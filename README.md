@@ -23,7 +23,7 @@ It has four characteristics:
 
 ## Documents
 
-Language: [English](lib/docs/README.md) | [中文简体](lib/docs/README-cn.md)
+Language: [English](docs/README.md) | [中文简体](docs/README-cn.md)
 
 ## Examples
 
@@ -31,7 +31,7 @@ Language: [English](lib/docs/README.md) | [中文简体](lib/docs/README-cn.md)
 
 ## What's the difference between 'Fish Redux' and 'Redux' ?
 
--   [answers](lib/docs/concept/what's-the-diiference.md)
+-   [answers](docs/concept/what's-the-diiference.md)
 
 ## License
 
