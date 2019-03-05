@@ -28,6 +28,13 @@ Language: [English](docs/README.md) | [中文简体](docs/README-cn.md)
 ## Examples
 
 -   [todo list](sample) - a simple todo list demo.
+-   run it:
+
+```
+cd ./sample
+flutter create .
+flutter run
+```
 
 ## What's the difference between 'Fish Redux' and 'Redux' ?
 
