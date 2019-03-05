@@ -15,7 +15,7 @@ It has four characteristics:
 
 > 3. Pluggable componentization
 
-> 4. Lossless performance
+> 4. Non-destructive performance
 
 ## Architecture diagram
 
