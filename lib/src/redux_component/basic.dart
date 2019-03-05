@@ -109,9 +109,6 @@ abstract class Context<T> extends AutoDispose {
 }
 
 /// Seen in framework-component
-/// 上下文是框架提供的最重要的对象, 它提供了用户在构建UI展示和处理副作用逻辑部分所必须的最小能力的集合
-/// 1. Get the latest state
-///
 abstract class ContextSys<T> extends Context<T> implements ViewService {
   /// Response to lifecycle calls
   void onLifecycle(Action action);
