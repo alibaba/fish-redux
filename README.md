@@ -4,8 +4,8 @@
 
 ## What is Fish Redux ?
 
-Fish Redux is is an assembled flutter application framework based on Redux state management.
-It is suitable for building medium to large complex applications.
+Fish Redux is an assembled flutter application framework based on Redux state management.
+It is suitable for building medium and large applications.
 
 It has four characteristics:
 
