@@ -7,13 +7,8 @@
 .dart_tool/
 build/
 pubspec.lock
-android/.gradle/
-android/build/
-android/local.properties
-android/.navigation/
-android/*.log
-android/bin/
-android/gen/
+android/
+ios/
 .gradle/
 build.gradle
 gradle/
@@ -21,8 +16,5 @@ gradlew
 gradlew.bat
 local.properties
 redux.iml
-ios/.generated/
-ios/Flutter/Generated.xcconfig
-ios/Runner/GeneratedPluginRegistrant.*
 pubspec.lock
 android/local.properties
