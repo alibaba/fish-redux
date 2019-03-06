@@ -60,6 +60,7 @@ Widget buildView(
                   margin: const EdgeInsets.only(left: 8.0),
                   child: EditableText(
                       controller: state.descEditController,
+                      backgroundCursorColor: const Color(0xFFE0E0E0),
                       maxLines: 10,
                       focusNode: FocusNode(),
                       style:
