@@ -7,10 +7,8 @@
 .dart_tool/
 build/
 pubspec.lock
-android/
 ios/
 .gradle/
-build.gradle
 gradle/
 gradlew
 gradlew.bat

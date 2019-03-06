@@ -1,0 +1,38 @@
+buildscript {
+    ext {
+        // Sdk and tools
+        targetSdkVersion = 27
+        compileSdkVersion = 27
+        buildToolsVersion = '27.0.3'
+
+        // App dependencies
+        supportLibraryVersion = '27.1.1'
+    }
+    repositories {
+        jcenter()
+        google()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.2.1'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(':app')
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
