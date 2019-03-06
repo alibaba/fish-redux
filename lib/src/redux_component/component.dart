@@ -211,7 +211,7 @@ class _ComponentState<T> extends State<_ComponentWidget<T>> {
 
     /// register store.subscribe
     _mainCtx
-      ..regiestOnDisposed(widget.store.subscribe(_onNotify))
+      ..registerOnDisposed(widget.store.subscribe(_onNotify))
       ..onLifecycle(LifecycleCreator.initState());
   }
 
