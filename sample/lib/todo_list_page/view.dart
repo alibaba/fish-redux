@@ -23,7 +23,7 @@ Widget buildView(PageState state, Dispatch dispatch, ViewService viewService) {
     ),
     floatingActionButton: FloatingActionButton(
       onPressed: () => dispatch(PageActionCreator.onAddAction()),
-      tooltip: 'Increment',
+      tooltip: 'Add',
       child: const Icon(Icons.add),
     ),
   );

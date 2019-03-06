@@ -29,12 +29,13 @@ Widget buildView(
                   padding: const EdgeInsets.all(8.0),
                   margin: const EdgeInsets.only(left: 8.0),
                   child: EditableText(
-                      controller: state.nameEditController,
-                      focusNode: FocusNode(),
-                      autofocus: true,
-                      style:
-                          const TextStyle(color: Colors.black, fontSize: 16.0),
-                      cursorColor: Colors.yellow),
+                    controller: state.nameEditController,
+                    focusNode: FocusNode(),
+                    autofocus: true,
+                    style: const TextStyle(color: Colors.black, fontSize: 16.0),
+                    cursorColor: Colors.yellow,
+                    backgroundCursorColor: const Color(0xFFFFF59D),
+                  ),
                 ))
               ],
             ),
@@ -63,7 +64,8 @@ Widget buildView(
                       focusNode: FocusNode(),
                       style:
                           const TextStyle(color: Colors.black, fontSize: 16.0),
-                      cursorColor: Colors.yellow),
+                      cursorColor: Colors.yellow,
+                      backgroundCursorColor: const Color(0xFFFFF59D)),
                 ))
               ],
             ),
