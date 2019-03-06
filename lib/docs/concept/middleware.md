@@ -28,7 +28,7 @@ Middleware<T> logMiddleware<T>({
               }
 
               if (prevState == nextState) {
-                print('[$tag] warning: ${action.type} has not bean used.');
+                print('[$tag] warning: ${action.type} has not been used.');
               }
 
               print('========== [$tag] ================');
