@@ -34,7 +34,8 @@ Widget buildView(
                       autofocus: true,
                       style:
                           const TextStyle(color: Colors.black, fontSize: 16.0),
-                      cursorColor: Colors.yellow),
+                      cursorColor: Colors.yellow,
+                      backgroundCursorColor: Colors.black),
                 ))
               ],
             ),
@@ -63,7 +64,8 @@ Widget buildView(
                       focusNode: FocusNode(),
                       style:
                           const TextStyle(color: Colors.black, fontSize: 16.0),
-                      cursorColor: Colors.yellow),
+                      cursorColor: Colors.yellow,
+                      backgroundCursorColor: Colors.black),
                 ))
               ],
             ),
