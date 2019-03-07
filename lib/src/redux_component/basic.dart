@@ -84,7 +84,7 @@ abstract class ViewService {
   void appBroadcast(Action action);
 
   /// Broadcast action(the intent) in page (inter-components)
-  void pageBroadcast(Action action);
+  void pageBroadcast(Action action, {bool excluedSelf});
 }
 
 ///  Seen in effect-part
@@ -105,7 +105,7 @@ abstract class Context<T> extends AutoDispose {
   void appBroadcast(Action action);
 
   /// Broadcast action in page (inter-components)
-  void pageBroadcast(Action action);
+  void pageBroadcast(Action action, {bool excluedSelf});
 }
 
 /// Seen in framework-component

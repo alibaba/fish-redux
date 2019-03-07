@@ -7,7 +7,7 @@ class _Broadcast<T> implements Broadcast {
   @override
   void sendBroadcast(Action action, {OnAction excluded}) {
     final List<OnAction> list = _onActionContainer
-        .skipWhile((OnAction onAction) => onAction != excluded)
+        .where((OnAction onAction) => onAction != excluded)
         .toList(growable: false);
 
     for (OnAction onAction in list) {

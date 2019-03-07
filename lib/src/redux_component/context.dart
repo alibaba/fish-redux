@@ -86,9 +86,12 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   }
 
   @override
-  void pageBroadcast(Action action) {
+  void pageBroadcast(Action action, {bool excluedSelf}) {
     assert(_throwIfDisposed());
-    store.sendBroadcast(action, excluded: _onBroadcast);
+    store.sendBroadcast(
+      action,
+      excluded: excluedSelf == true ? _onBroadcast : null,
+    );
   }
 
   bool _throwIfDisposed() {
@@ -135,7 +138,8 @@ class _TwinceContext<T> extends ContextSys<T> with _ExtraMixin {
   T get state => mainCtx.state;
 
   @override
-  void pageBroadcast(Action action) => mainCtx.pageBroadcast(action);
+  void pageBroadcast(Action action, {bool excluedSelf}) =>
+      mainCtx.pageBroadcast(action, excluedSelf: excluedSelf);
 }
 
 ContextSys<T> mergeContext<T>(ContextSys<T> mainCtx, ContextSys<T> sidecarCtx) {
