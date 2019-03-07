@@ -36,7 +36,7 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
     /// Register inter-component broadcast
     final OnAction onBroadcast =
         factors.createHandlerOnBroadcast(onAction, this, store.dispatch);
-    regiestOnDisposed(store.registerReceiver(onBroadcast));
+    registerOnDisposed(store.registerReceiver(onBroadcast));
   }
 
   @override

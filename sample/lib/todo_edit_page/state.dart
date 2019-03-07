@@ -8,11 +8,16 @@ class TodoEditState implements Cloneable<TodoEditState> {
   TextEditingController nameEditController;
   TextEditingController descEditController;
 
+  FocusNode focusNodeName;
+  FocusNode focusNodeDesc;
+
   @override
   TodoEditState clone() {
     return TodoEditState()
       ..nameEditController = nameEditController
       ..descEditController = descEditController
+      .. focusNodeName = focusNodeName
+      .. focusNodeDesc = focusNodeDesc
       ..toDo = toDo;
   }
 }
@@ -22,5 +27,7 @@ TodoEditState initState(ToDoState arg) {
   state.toDo = arg?.clone() ?? ToDoState();
   state.nameEditController = TextEditingController(text: arg?.title);
   state.descEditController = TextEditingController(text: arg?.desc);
+  state.focusNodeName = FocusNode();
+  state.focusNodeDesc = FocusNode();
   return state;
 }
