@@ -18,6 +18,7 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   final Get<T> getState;
 
   Dispatch _dispatch;
+  OnAction _onBroadcast;
 
   DefaultContext({
     @required this.factors,
@@ -34,9 +35,9 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
     _dispatch = factors.createDispatch(onAction, this, store.dispatch);
 
     /// Register inter-component broadcast
-    final OnAction onBroadcast =
+    _onBroadcast =
         factors.createHandlerOnBroadcast(onAction, this, store.dispatch);
-    registerOnDisposed(store.registerReceiver(onBroadcast));
+    registerOnDisposed(store.registerReceiver(_onBroadcast));
   }
 
   @override
@@ -87,7 +88,7 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   @override
   void pageBroadcast(Action action) {
     assert(_throwIfDisposed());
-    store.sendBroadcast(action);
+    store.sendBroadcast(action, excluded: _onBroadcast);
   }
 
   bool _throwIfDisposed() {

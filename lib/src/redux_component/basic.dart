@@ -60,7 +60,7 @@ typedef OnError<T> = bool Function(Exception exception, Context<T> ctx);
 
 abstract class Broadcast {
   /// Broadcast in all receivers;
-  void sendBroadcast(Action action);
+  void sendBroadcast(Action action, {OnAction excluded});
 
   /// Register a receiver and return the unregister function
   void Function() registerReceiver(OnAction onAction);

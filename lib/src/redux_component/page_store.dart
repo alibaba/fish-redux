@@ -5,10 +5,10 @@ class _Broadcast<T> implements Broadcast {
   final List<OnAction> _onActionContainer = <OnAction>[];
 
   @override
-  void sendBroadcast(Action action) {
-    final List<OnAction> list = _onActionContainer.toList(
-      growable: false,
-    );
+  void sendBroadcast(Action action, {OnAction excluded}) {
+    final List<OnAction> list = _onActionContainer
+        .skipWhile((OnAction onAction) => onAction != excluded)
+        .toList(growable: false);
 
     for (OnAction onAction in list) {
       onAction(action);
