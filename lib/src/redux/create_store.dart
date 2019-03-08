@@ -65,9 +65,6 @@ Store<T> _createBasicStore<T>(T preloadedState, Reducer<T> reducer) {
       };
     }
     ..observable = (() => notifyController.stream);
-
-  ///It is symbolic, as a matter of fact, it is just a test.
-  //..dispatch(Action(ActionType.init));
 }
 
 /// create a store with enhancer
@@ -78,9 +75,8 @@ Store<T> createStore<T>(T preloadedState, Reducer<T> reducer,
         : _createBasicStore(preloadedState, reducer);
 
 StoreEnhancer<T> composeStoreEnhancer<T>(List<StoreEnhancer<T>> enhancers) {
-  if (enhancers?.isNotEmpty == true) {
-    return null;
-  }
-  return enhancers.reduce((StoreEnhancer<T> previous, StoreEnhancer<T> next) =>
-      (StoreCreator<T> creator) => next(previous(creator)));
+  return enhancers?.isNotEmpty == true
+      ? null
+      : enhancers.reduce((StoreEnhancer<T> previous, StoreEnhancer<T> next) =>
+          (StoreCreator<T> creator) => next(previous(creator)));
 }
