@@ -21,11 +21,11 @@ It has four characteristics:
 
 <img src="https://img.alicdn.com/tfs/TB1pkhoJr2pK1RjSZFsXXaNlXXa-1004-1370.png" width="500px" height="680px">
 
-## Getting Started
+## Installation
 
 [Go](https://pub.dartlang.org/packages/fish_redux#-installing-tab-)
 
-## Documents
+## Documentation
 
 Language: [English](doc/README.md) | [中文简体](doc/README-cn.md)
 
