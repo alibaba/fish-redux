@@ -1,3 +1,6 @@
-## [0.0.1] - TODO: Add release date.
+## [0.1.1]
 
-* TODO: Describe initial release.
+-   fix hot-reload bug
+-   add excluedSelf in broadcast
+-   rename sample to example
+-   rename docs to doc
