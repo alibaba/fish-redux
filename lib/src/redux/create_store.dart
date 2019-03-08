@@ -65,9 +65,6 @@ Store<T> _createBasicStore<T>(T preloadedState, Reducer<T> reducer) {
       };
     }
     ..observable = (() => notifyController.stream);
-
-  ///It is symbolic, as a matter of fact, it is just a test.
-  //..dispatch(Action(ActionType.init));
 }
 
 /// create a store with enhancer
