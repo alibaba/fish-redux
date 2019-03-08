@@ -18,6 +18,7 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   final Get<T> getState;
 
   Dispatch _dispatch;
+  OnAction _onBroadcast;
 
   DefaultContext({
     @required this.factors,
@@ -34,9 +35,9 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
     _dispatch = factors.createDispatch(onAction, this, store.dispatch);
 
     /// Register inter-component broadcast
-    final OnAction onBroadcast =
+    _onBroadcast =
         factors.createHandlerOnBroadcast(onAction, this, store.dispatch);
-    registerOnDisposed(store.registerReceiver(onBroadcast));
+    registerOnDisposed(store.registerReceiver(_onBroadcast));
   }
 
   @override
@@ -85,9 +86,12 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   }
 
   @override
-  void pageBroadcast(Action action) {
+  void pageBroadcast(Action action, {bool excluedSelf}) {
     assert(_throwIfDisposed());
-    store.sendBroadcast(action);
+    store.sendBroadcast(
+      action,
+      excluded: excluedSelf == true ? _onBroadcast : null,
+    );
   }
 
   bool _throwIfDisposed() {
@@ -134,7 +138,8 @@ class _TwinceContext<T> extends ContextSys<T> with _ExtraMixin {
   T get state => mainCtx.state;
 
   @override
-  void pageBroadcast(Action action) => mainCtx.pageBroadcast(action);
+  void pageBroadcast(Action action, {bool excluedSelf}) =>
+      mainCtx.pageBroadcast(action, excluedSelf: excluedSelf);
 }
 
 ContextSys<T> mergeContext<T>(ContextSys<T> mainCtx, ContextSys<T> sidecarCtx) {
