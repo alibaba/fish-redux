@@ -1,6 +1,6 @@
 # Directory
 
-The recommended directory structure would be like this
+The recommended directory structure
 
 ```
 sample_page

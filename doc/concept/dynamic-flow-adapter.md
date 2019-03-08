@@ -1,6 +1,6 @@
 # DynamicFlowAdapter
 
--   The template is a Map that accepts an array like data driven
+-   The template is a Map that accepts an array-like data driven
 -   Sample Code
 
 ```dart

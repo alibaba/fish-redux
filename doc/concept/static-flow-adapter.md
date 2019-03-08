@@ -1,8 +1,8 @@
 # StaticFlowAdapter
 
--   The template is an Array that accepts map like data driven.
+-   The template is an Array that accepts map-like data driven.
 -   The template receives an array of Dependents.
--   It's very much like a flatMap + compact operation abstractly.
+-   It's similar with a flatMap + compact operation abstractly.
 -   Sample Code
 
 ```dart
