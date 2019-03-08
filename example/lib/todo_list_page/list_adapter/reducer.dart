@@ -15,7 +15,6 @@ Reducer<PageState> buildReducer() {
 PageState _add(PageState state, Action action) {
   final ToDoState toDo = action.payload;
   final PageState newState = state.clone();
-  newState.toDos == List<ToDoState>.from(state.toDos);
   newState.toDos.add(toDo);
   return newState;
 }
@@ -23,7 +22,6 @@ PageState _add(PageState state, Action action) {
 PageState _remove(PageState state, Action action) {
   final String unique = action.payload;
   final PageState newState = state.clone();
-  newState.toDos == List<ToDoState>.from(state.toDos);
   newState.toDos.removeWhere((ToDoState state) => state.uniqueId == unique);
   return newState;
 }
