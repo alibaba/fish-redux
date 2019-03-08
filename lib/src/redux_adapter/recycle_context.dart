@@ -44,7 +44,7 @@ class RecycleContext<T> extends DefaultContext<T> {
     if (length > list.length) {
       _cachedMap[key].add(
         create()
-          ..follow(this)
+          ..setParent(this)
           ..onLifecycle(LifecycleCreator.initState()),
       );
     }
