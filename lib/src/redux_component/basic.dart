@@ -37,6 +37,7 @@ typedef AdapterBuilder<T> = ListAdapter Function(
 abstract class ViewUpdater<T> {
   Widget buildView(T state, Dispatch dispatch, ViewService viewService);
   void onNotify(T now, void Function() markNeedsBuild, Dispatch dispatch);
+  void reassemble();
 }
 
 /// A little different with Dispatch (with if it is interrupted).

@@ -168,6 +168,11 @@ class _ViewUpdater<T> implements ViewUpdater<T> {
       _latestState = now;
     }
   }
+
+  @override
+  void reassemble() {
+    _widgetCache = null;
+  }
 }
 
 class _ComponentWidget<T> extends StatefulWidget {
@@ -195,6 +200,14 @@ class _ComponentState<T> extends State<_ComponentWidget<T>> {
   @override
   Widget build(BuildContext context) =>
       _viewUpdater.buildView(_mainCtx.state, _mainCtx.dispatch, _mainCtx);
+
+  @override
+  @protected
+  @mustCallSuper
+  void reassemble() {
+    super.reassemble();
+    _viewUpdater.reassemble();
+  }
 
   @override
   void initState() {
