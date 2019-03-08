@@ -1,6 +1,6 @@
 class _Fields {
   bool isDisposed = false;
-  Set<AutoDispose> chilren;
+  Set<AutoDispose> children;
   AutoDispose parent;
   void Function() onDisposed;
 }
@@ -15,22 +15,22 @@ class AutoDispose {
   final _Fields _fields = _Fields();
 
   void visit(void Function(AutoDispose) visiter) =>
-      _fields.chilren?.forEach(visiter);
+      _fields.children?.forEach(visiter);
 
   bool get isDisposed => _fields.isDisposed;
 
   void dispose() {
     /// dispose all children
-    if (_fields.chilren != null) {
-      final List<AutoDispose> copy = _fields.chilren.toList(growable: false);
+    if (_fields.children != null) {
+      final List<AutoDispose> copy = _fields.children.toList(growable: false);
       for (AutoDispose child in copy) {
         child.dispose();
       }
-      _fields.chilren = null;
+      _fields.children = null;
     }
 
     /// Cut off the connection with parent.
-    _fields.parent?._fields?.chilren?.remove(this);
+    _fields.parent?._fields?.children?.remove(this);
     _fields.parent = null;
 
     /// The hook function of onDisposed is triggered.
@@ -64,16 +64,16 @@ class AutoDispose {
     }
 
     if (newParent != null) {
-      newParent._fields.chilren ??= Set<AutoDispose>();
-      newParent._fields.chilren.add(this);
+      newParent._fields.children ??= Set<AutoDispose>();
+      newParent._fields.children.add(this);
     }
     if (oldParent != null) {
-      oldParent._fields.chilren.remove(this);
+      oldParent._fields.children.remove(this);
     }
     _fields.parent = newParent;
   }
 
-  AutoDispose regiestOnDisposed(void Function() onDisposed) {
+  AutoDispose registerOnDisposed(void Function() onDisposed) {
     return AutoDispose()
       ..setParent(this)
       ..onDisposed(onDisposed);
@@ -86,6 +86,6 @@ class AutoDispose {
 
   @deprecated
   AutoDispose follower([void Function() onDisposed]) {
-    return regiestOnDisposed(onDisposed);
+    return registerOnDisposed(onDisposed);
   }
 }
