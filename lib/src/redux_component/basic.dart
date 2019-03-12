@@ -102,6 +102,10 @@ abstract class Context<T> extends AutoDispose {
   /// Get|Set extra data in context if needed.
   Map<String, Object> get extra;
 
+  /// The way to build slot component which is configed in Dependencies.slots
+  /// such as custom mask or dialog
+  Widget buildComponent(String name);
+
   /// Broadcast action in app (inter-pages)
   void appBroadcast(Action action);
 

@@ -1,8 +1,8 @@
 # StaticFlowAdapter
 
--   The template is an Array that accepts map like data driven.
+-   The template is an Array that accepts map-like data driven.
 -   The template receives an array of Dependents.
--   It's very much like a flatMap + compact operation abstractly.
+-   It's similar with a flatMap + compact operation abstractly.
 -   Sample Code
 
 ```dart
@@ -30,3 +30,5 @@ class ItemBodyComponent extends Component<ItemBodyState> {
 }
 
 ```
+
+<img src="https://img.alicdn.com/tfs/TB1sXXOLQvoK1RjSZPfXXXPKFXa-1666-1104.png" width="833px" height="552px">

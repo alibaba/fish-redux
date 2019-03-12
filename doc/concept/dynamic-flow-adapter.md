@@ -1,6 +1,6 @@
 # DynamicFlowAdapter
 
--   The template is a Map that accepts an array like data driven
+-   The template is a Map that accepts an array-like data driven
 -   Sample Code
 
 ```dart
@@ -15,3 +15,5 @@ class RecommendAdapter extends DynamicFlowAdapter<RecommendState> {
         );
 }
 ```
+
+<img src="https://img.alicdn.com/tfs/TB10lxHLMDqK1RjSZSyXXaxEVXa-1838-1024.png" width="919px" height="5128px">

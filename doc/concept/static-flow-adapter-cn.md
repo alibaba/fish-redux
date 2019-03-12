@@ -30,3 +30,5 @@ class ItemBodyComponent extends Component<ItemBodyState> {
 }
 
 ```
+
+<img src="https://img.alicdn.com/tfs/TB1sXXOLQvoK1RjSZPfXXXPKFXa-1666-1104.png" width="833px" height="552px">

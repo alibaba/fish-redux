@@ -1,4 +1,7 @@
--   **[简介](introduction/README-cn.md)**
+-   **简介**
+    -   [关于](introduction/README-cn.md)
+    -   [演进](concept/evolution-of-fish-redux.md)
+    -   [特性](concept/features.md)
 -   **核心概念**
     -   [Redux](concept/redux-cn.md)
         -   [Action](concept/action-cn.md)
@@ -19,10 +22,13 @@
         -   [OOP](concept/oop-cn.md)
         -   [WidgetWrapper](concept/widget-wrapper-cn.md)
         -   [Page](concept/page-cn.md)
-        -   [Mechanism](concept/mechanism-cn.md)
     -   [Adapter](concept/adapter-cn.md)
         -   [StaticFlowAdapter](concept/static-flow-adapter-cn.md)
         -   [DynamicFlowAdapter](concept/dynamic-flow-adapter-cn.md)
         -   [CustomAdapter](concept/custom-adapter-cn.md)
-    -   Other
-        -   [Directory](concept/directory-cn.md)
+-   **其他**
+    -   [What's the difference between 'Fish Redux' and 'Redux' ?](concept/what's-the-diiference-cn.md)
+    -   [What's-adapter](concept/what's-adapter.md)
+    -   [What's-connector](concept/what's-connector.md)
+    -   [Mechanism](concept/mechanism-cn.md)
+    -   [Directory](concept/directory-cn.md)

@@ -1,4 +1,7 @@
--   **[Introduction](introduction/README.md)**
+-   **Introduction**
+    -   [About](introduction/README.md)
+    -   [Evolution](concept/evolution-of-fish-redux.md)
+    -   [Features](concept/features.md)
 -   **Core Concepts**
     -   [Redux](concept/redux.md)
         -   [Action](concept/action.md)
@@ -19,10 +22,13 @@
         -   [OOP](concept/oop.md)
         -   [WidgetWrapper](concept/widget-wrapper.md)
         -   [Page](concept/page.md)
-        -   [Mechanism](concept/mechanism.md)
     -   [Adapter](concept/adapter.md)
         -   [StaticFlowAdapter](concept/static-flow-adapter.md)
         -   [DynamicFlowAdapter](concept/dynamic-flow-adapter.md)
         -   [CustomAdapter](concept/custom-adapter.md)
-    -   Other
-        -   [Directory](concept/directory.md)
+-   **Ohters**
+    -   [What's the difference between 'Fish Redux' and 'Redux' ?](concept/what's-the-diiference.md)
+    -   [What's-adapter](concept/what's-adapter.md)
+    -   [What's-connector](concept/what's-connector.md)
+    -   [Mechanism](concept/mechanism.md)
+    -   [Directory](concept/directory.md)
