@@ -1,18 +1,24 @@
 # What's adapter
 
-在解答什么是 adapter 之前
+面向 ListView 场景的分治设计 Adapter。
 
--   面向 ListView 场景的分治设计 Adapter。
-    传统而言，绝大多数框架，客户端或前端，对 ListView 的分治仅限于展示部分，而逻辑部分往往是集中的。这带来了复用难，可维护性差，难以协作等中大型场景下的问题。
+> 在解答什么是 adapter 之前，我们来看下一般框架对 ListView 的分治是怎么做的。传统的手段，我们对 ListView 的分治更多的局限于它展现部分，而它的逻辑部分往往是集中的。而当我们试图将 ListView 下的某一局部的展现和逻辑封装在一起，我们就会遇到"Big-Cell"问题，面临性能的显著降低。
+> 这里面存在一个分治和性能上的矛盾。这个矛盾带来了复用难，可维护差，难以协作等中大型场景下的问题。
+>
+>         解决这个问题，有两种思路：
+>
+> >         1. 下沉到 UI 表达层（Widgets），去实现一个高性能的 ScrollView。
+> >         2. 向上做模型抽象，得到一个逻辑上的 ScrollView，性能上的 ListView。
+>
+>         fish redux 选择了第二条更加通用的路径来解决 LisView 下的分治问题。
+>
+>        一个 ListView 对应了一个 Adapter，这看上去非常的像 Android 里的设计，但事实上 fish-redux 里的 Adapter 概念走的更远。
+>
+> >         1. 一个 Adapter 是可以由多个 Component 和 Adapter 组合而成，它有点像 flatmap & compact 的 api 的叠加。
+> >         2. Adapter即它的子Adapter 的生命周期是和ListView等效的。它像跨斗一般附着于ListView的生命周期之上。由于Adapter生命周期的提升，额外收获了两个非常有用的事件消息(appear & disappear)。
 
-    -   4.1 解决 "Big-Cell" 性能问题
-        > 以假设的一个业务场景为例，其中有个"Big-Cell":留言（有非常多行）。如果我们将"留言"以 Component 形态来组装，就会使得"留言"成为一个非常巨大的 Widget，极大影响整体的 FPS。所以我们需要将这个"留言"拆的更细一点。
-        > 两种方式
-        >
-        > 1. 将每一行都拆解为一个 Component
-        >    我们将得到性能的提升，但是这样的拆分下，每一行的 Component 仅仅有展示的能力而失去了大部分的逻辑的能力，主要的"留言"的逻辑部分都会上升到 ListView 本身，导致"留言"失去了做为独立模块纯在的能力。
-        > 2. 将"留言"这个"Big-Cell"
-    -   4.2 解决逻辑的独立性
-        > 以闲鱼的详情业务场景为例，其中有两个"Big-Cell":留言和推荐。如果我们将留言和推荐以 Component 形态来组装，就会使得留言和推荐成为两个非常巨大的 Widget，极大的影响了页面的 FPS。
-    -   4.3
-        > 以闲鱼的详情业务场景为例，其中有两个"Big-Cell":留言和推荐。如果我们将留言和推荐以 Component 形态来组装，就会使得留言和推荐成为两个非常巨大的 Widget，极大的影响了页面的 FPS。
+-   Adapter 的容器有两类，用图来说明吧：
+
+<img src="https://img.alicdn.com/tfs/TB1sXXOLQvoK1RjSZPfXXXPKFXa-1666-1104.png" width="833px" height="552px">
+
+<img src="https://img.alicdn.com/tfs/TB10lxHLMDqK1RjSZSyXXaxEVXa-1838-1024.png" width="919px" height="5128px">
