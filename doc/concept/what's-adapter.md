@@ -15,7 +15,9 @@
 > 一个 ListView 对应了一个 Adapter，这看上去非常的像 Android 里的设计，但事实上 fish-redux 里的 Adapter 概念走的更远。
 >
 > 1. 一个 Adapter 是可以由多个 Component 和 Adapter 组合而成，它有点像 flatmap & compact 的 api 的叠加。
-> 2. Adapter 即它的子 Adapter 的生命周期是和 ListView 等效的。它像跨斗一般附着于 ListView 的生命周期之上。由于 Adapter 生命周期的提升，额外收获了两个非常有用的事件消息(appear & disappear)。
+> 2. Adapter 以及它的子 Adapter 的生命周期是和 ListView 是等效的。它像跨斗一般附着于 ListView 的生命周期之上。同时由于 Adapter 生命周期的提升，我们额外收获了两个非常有用的事件消息(appear & disappear)。
+>
+> > 注意 ⚠️ 在 Adapter 里配置的子 Component，它的生命周期和它所对应的 WidgetState 是一致的，所以它的是短暂的。
 
 -   Adapter 的容器有两类，用图来说明吧：
 
