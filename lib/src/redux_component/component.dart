@@ -48,7 +48,7 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
   @override
   Widget buildComponent(PageStore<Object> store, Get<Object> getter) {
     return wrapper(
-      _ComponentWidget<T>(
+      ComponentWidget<T>(
         component: this,
         getter: _asGetter<T>(getter),
         store: store,
@@ -80,25 +80,27 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
   @override
   ContextSys<T> createContext({
     PageStore<Object> store,
-    Get<BuildContext> getBuildContext,
+    State stfState,
     Get<T> getState,
   }) {
     /// init context
     final ContextSys<T> mainCtx = super.createContext(
       store: store,
-      getBuildContext: getBuildContext,
+      stfState: stfState,
       getState: getState,
     );
 
     final ContextSys<T> sidecarCtx = dependencies?.adapter?.createContext(
       store: store,
-      getBuildContext: getBuildContext,
+      stfState: stfState,
       getState: getState,
     );
 
     /// adapter-effect-promote
     return mergeContext(mainCtx, sidecarCtx);
   }
+
+  ComponentState<T> createState() => ComponentState<T>();
 
   String get name => cache<String>('name', () => runtimeType.toString());
 
@@ -175,12 +177,12 @@ class _ViewUpdater<T> implements ViewUpdater<T> {
   }
 }
 
-class _ComponentWidget<T> extends StatefulWidget {
+class ComponentWidget<T> extends StatefulWidget {
   final Component<T> component;
   final PageStore<Object> store;
   final Get<T> getter;
 
-  const _ComponentWidget({
+  const ComponentWidget({
     @required this.component,
     @required this.store,
     @required this.getter,
@@ -190,10 +192,10 @@ class _ComponentWidget<T> extends StatefulWidget {
         super(key: key);
 
   @override
-  _ComponentState<T> createState() => _ComponentState<T>();
+  ComponentState<T> createState() => component.createState();
 }
 
-class _ComponentState<T> extends State<_ComponentWidget<T>> {
+class ComponentState<T> extends State<ComponentWidget<T>> {
   ContextSys<T> _mainCtx;
   ViewUpdater<T> _viewUpdater;
 
@@ -216,7 +218,7 @@ class _ComponentState<T> extends State<_ComponentWidget<T>> {
     /// init context
     _mainCtx = widget.component.createContext(
       store: widget.store,
-      getBuildContext: () => context,
+      stfState: this,
       getState: () => widget.getter(),
     );
 
@@ -241,7 +243,7 @@ class _ComponentState<T> extends State<_ComponentWidget<T>> {
   }
 
   @override
-  void didUpdateWidget(_ComponentWidget<T> oldWidget) {
+  void didUpdateWidget(ComponentWidget<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     _onNotify();
     _mainCtx.onLifecycle(LifecycleCreator.didUpdateWidget());

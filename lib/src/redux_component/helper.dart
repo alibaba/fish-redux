@@ -6,9 +6,11 @@ import '../redux/basic.dart';
 import 'basic.dart';
 
 AdapterBuilder<T> asAdapter<T>(ViewBuilder<T> view) {
-  return (T state, Dispatch dispatch, ViewService service) {
+  return (T unstableState, Dispatch dispatch, ViewService service) {
+    final ContextSys<T> ctx = service;
     return ListAdapter(
-      (BuildContext buildContext, int index) => view(state, dispatch, service),
+      (BuildContext buildContext, int index) =>
+          view(ctx.state, dispatch, service),
       1,
     );
   };
