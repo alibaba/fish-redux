@@ -102,6 +102,8 @@ abstract class Context<T> extends AutoDispose {
   /// In general, we should not need this field.
   /// When we have to use this field, it means that we have encountered difficulties.
   /// This is a contradiction between presentation & logical separation, and Flutter's Widgets system.
+  ///
+  /// How to use ?
   /// For example, we want to use SingleTickerProviderStateMixin
   /// We should
   /// 1. Define a new ComponentState
@@ -109,7 +111,7 @@ abstract class Context<T> extends AutoDispose {
   /// 2. Override the createState method of the Component with the newly defined CustomStfState.
   ///    @override
   ///    CustomStfState createState() => CustomStfState();
-  /// 3. In Effect, get the CustomStfState via context.stfState
+  /// 3. Get the CustomStfState via context.stfState in Effect.
   ///    AnimationController controller = AnimationController(vsync: context.stfState);
   ///    context.dispatch(ActionCreator.createController(controller));
   State get stfState;
