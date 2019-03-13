@@ -60,7 +60,7 @@ class StaticFlowAdapter<T> extends Logic<T>
           final ContextSys<Object> subCtx = ctx.reuseOrCreate(i, () {
             return dependent.createContext(
               store: ctx.store,
-              getBuildContext: ctx.getBuildContext,
+              stfState: ctx.stfState,
               getState: ctx.getState,
             );
           });

@@ -14,7 +14,8 @@ class _ExtraMixin {
 class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   final AbstractLogic<T> factors;
   final PageStore<Object> store;
-  final Get<BuildContext> getBuildContext;
+  @override
+  final State stfState;
   final Get<T> getState;
 
   Dispatch _dispatch;
@@ -23,11 +24,11 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   DefaultContext({
     @required this.factors,
     @required this.store,
-    @required this.getBuildContext,
+    @required this.stfState,
     @required this.getState,
   })  : assert(factors != null),
         assert(store != null),
-        assert(getBuildContext != null),
+        assert(stfState != null),
         assert(getState != null) {
     final OnAction onAction = factors.createHandlerOnAction(this);
 
@@ -43,7 +44,7 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   @override
   BuildContext get context {
     assert(_throwIfDisposed());
-    return getBuildContext();
+    return stfState.context;
   }
 
   @override
@@ -140,6 +141,9 @@ class _TwinceContext<T> extends ContextSys<T> with _ExtraMixin {
   @override
   void pageBroadcast(Action action, {bool excluedSelf}) =>
       mainCtx.pageBroadcast(action, excluedSelf: excluedSelf);
+
+  @override
+  State<StatefulWidget> get stfState => mainCtx.stfState;
 }
 
 ContextSys<T> mergeContext<T>(ContextSys<T> mainCtx, ContextSys<T> sidecarCtx) {

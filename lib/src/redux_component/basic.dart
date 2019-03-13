@@ -99,6 +99,23 @@ abstract class Context<T> extends AutoDispose {
   /// Get BuildContext from the host-widget
   BuildContext get context;
 
+  /// In general, we should not need this field.
+  /// When we have to use this field, it means that we have encountered difficulties.
+  /// This is a contradiction between presentation & logical separation, and Flutter's Widgets system.
+  ///
+  /// How to use ?
+  /// For example, we want to use SingleTickerProviderStateMixin
+  /// We should
+  /// 1. Define a new ComponentState
+  ///    class CustomStfState extends ComponentState<T> with SingleTickerProviderStateMixin {}
+  /// 2. Override the createState method of the Component with the newly defined CustomStfState.
+  ///    @override
+  ///    CustomStfState createState() => CustomStfState();
+  /// 3. Get the CustomStfState via context.stfState in Effect.
+  ///    AnimationController controller = AnimationController(vsync: context.stfState);
+  ///    context.dispatch(ActionCreator.createController(controller));
+  State get stfState;
+
   /// Get|Set extra data in context if needed.
   Map<String, Object> get extra;
 
@@ -136,7 +153,7 @@ abstract class Dependent<T> {
 
   ContextSys<Object> createContext({
     PageStore<Object> store,
-    Get<BuildContext> getBuildContext,
+    State stfState,
     Get<T> getState,
   });
 
@@ -170,7 +187,7 @@ abstract class AbstractLogic<T> {
   /// To create each instance's context
   ContextSys<T> createContext({
     PageStore<Object> store,
-    Get<BuildContext> getBuildContext,
+    State stfState,
     Get<T> getState,
   });
 
