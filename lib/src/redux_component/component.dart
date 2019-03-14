@@ -186,9 +186,10 @@ class ComponentWidget<T> extends StatefulWidget {
     @required this.component,
     @required this.store,
     @required this.getter,
-    Broadcast broadcast,
     Key key,
-  })  : assert(store != null && getter != null),
+  })  : assert(component != null),
+        assert(store != null),
+        assert(getter != null),
         super(key: key);
 
   @override
