@@ -24,7 +24,10 @@ class _BasePart<T> {
     return true;
   }
 
-  VoidCallback bindAction(Action action) => () => dispatch(action);
+  VoidCallback bindAction(Action action) {
+    final Dispatch current = dispatch;
+    return () => current(action);
+  }
 }
 
 @immutable
