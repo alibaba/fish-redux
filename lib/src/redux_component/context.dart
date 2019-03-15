@@ -14,22 +14,22 @@ class _ExtraMixin {
 class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   final AbstractLogic<T> factors;
   final PageStore<Object> store;
-  @override
-  final State stfState;
   final Get<T> getState;
 
+  BuildContext _buildContext;
   Dispatch _dispatch;
   OnAction _onBroadcast;
 
   DefaultContext({
     @required this.factors,
     @required this.store,
-    @required this.stfState,
+    @required BuildContext buildContext,
     @required this.getState,
   })  : assert(factors != null),
         assert(store != null),
         assert(stfState != null),
-        assert(getState != null) {
+        assert(getState != null),
+        _buildContext = buildContext {
     final OnAction onAction = factors.createHandlerOnAction(this);
 
     /// create Dispatch
@@ -44,7 +44,7 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   @override
   BuildContext get context {
     assert(_throwIfDisposed());
-    return stfState.context;
+    return _buildContext;
   }
 
   @override
@@ -95,12 +95,28 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
     );
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _buildContext = null;
+  }
+
   bool _throwIfDisposed() {
     if (isDisposed) {
       throw const DisposeException(
           'Ctx has been disposed which could not been used any more.');
     }
     return true;
+  }
+
+  @override
+  State<StatefulWidget> get stfState {
+    assert(_buildContext is StatefulElement);
+    if (_buildContext is StatefulElement) {
+      final StatefulElement stfElement = _buildContext;
+      return stfElement.state;
+    }
+    return null;
   }
 }
 

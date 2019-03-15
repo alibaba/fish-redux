@@ -112,7 +112,9 @@ abstract class Context<T> extends AutoDispose {
   ///    @override
   ///    CustomStfState createState() => CustomStfState();
   /// 3. Get the CustomStfState via context.stfState in Effect.
-  ///    AnimationController controller = AnimationController(vsync: context.stfState);
+  ///    /// Through BuildContext -> StatefulElement -> State
+  ///    final TickerProvider tickerProvider = context.stfState;
+  ///    AnimationController controller = AnimationController(vsync: tickerProvider);
   ///    context.dispatch(ActionCreator.createController(controller));
   State get stfState;
 
@@ -153,7 +155,7 @@ abstract class Dependent<T> {
 
   ContextSys<Object> createContext({
     PageStore<Object> store,
-    State stfState,
+    BuildContext buildContext,
     Get<T> getState,
   });
 
@@ -187,7 +189,7 @@ abstract class AbstractLogic<T> {
   /// To create each instance's context
   ContextSys<T> createContext({
     PageStore<Object> store,
-    State stfState,
+    BuildContext buildContext,
     Get<T> getState,
   });
 
