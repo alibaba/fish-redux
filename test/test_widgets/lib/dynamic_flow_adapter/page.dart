@@ -76,7 +76,7 @@ const Map<String, dynamic> pageInitParams = <String, dynamic>{
 bool pageEffect(Action action, Context<ToDoList> ctx) {
   if (action.type == PageAction.onAdd) {
     print('page onAdd');
-    ctx.pageBroadcast(Action(ToDoListAction.onAdd, payload: ToDo.mock()));
+    ctx.pageBroadcast(Action(ToDoListAction.onAdd, payload: Todo.mock()));
     return true;
   }
 

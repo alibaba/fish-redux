@@ -9,16 +9,16 @@ import 'track.dart';
 
 enum ToDoAction { add, remove, done }
 
-class ToDo {
+class Todo {
   String id;
   String title;
   String desc;
   bool isDone = false;
 
-  ToDo();
+  Todo();
 
-  factory ToDo.copy(ToDo toDo) {
-    return ToDo()
+  factory Todo.copy(Todo toDo) {
+    return Todo()
       ..id = toDo.id
       ..title = toDo.title
       ..desc = toDo.desc
@@ -27,7 +27,7 @@ class ToDo {
 }
 
 class ToDoList {
-  List<ToDo> list = <ToDo>[];
+  List<Todo> list = <Todo>[];
 
   ToDoList();
 
@@ -42,10 +42,10 @@ ToDoList toDoReducer(ToDoList state, Action action) {
   if (action.type == ToDoAction.add) {
     newState.list.add(action.payload);
   } else if (action.type == ToDoAction.remove) {
-    newState.list.removeWhere((ToDo toDo) => toDo.id == action.payload);
+    newState.list.removeWhere((Todo toDo) => toDo.id == action.payload);
   } else if (action.type == ToDoAction.done) {
     newState.list
-        .firstWhere((ToDo toDo) => toDo.id == action.payload,
+        .firstWhere((Todo toDo) => toDo.id == action.payload,
             orElse: () => null)
         ?.isDone = true;
   }
@@ -98,7 +98,7 @@ void main() {
 
       track.append('dispatch_Add');
       store.dispatch(Action(ToDoAction.add,
-          payload: ToDo()
+          payload: Todo()
             ..id = 'unique'
             ..title = 'test'
             ..desc = 'just test'));
@@ -160,19 +160,19 @@ void main() {
             }
           }));
 
-      ToDo firstToDo;
+      Todo firstToDo;
       store.subscribe(() {
         track.append('onSubscribe');
         firstToDo = store.getState().list.isEmpty
             ? null
-            : ToDo.copy(store.getState().list.first);
+            : Todo.copy(store.getState().list.first);
       });
 
       expect(firstToDo, isNull);
 
       track.append('dispatch_Add');
       store.dispatch(Action(ToDoAction.add,
-          payload: ToDo()
+          payload: Todo()
             ..id = 'unique'
             ..title = 'test'
             ..desc = 'just test'));
@@ -216,17 +216,17 @@ void main() {
       final Store<ToDoList> store =
           createStore<ToDoList>(ToDoList(), toDoReducer);
 
-      ToDo firstToDo;
+      Todo firstToDo;
       final VoidCallback unsubscribe = store.subscribe(() {
         firstToDo = store.getState().list.isEmpty
             ? null
-            : ToDo.copy(store.getState().list.first);
+            : Todo.copy(store.getState().list.first);
       });
 
       expect(firstToDo, isNull);
 
       store.dispatch(Action(ToDoAction.add,
-          payload: ToDo()
+          payload: Todo()
             ..id = 'unique'
             ..title = 'test'
             ..desc = 'just test'));
@@ -264,17 +264,17 @@ void main() {
             }
           }));
 
-      ToDo firstToDo;
+      Todo firstToDo;
       store.observable().listen((ToDoList list) {
         track.append('observed');
-        firstToDo = list.list.isEmpty ? null : ToDo.copy(list.list.first);
+        firstToDo = list.list.isEmpty ? null : Todo.copy(list.list.first);
       });
 
       expect(firstToDo, isNull);
 
       track.append('dispatch_Add');
       store.dispatch(Action(ToDoAction.add,
-          payload: ToDo()
+          payload: Todo()
             ..id = 'unique'
             ..title = 'test'
             ..desc = 'just test'));
@@ -317,16 +317,16 @@ void main() {
       final Store<ToDoList> store =
           createStore<ToDoList>(ToDoList(), toDoReducer);
 
-      ToDo firstToDo;
+      Todo firstToDo;
       final StreamSubscription<ToDoList> subscription =
           store.observable().listen((ToDoList list) {
-        firstToDo = list.list.isEmpty ? null : ToDo.copy(list.list.first);
+        firstToDo = list.list.isEmpty ? null : Todo.copy(list.list.first);
       });
 
       expect(firstToDo, isNull);
 
       store.dispatch(Action(ToDoAction.add,
-          payload: ToDo()
+          payload: Todo()
             ..id = 'unique'
             ..title = 'test'
             ..desc = 'just test'));
@@ -357,7 +357,7 @@ void main() {
       expect(store.getState().list, isEmpty);
 
       store.dispatch(Action(ToDoAction.add,
-          payload: ToDo()
+          payload: Todo()
             ..id = 'unique'
             ..title = 'test'
             ..desc = 'just test'));
@@ -451,7 +451,7 @@ void main() {
 
       track.append('dispatch_Add');
       store.dispatch(Action(ToDoAction.add,
-          payload: ToDo()
+          payload: Todo()
             ..id = 'unique'
             ..title = 'test'
             ..desc = 'just test'));

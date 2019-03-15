@@ -10,22 +10,22 @@ import 'package:test_widgets/test_base.dart';
 import 'instrument.dart';
 import 'track.dart';
 
-class ToDoComponentInstrument extends TestComponent<ToDo> {
+class ToDoComponentInstrument extends TestComponent<Todo> {
   ToDoComponentInstrument(final Track track, int index,
       {bool hasReducer = true})
       : super(
-            view: instrumentView<ToDo>(toDoView,
-                (ToDo state, Dispatch dispatch, ViewService viewService) {
+            view: instrumentView<Todo>(toDoView,
+                (Todo state, Dispatch dispatch, ViewService viewService) {
               track.append('toDo$index-build', state.clone());
             }),
             reducer: hasReducer
-                ? instrumentReducer<ToDo>(toDoReducer,
-                    change: (ToDo state, Action action) {
+                ? instrumentReducer<Todo>(toDoReducer,
+                    change: (Todo state, Action action) {
                     track.append('toDo$index-onReduce', state.clone());
                   })
                 : null,
-            effect: instrumentEffect<ToDo>(toDoEffect,
-                (Action action, Get<ToDo> getState) {
+            effect: instrumentEffect<Todo>(toDoEffect,
+                (Action action, Get<Todo> getState) {
               if (action.type == ToDoAction.onEdit) {
                 track.append('toDo$index-onEdit', getState().clone());
               } else if (action.type == ToDoAction.broadcast) {
@@ -55,18 +55,18 @@ class Component3 extends ToDoComponentInstrument {
 
 Dependencies<ToDoList> toDoListDependencies(final Track track) =>
     Dependencies<ToDoList>(slots: {
-      'toDo0': Component0(track).asDependent(Connector<ToDoList, ToDo>(
+      'toDo0': Component0(track).asDependent(Connector<ToDoList, Todo>(
           get: (ToDoList toDoList) => toDoList.list[0],
-          set: (ToDoList toDoList, ToDo toDo) => toDoList.list[0] = toDo)),
-      'toDo1': Component1(track).asDependent(Connector<ToDoList, ToDo>(
+          set: (ToDoList toDoList, Todo toDo) => toDoList.list[0] = toDo)),
+      'toDo1': Component1(track).asDependent(Connector<ToDoList, Todo>(
           get: (ToDoList toDoList) => toDoList.list[1],
-          set: (ToDoList toDoList, ToDo toDo) => toDoList.list[1] = toDo)),
-      'toDo2': Component2(track).asDependent(Connector<ToDoList, ToDo>(
+          set: (ToDoList toDoList, Todo toDo) => toDoList.list[1] = toDo)),
+      'toDo2': Component2(track).asDependent(Connector<ToDoList, Todo>(
           get: (ToDoList toDoList) => toDoList.list[2],
-          set: (ToDoList toDoList, ToDo toDo) => toDoList.list[2] = toDo)),
-      'toDo3': Component3(track).asDependent(Connector<ToDoList, ToDo>(
+          set: (ToDoList toDoList, Todo toDo) => toDoList.list[2] = toDo)),
+      'toDo3': Component3(track).asDependent(Connector<ToDoList, Todo>(
           get: (ToDoList toDoList) => toDoList.list[3],
-          set: (ToDoList toDoList, ToDo toDo) => toDoList.list[3] = toDo)),
+          set: (ToDoList toDoList, Todo toDo) => toDoList.list[3] = toDo)),
     });
 
 Widget pageView(
@@ -88,7 +88,7 @@ Widget pageView(
           } else if (index == 3) {
             return viewService.buildComponent('toDo3');
           } else {
-            final ToDo toDo = state.list[index];
+            final Todo toDo = state.list[index];
             return Container(
               padding: const EdgeInsets.all(8.0),
               margin: const EdgeInsets.all(8.0),
@@ -129,12 +129,12 @@ Widget pageView(
 void main() {
   group('component', () {
     test('create', () {
-      final TestComponent<ToDo> component = TestComponent<ToDo>(
+      final TestComponent<Todo> component = TestComponent<Todo>(
           view: toDoView, wrapper: (child) => ComponentWrapper(child));
       expect(component, isNotNull);
 
       final Widget componentWidget = component.buildComponent(
-          createPageStore<ToDo>(ToDo.mock(), null), () => ToDo.mock());
+          createPageStore<Todo>(Todo.mock(), null), () => Todo.mock());
       expect(componentWidget, isNotNull);
 
       expect(
@@ -343,13 +343,13 @@ void main() {
             Pin('toDo1-build', mockState.list[1].clone()),
             Pin('page-onAdd', mockState.clone()),
             Pin('page-onReduce', () {
-              mockState.list.add(ToDo.mock());
+              mockState.list.add(Todo.mock());
               return mockState.clone();
             }),
             Pin('page-build', mockState.clone()),
             Pin('page-onAdd', mockState.clone()),
             Pin('page-onReduce', () {
-              mockState.list.add(ToDo.mock());
+              mockState.list.add(Todo.mock());
               return mockState.clone();
             }),
             Pin('page-build', mockState.clone()),

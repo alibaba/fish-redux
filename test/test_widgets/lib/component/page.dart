@@ -26,7 +26,7 @@ Widget toDoListView(
           } else if (index == 3) {
             return viewService.buildComponent('toDo3');
           } else {
-            ToDo toDo = state.list[index];
+            Todo toDo = state.list[index];
             return Container(
               padding: const EdgeInsets.all(8.0),
               margin: const EdgeInsets.all(8.0),
@@ -63,7 +63,7 @@ Widget toDoListView(
 bool toDoListEffect(Action action, Context<ToDoList> ctx) {
   if (action.type == ToDoListAction.onAdd) {
     print('onAdd');
-    ctx.dispatch(Action(ToDoListAction.add, payload: ToDo.mock()));
+    ctx.dispatch(Action(ToDoListAction.add, payload: Todo.mock()));
     return true;
   } else if (action.type == ToDoListAction.onBroadcast) {
     ctx.pageBroadcast(Action(ToDoListAction.broadcast));
@@ -87,12 +87,12 @@ OnAction toDoListHigherEffect(Context<ToDoList> ctx) =>
 
 ToDoList toDoListReducer(ToDoList state, Action action) {
   print('onReduce:${action.type}');
-  if (!(action.payload is ToDo)) return state;
+  if (!(action.payload is Todo)) return state;
 
   if (action.type == ToDoListAction.add) {
     return state.clone()..list.add(action.payload);
   } else if (action.type == ToDoListAction.remove) {
-    ToDo toDo = state.list.firstWhere((toDo) => toDo.id == action.payload.id);
+    Todo toDo = state.list.firstWhere((toDo) => toDo.id == action.payload.id);
     int index = state.list.indexOf(toDo);
     toDo = toDo.clone()..desc = 'removed';
     return state.clone()..list[index] = toDo;
@@ -141,16 +141,16 @@ class ToDoComponent2 extends ToDoComponent {}
 class ToDoComponent3 extends ToDoComponent {}
 
 final toDoListDependencies = Dependencies<ToDoList>(slots: {
-  'toDo0': ToDoComponent0().asDependent(Connector<ToDoList, ToDo>(
+  'toDo0': ToDoComponent0().asDependent(Connector<ToDoList, Todo>(
       get: (toDoList) => toDoList.list[0],
       set: (toDoList, toDo) => toDoList.list[0] = toDo)),
-  'toDo1': ToDoComponent1().asDependent(Connector<ToDoList, ToDo>(
+  'toDo1': ToDoComponent1().asDependent(Connector<ToDoList, Todo>(
       get: (toDoList) => toDoList.list[1],
       set: (toDoList, toDo) => toDoList.list[1] = toDo)),
-  'toDo2': ToDoComponent2().asDependent(Connector<ToDoList, ToDo>(
+  'toDo2': ToDoComponent2().asDependent(Connector<ToDoList, Todo>(
       get: (toDoList) => toDoList.list[2],
       set: (toDoList, toDo) => toDoList.list[2] = toDo)),
-  'toDo3': ToDoComponent3().asDependent(Connector<ToDoList, ToDo>(
+  'toDo3': ToDoComponent3().asDependent(Connector<ToDoList, Todo>(
       get: (toDoList) => toDoList.list[3],
       set: (toDoList, toDo) => toDoList.list[3] = toDo)),
 });

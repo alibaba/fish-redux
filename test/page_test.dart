@@ -209,20 +209,20 @@ void main() {
             Pin('onAdd', mockState.clone()),
             Pin('onReduce', () {
               mockState = toDoListReducer(
-                  mockState, Action(ToDoListAction.add, payload: ToDo.mock()));
+                  mockState, Action(ToDoListAction.add, payload: Todo.mock()));
               return mockState.clone();
             }),
             Pin('build', mockState.clone()),
             Pin('onAdd', mockState.clone()),
             Pin('onReduce', () {
               mockState = toDoListReducer(
-                  mockState, Action(ToDoListAction.add, payload: ToDo.mock()));
+                  mockState, Action(ToDoListAction.add, payload: Todo.mock()));
               return mockState.clone();
             }),
             Pin('build', mockState.clone()),
             Pin('onEdit', mockState.clone()),
             Pin('onReduce', () {
-              ToDo toDo = mockState.list.firstWhere((i) => i.id == '0');
+              Todo toDo = mockState.list.firstWhere((i) => i.id == '0');
               toDo = toDo.clone();
               toDo.desc = '${toDo.desc}-effect';
               mockState = toDoListReducer(
@@ -284,20 +284,20 @@ void main() {
             Pin('onAdd', mockState.clone()),
             Pin('onReduce', () {
               mockState = toDoListReducer(
-                  mockState, Action(ToDoListAction.add, payload: ToDo.mock()));
+                  mockState, Action(ToDoListAction.add, payload: Todo.mock()));
               return mockState.clone();
             }),
             Pin('build', mockState.clone()),
             Pin('onAdd', mockState.clone()),
             Pin('onReduce', () {
               mockState = toDoListReducer(
-                  mockState, Action(ToDoListAction.add, payload: ToDo.mock()));
+                  mockState, Action(ToDoListAction.add, payload: Todo.mock()));
               return mockState.clone();
             }),
             Pin('build', mockState.clone()),
             Pin('onEdit', mockState.clone()),
             Pin('onReduce', () {
-              ToDo toDo = mockState.list.firstWhere((i) => i.id == '0');
+              Todo toDo = mockState.list.firstWhere((i) => i.id == '0');
               toDo = toDo.clone();
               toDo.desc = '${toDo.desc}-effect';
               mockState = toDoListReducer(
@@ -363,20 +363,20 @@ void main() {
             Pin('onAdd', mockState.clone()),
             Pin('onReduce', () {
               mockState = toDoListReducer(
-                  mockState, Action(ToDoListAction.add, payload: ToDo.mock()));
+                  mockState, Action(ToDoListAction.add, payload: Todo.mock()));
               return mockState.clone();
             }),
             Pin('build', mockState.clone()),
             Pin('onAdd', mockState.clone()),
             Pin('onReduce', () {
               mockState = toDoListReducer(
-                  mockState, Action(ToDoListAction.add, payload: ToDo.mock()));
+                  mockState, Action(ToDoListAction.add, payload: Todo.mock()));
               return mockState.clone();
             }),
             Pin('build', mockState.clone()),
             Pin('onEdit', mockState.clone()),
             Pin('onReduce', () {
-              ToDo toDo = mockState.list.firstWhere((i) => i.id == '0');
+              Todo toDo = mockState.list.firstWhere((i) => i.id == '0');
               toDo = toDo.clone();
               toDo.desc = '${toDo.desc}-effect';
               mockState = toDoListReducer(
@@ -441,7 +441,7 @@ void main() {
             Pin('onAdd', mockState.clone()),
             Pin('onReduce', () {
               mockState = toDoListReducer(
-                  mockState, Action(ToDoListAction.add, payload: ToDo.mock()));
+                  mockState, Action(ToDoListAction.add, payload: Todo.mock()));
               return mockState.clone();
             }),
             Pin('onReduce', () {
@@ -507,7 +507,7 @@ void main() {
             Pin('onMiddleware', mockState.clone()),
             Pin('onReduce', mockState.clone()),
             Pin('onReduce', () {
-              ToDo toDo = mockState.list.firstWhere((i) => i.id == '0');
+              Todo toDo = mockState.list.firstWhere((i) => i.id == '0');
               toDo = toDo.clone();
               toDo.desc = '${toDo.desc}-middleware';
               mockState = toDoListReducer(
@@ -518,7 +518,7 @@ void main() {
             Pin('onMiddleware', mockState.clone()),
             Pin('onReduce', mockState.clone()),
             Pin('onReduce', () {
-              ToDo toDo = mockState.list.firstWhere((i) => i.id == '0');
+              Todo toDo = mockState.list.firstWhere((i) => i.id == '0');
               toDo = toDo.clone();
               toDo.desc = '${toDo.desc}-middleware';
               mockState = toDoListReducer(
