@@ -10,13 +10,13 @@ import 'package:test_widgets/test_base.dart';
 import 'instrument.dart';
 import 'track.dart';
 
-class ToDoComponentInstrument extends TestComponent<ToDo> {
+class ToDoComponentInstrument extends TestComponent<Todo> {
   ToDoComponentInstrument(final Track track)
       : super(
             view: toDoView,
             reducer: toDoReducer,
-            effect: instrumentEffect<ToDo>(toDoEffect,
-                (Action action, Get<ToDo> getState) {
+            effect: instrumentEffect<Todo>(toDoEffect,
+                (Action action, Get<Todo> getState) {
               if (action.type == ToDoAction.onEdit) {
                 track.append('toDo-onEdit');
                 print('toDo-onEdit');
@@ -46,10 +46,10 @@ class ToDoComponentInstrument extends TestComponent<ToDo> {
 Dependencies<ToDoList> toDoListDependencies(final Track track) =>
     Dependencies<ToDoList>(slots: {
       'toDo': ToDoComponentInstrument(track).asDependent(
-          Connector<ToDoList, ToDo>(
+          Connector<ToDoList, Todo>(
               get: (ToDoList toDoList) =>
-                  toDoList.list.isNotEmpty ? toDoList.list[0] : ToDo.mock(),
-              set: (ToDoList toDoList, ToDo toDo) => toDoList.list.isNotEmpty
+                  toDoList.list.isNotEmpty ? toDoList.list[0] : Todo.mock(),
+              set: (ToDoList toDoList, Todo toDo) => toDoList.list.isNotEmpty
                   ? toDoList.list[0] = toDo
                   : toDoList))
     });
@@ -95,12 +95,12 @@ Widget pageView(
 void main() {
   group('component', () {
     test('create', () {
-      final TestComponent<ToDo> component = TestComponent<ToDo>(
+      final TestComponent<Todo> component = TestComponent<Todo>(
           view: toDoView, wrapper: (child) => ComponentWrapper(child));
       expect(component, isNotNull);
 
       final Widget componentWidget = component.buildComponent(
-          createPageStore<ToDo>(ToDo.mock(), null), () => ToDo.mock());
+          createPageStore<Todo>(Todo.mock(), null), () => Todo.mock());
       expect(componentWidget, isNotNull);
 
       expect(

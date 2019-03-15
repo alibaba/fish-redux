@@ -1,28 +1,28 @@
 import 'package:fish_redux/fish_redux.dart';
 
-class ToDo implements Cloneable<ToDo> {
+class Todo implements Cloneable<Todo> {
   String id;
   String title;
   String desc;
   bool isDone = false;
 
-  ToDo();
+  Todo();
 
-  factory ToDo.mock() => ToDo()
+  factory Todo.mock() => Todo()
     ..id = 'id-mock'
     ..title = 'title-mock'
     ..desc = 'desc-mock'
     ..isDone = false;
 
   @override
-  ToDo clone() => ToDo()
+  Todo clone() => Todo()
     ..id = this.id
     ..title = this.title
     ..desc = this.desc
     ..isDone = this.isDone;
 
-  factory ToDo.fromMap(Map map) {
-    return ToDo()
+  factory Todo.fromMap(Map map) {
+    return Todo()
       ..id = map['id'] ?? 'uniq'
       ..title = map['title'] ?? ''
       ..desc = map['desc'] ?? ''
@@ -31,7 +31,7 @@ class ToDo implements Cloneable<ToDo> {
 
   @override
   bool operator ==(dynamic other) {
-    if (!(other is ToDo)) return false;
+    if (!(other is Todo)) return false;
 
     return id == other.id &&
         title == other.title &&
@@ -41,12 +41,12 @@ class ToDo implements Cloneable<ToDo> {
 
   @override
   String toString() {
-    return 'ToDo{id: $id, title: $title, desc: $desc, isDone: $isDone}';
+    return 'Todo{id: $id, title: $title, desc: $desc, isDone: $isDone}';
   }
 }
 
 class ToDoList implements Cloneable<ToDoList> {
-  List<ToDo> list = <ToDo>[];
+  List<Todo> list = <Todo>[];
 
   ToDoList();
 
@@ -56,7 +56,7 @@ class ToDoList implements Cloneable<ToDoList> {
   factory ToDoList.fromMap(Map map) {
     return ToDoList()
       ..list.addAll(
-          map['list']?.map<ToDo>((Map map) => ToDo.fromMap(map))?.toList());
+          map['list']?.map<Todo>((Map map) => Todo.fromMap(map))?.toList());
   }
 
   @override

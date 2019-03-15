@@ -7,7 +7,7 @@ import 'state.dart';
 bool toDoListEffect(Action action, Context<ToDoList> ctx) {
   if (action.type == ToDoListAction.onAdd) {
     print('onAdd');
-    ctx.dispatch(Action(ToDoListAction.add, payload: ToDo.mock()));
+    ctx.dispatch(Action(ToDoListAction.add, payload: Todo.mock()));
 
     return true;
   }
@@ -29,12 +29,12 @@ OnAction toDoListHigherEffect(Context<ToDoList> ctx) =>
 
 ToDoList toDoListReducer(ToDoList state, Action action) {
   print('onReduce:${action.type}');
-  if (!(action.payload is ToDo)) return state;
+  if (!(action.payload is Todo)) return state;
 
   if (action.type == ToDoListAction.add) {
     return state.clone()..list.add(action.payload);
   } else if (action.type == ToDoListAction.remove) {
-    ToDo toDo = state.list.firstWhere((toDo) => toDo?.id == action.payload.id);
+    Todo toDo = state.list.firstWhere((toDo) => toDo?.id == action.payload.id);
     int index = state.list.indexOf(toDo);
     return state.clone()..list[index] = null;
   } else {
@@ -51,16 +51,16 @@ class ToDoComponent2 extends ToDoComponent {}
 class ToDoComponent3 extends ToDoComponent {}
 
 final testAdapter = TestStaticFlowAdapter<ToDoList>(slots: [
-  ToDoComponent0().asDependent(Connector<ToDoList, ToDo>(
+  ToDoComponent0().asDependent(Connector<ToDoList, Todo>(
       get: (toDoList) => toDoList.list[0],
       set: (toDoList, toDo) => toDoList.list[0] = toDo)),
-  ToDoComponent1().asDependent(Connector<ToDoList, ToDo>(
+  ToDoComponent1().asDependent(Connector<ToDoList, Todo>(
       get: (toDoList) => toDoList.list[1],
       set: (toDoList, toDo) => toDoList.list[1] = toDo)),
-  ToDoComponent2().asDependent(Connector<ToDoList, ToDo>(
+  ToDoComponent2().asDependent(Connector<ToDoList, Todo>(
       get: (toDoList) => toDoList.list[2],
       set: (toDoList, toDo) => toDoList.list[2] = toDo)),
-  ToDoComponent3().asDependent(Connector<ToDoList, ToDo>(
+  ToDoComponent3().asDependent(Connector<ToDoList, Todo>(
       get: (toDoList) => toDoList.list[3],
       set: (toDoList, toDo) => toDoList.list[3] = toDo))
 ], reducer: toDoListReducer, effect: toDoListEffect);

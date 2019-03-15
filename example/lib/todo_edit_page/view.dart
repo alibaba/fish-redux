@@ -8,7 +8,7 @@ Widget buildView(
     TodoEditState state, Dispatch dispatch, ViewService viewService) {
   return Scaffold(
     appBar: AppBar(
-      title: const Text('ToDo'),
+      title: const Text('Todo'),
     ),
     body: Container(
       padding: const EdgeInsets.all(16.0),
