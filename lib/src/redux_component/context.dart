@@ -27,7 +27,7 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
     @required this.getState,
   })  : assert(factors != null),
         assert(store != null),
-        assert(stfState != null),
+        assert(buildContext != null),
         assert(getState != null),
         _buildContext = buildContext {
     final OnAction onAction = factors.createHandlerOnAction(this);
