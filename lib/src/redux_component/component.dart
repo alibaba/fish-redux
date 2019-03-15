@@ -80,19 +80,19 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
   @override
   ContextSys<T> createContext({
     PageStore<Object> store,
-    State stfState,
+    BuildContext buildContext,
     Get<T> getState,
   }) {
     /// init context
     final ContextSys<T> mainCtx = super.createContext(
       store: store,
-      stfState: stfState,
+      buildContext: buildContext,
       getState: getState,
     );
 
     final ContextSys<T> sidecarCtx = dependencies?.adapter?.createContext(
       store: store,
-      stfState: stfState,
+      buildContext: buildContext,
       getState: getState,
     );
 
@@ -219,7 +219,7 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
     /// init context
     _mainCtx = widget.component.createContext(
       store: widget.store,
-      stfState: this,
+      buildContext: context,
       getState: () => widget.getter(),
     );
 

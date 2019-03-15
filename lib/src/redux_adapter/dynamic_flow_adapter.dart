@@ -83,7 +83,7 @@ class DynamicFlowAdapter<T> extends Logic<T>
             () {
               return result.createContext(
                 store: ctx.store,
-                stfState: ctx.stfState,
+                buildContext: ctx.context,
                 getState: _subGetter(() => connector.get(ctx.state), index),
               );
             },

@@ -12,12 +12,12 @@ class RecycleContext<T> extends DefaultContext<T> {
   RecycleContext({
     AbstractLogic<T> factors,
     PageStore<Object> store,
-    State stfState,
+    BuildContext buildContext,
     Get<T> getState,
   }) : super(
           factors: factors,
           store: store,
-          stfState: stfState,
+          buildContext: buildContext,
           getState: getState,
         );
 
@@ -71,13 +71,13 @@ abstract class RecycleContextMixin<T> implements Logic<T> {
   @override
   RecycleContext<T> createContext({
     PageStore<Object> store,
-    State stfState,
+    BuildContext buildContext,
     Get<T> getState,
   }) {
     return RecycleContext<T>(
       factors: this,
       store: store,
-      stfState: stfState,
+      buildContext: buildContext,
       getState: getState,
     );
   }

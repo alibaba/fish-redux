@@ -41,12 +41,12 @@ class _Dependent<T, P> implements Dependent<T> {
   @override
   ContextSys<P> createContext({
     PageStore<Object> store,
-    State stfState,
+    BuildContext buildContext,
     Get<T> getState,
   }) {
     return factors.createContext(
       store: store,
-      stfState: stfState,
+      buildContext: buildContext,
       getState: subGetter(getState),
     );
   }
