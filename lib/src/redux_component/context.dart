@@ -87,11 +87,11 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   }
 
   @override
-  void pageBroadcast(Action action, {bool excluedSelf}) {
+  void pageBroadcast(Action action, {bool excludeSelf}) {
     assert(_throwIfDisposed());
     store.sendBroadcast(
       action,
-      excluded: excluedSelf == true ? _onBroadcast : null,
+      excluded: excludeSelf == true ? _onBroadcast : null,
     );
   }
 
@@ -155,8 +155,8 @@ class _TwinceContext<T> extends ContextSys<T> with _ExtraMixin {
   T get state => mainCtx.state;
 
   @override
-  void pageBroadcast(Action action, {bool excluedSelf}) =>
-      mainCtx.pageBroadcast(action, excluedSelf: excluedSelf);
+  void pageBroadcast(Action action, {bool excludeSelf}) =>
+      mainCtx.pageBroadcast(action, excludeSelf: excludeSelf);
 
   @override
   State<StatefulWidget> get stfState => mainCtx.stfState;

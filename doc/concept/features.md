@@ -35,7 +35,7 @@
 > 参考:
 >
 > > 1. [what's-connector](what's-connector.md)
-> > 2. [connector](connector.md.md)
+> > 2. [connector](connector.md)
 > > 3. [dependencies](dependencies.md)
 > > 4. [component](component.md)
 > > 5. [adapter](adapter.md)
