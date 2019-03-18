@@ -27,5 +27,5 @@ class ReportConnector extends ConnOp<PageState, ReportState> {
   }
 
   @override
-  void set(PageState state, ReportState substate) {}
+  void set(PageState state, ReportState subState) {}
 }

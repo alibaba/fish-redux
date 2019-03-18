@@ -14,7 +14,7 @@ class ConnOp<S, P> implements Connector<S, P> {
   @override
   P get(S state) => _getter(state);
   @override
-  void set(S state, P substate) => _setter(state, substate);
+  void set(S state, P subState) => _setter(state, subState);
 
   Dependent<S> operator +(Logic<P> logic) => createDependent<S, P>(this, logic);
 }
@@ -68,8 +68,8 @@ class AutoInitConnector<T extends MapLike, P> extends ConnOp<T, P> {
       state.containsKey(_key) ? state[_key] : (state[_key] = init(state));
 
   @override
-  void set(T state, P substate) {
-    state[_key] = substate;
-    _setHook?.call(state, substate);
+  void set(T state, P subState) {
+    state[_key] = subState;
+    _setHook?.call(state, subState);
   }
 }

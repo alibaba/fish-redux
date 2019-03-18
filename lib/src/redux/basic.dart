@@ -96,7 +96,7 @@ abstract class Connector<S, P> {
       _Connector<S, P>(get, set);
 
   P get(S state);
-  void set(S state, P substate);
+  void set(S state, P subState);
 }
 
 /// An implementation of the default Connector<S, P>
@@ -107,5 +107,5 @@ class _Connector<S, P> implements Connector<S, P> {
   @override
   P get(S state) => getter(state);
   @override
-  void set(S state, P substate) => setter(state, substate);
+  void set(S state, P subState) => setter(state, subState);
 }
