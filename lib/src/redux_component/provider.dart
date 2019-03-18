@@ -31,6 +31,7 @@ class PageProvider extends InheritedWidget {
 
 class AppProvider extends InheritedWidget {
   final Set<Dispatch> _onActionContainer = Set<Dispatch>();
+  final Map<String, dynamic> extra = <String, dynamic>{};
 
   AppProvider({
     Key key,

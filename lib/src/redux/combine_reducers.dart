@@ -1,4 +1,3 @@
-import '../utils/utils.dart';
 import 'basic.dart';
 
 /// how to clone an object
@@ -36,10 +35,10 @@ SubReducer<T> subReducer<T, P>(Connector<T, P> connector, Reducer<P> reducer) {
 
 /// Combine an iterable of SubReducer<T> into one Reducer<T>
 Reducer<T> combineSubReducers<T>(Iterable<SubReducer<T>> subReducers) {
-  final List<SubReducer<T>> notNullReducers = Collections.compact(
-    subReducers,
-    growable: false,
-  );
+  final List<SubReducer<T>> notNullReducers = subReducers
+      ?.where((SubReducer<T> e) => e != null)
+      ?.toList(growable: false);
+
   if (notNullReducers == null || notNullReducers.isEmpty) {
     return null;
   }

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'action.dart';
 import 'state.dart';
 
-Widget toDoView(ToDo toDo, Dispatch dispatch, ViewService viewService) {
+Widget toDoView(Todo toDo, Dispatch dispatch, ViewService viewService) {
   return Container(
     margin: const EdgeInsets.all(8.0),
     color: Colors.grey,
@@ -74,11 +74,11 @@ Widget toDoView(ToDo toDo, Dispatch dispatch, ViewService viewService) {
   );
 }
 
-bool toDoEffect(Action action, Context<ToDo> ctx) {
+bool toDoEffect(Action action, Context<Todo> ctx) {
   if (action.type == ToDoAction.onEdit) {
     print('onEdit');
 
-    ToDo toDo = ctx.state.clone();
+    Todo toDo = ctx.state.clone();
     toDo.desc = '${toDo.desc}-effect';
 
     ctx.dispatch(Action(ToDoAction.edit, payload: toDo));
@@ -91,7 +91,7 @@ bool toDoEffect(Action action, Context<ToDo> ctx) {
   return false;
 }
 
-dynamic toDoEffectAsync(Action action, Context<ToDo> ctx) {
+dynamic toDoEffectAsync(Action action, Context<Todo> ctx) {
   if (action.type == ToDoAction.onEdit) {
     return Future.delayed(Duration(seconds: 1), () => toDoEffect(action, ctx));
   }
@@ -99,11 +99,11 @@ dynamic toDoEffectAsync(Action action, Context<ToDo> ctx) {
   return null;
 }
 
-OnAction toDoHigherEffect(Context<ToDo> ctx) =>
+OnAction toDoHigherEffect(Context<Todo> ctx) =>
     (Action action) => toDoEffect(action, ctx);
 
-ToDo toDoReducer(ToDo state, Action action) {
-  if (!(action.payload is ToDo) || state.id != action.payload.id) return state;
+Todo toDoReducer(Todo state, Action action) {
+  if (!(action.payload is Todo) || state.id != action.payload.id) return state;
 
   print('onReduce:${action.type}');
 
@@ -116,13 +116,13 @@ ToDo toDoReducer(ToDo state, Action action) {
   }
 }
 
-bool shouldUpdate(ToDo old, ToDo now) => old != now;
+bool shouldUpdate(Todo old, Todo now) => old != now;
 
-bool reducerFilter(ToDo toDo, Action action) {
+bool reducerFilter(Todo toDo, Action action) {
   return action.type == ToDoAction.edit || action.type == ToDoAction.markDone;
 }
 
-class ToDoComponent extends Component<ToDo> {
+class ToDoComponent extends Component<Todo> {
   ToDoComponent()
       : super(
             view: toDoView,

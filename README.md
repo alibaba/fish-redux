@@ -21,24 +21,28 @@ It has four characteristics:
 
 <img src="https://img.alicdn.com/tfs/TB1pkhoJr2pK1RjSZFsXXaNlXXa-1004-1370.png" width="500px" height="680px">
 
-## Documents
+## Installation
 
-Language: [English](docs/README.md) | [中文简体](docs/README-cn.md)
+[Go](https://pub.dartlang.org/packages/fish_redux#-installing-tab-)
+
+## Documentation
+
+Language: [English](doc/README.md) | [中文简体](doc/README-cn.md)
 
 ## Examples
 
--   [todo list](sample) - a simple todo list demo.
+-   [todo list](example) - a simple todo list demo.
 -   run it:
 
 ```
-cd ./sample
+cd ./example
 flutter create .
 flutter run
 ```
 
 ## What's the difference between 'Fish Redux' and 'Redux' ?
 
--   [answers](docs/concept/what's-the-diiference.md)
+-   [answers](doc/concept/what's-the-diiference.md)
 
 ## License
 

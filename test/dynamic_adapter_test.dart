@@ -11,19 +11,19 @@ import 'package:test_widgets/test_base.dart';
 import 'instrument.dart';
 import 'track.dart';
 
-class ToDoComponentInstrument extends TestComponent<ToDo> {
+class ToDoComponentInstrument extends TestComponent<Todo> {
   ToDoComponentInstrument(final Track track)
       : super(
-          view: instrumentView<ToDo>(toDoView,
-              (ToDo state, Dispatch dispatch, ViewService viewService) {
+          view: instrumentView<Todo>(toDoView,
+              (Todo state, Dispatch dispatch, ViewService viewService) {
             track.append('toDo-build', state.clone());
           }),
-          reducer: instrumentReducer<ToDo>(toDoReducer,
-              change: (ToDo state, Action action) {
+          reducer: instrumentReducer<Todo>(toDoReducer,
+              change: (Todo state, Action action) {
             track.append('toDo-onReduce', state.clone());
           }),
-          effect: instrumentEffect<ToDo>(toDoEffect,
-              (Action action, Get<ToDo> getState) {
+          effect: instrumentEffect<Todo>(toDoEffect,
+              (Action action, Get<Todo> getState) {
             if (action.type == ToDoAction.onEdit) {
               track.append('toDo-onEdit', getState().clone());
             } else if (action.type == ToDoAction.broadcast) {
@@ -33,19 +33,19 @@ class ToDoComponentInstrument extends TestComponent<ToDo> {
             }
           }),
           shouldUpdate: shouldUpdate,
-          key: (ToDo toDo) => GlobalObjectKey(toDo.id),
+          key: (Todo toDo) => GlobalObjectKey(toDo.id),
         );
 }
 
-class ToDoComponentNoReducer extends TestComponent<ToDo> {
+class ToDoComponentNoReducer extends TestComponent<Todo> {
   ToDoComponentNoReducer(final Track track)
       : super(
-          view: instrumentView<ToDo>(toDoView,
-              (ToDo state, Dispatch dispatch, ViewService viewService) {
+          view: instrumentView<Todo>(toDoView,
+              (Todo state, Dispatch dispatch, ViewService viewService) {
             track.append('toDo-build', state.clone());
           }),
-          effect: instrumentEffect<ToDo>(toDoEffect,
-              (Action action, Get<ToDo> getState) {
+          effect: instrumentEffect<Todo>(toDoEffect,
+              (Action action, Get<Todo> getState) {
             if (action.type == ToDoAction.onEdit) {
               track.append('toDo-onEdit', getState().clone());
             } else if (action.type == ToDoAction.broadcast) {
@@ -55,7 +55,7 @@ class ToDoComponentNoReducer extends TestComponent<ToDo> {
             }
           }),
           shouldUpdate: shouldUpdate,
-          key: (ToDo toDo) => GlobalObjectKey(toDo.id),
+          key: (Todo toDo) => GlobalObjectKey(toDo.id),
         );
 }
 
@@ -63,20 +63,20 @@ Dependencies<ToDoList> toDoListDependencies(final Track track,
         {bool noReducer = false}) =>
     Dependencies<ToDoList>(
         adapter: TestDynamicFlowAdapter<ToDoList>(
-            pool: <String, AbstractLogic<ToDo>>{
+            pool: <String, AbstractLogic<Todo>>{
           'toDo': ToDoComponentInstrument(track),
           'toDoNoReducer': ToDoComponentNoReducer(track),
         },
             connector: Connector<ToDoList, List<ItemBean>>(
                 get: (ToDoList toDoList) => toDoList.list
-                    .map<ItemBean>((ToDo toDo) => noReducer
+                    .map<ItemBean>((Todo toDo) => noReducer
                         ? ItemBean('toDoNoReducer', toDo)
                         : ItemBean('toDo', toDo))
                     .toList(),
                 set: (ToDoList toDoList, List<ItemBean> beans) {
                   toDoList.list.clear();
                   toDoList.list.addAll(
-                      beans.map<ToDo>((ItemBean bean) => bean.data).toList());
+                      beans.map<Todo>((ItemBean bean) => bean.data).toList());
                 }),
             reducer: instrumentReducer<ToDoList>(toDoListReducer,
                 change: (ToDoList state, Action action) {
@@ -97,7 +97,7 @@ void main() {
   group('dynamic_flow_adapter', () {
     test('create', () {
       final Track track = Track();
-      final TestComponent<ToDo> component = ToDoComponentInstrument(track);
+      final TestComponent<Todo> component = ToDoComponentInstrument(track);
       expect(component, isNotNull);
 
       Widget page = TestPage<ToDoList, Map>(
@@ -320,7 +320,7 @@ void main() {
             Pin('toDo-build', mockState.list[3].clone()),
             Pin('toDo-onEdit', mockState.list[0].clone()),
             Pin('toDo-onReduce', () {
-              final ToDo toDo = mockState.list[0].clone();
+              final Todo toDo = mockState.list[0].clone();
               toDo.desc = '${toDo.desc}-effect';
               mockState.list[0] =
                   toDoReducer(toDo, Action(ToDoAction.edit, payload: toDo));
@@ -330,7 +330,7 @@ void main() {
             Pin('toDo-build', mockState.list[0].clone()),
             Pin('toDo-onEdit', mockState.list[1].clone()),
             Pin('toDo-onReduce', () {
-              final ToDo toDo = mockState.list[1].clone();
+              final Todo toDo = mockState.list[1].clone();
               toDo.desc = '${toDo.desc}-effect';
               mockState.list[1] =
                   toDoReducer(toDo, Action(ToDoAction.edit, payload: toDo));
@@ -341,11 +341,11 @@ void main() {
             Pin('adapter-onAdd', mockState.clone()),
             Pin('adapter-onReduce', () {
               mockState = toDoListReducer(
-                  mockState, Action(ToDoListAction.add, payload: ToDo.mock()));
+                  mockState, Action(ToDoListAction.add, payload: Todo.mock()));
               return mockState.clone();
             }),
             Pin('page-build', mockState.clone()),
-            Pin('toDo-build', ToDo.mock()),
+            Pin('toDo-build', Todo.mock()),
           ]));
     });
 
@@ -379,11 +379,11 @@ void main() {
             Pin('adapter-onAdd', mockState.clone()),
             Pin('adapter-onReduce', () {
               mockState = toDoListReducer(
-                  mockState, Action(ToDoListAction.add, payload: ToDo.mock()));
+                  mockState, Action(ToDoListAction.add, payload: Todo.mock()));
               return mockState.clone();
             }),
             Pin('page-build', mockState.clone()),
-            Pin('toDo-build', ToDo.mock()),
+            Pin('toDo-build', Todo.mock()),
           ]));
     });
 

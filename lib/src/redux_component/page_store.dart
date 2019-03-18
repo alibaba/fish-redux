@@ -1,3 +1,5 @@
+import 'package:flutter/scheduler.dart';
+
 import '../redux/redux.dart';
 import 'basic.dart';
 
@@ -5,10 +7,10 @@ class _Broadcast<T> implements Broadcast {
   final List<OnAction> _onActionContainer = <OnAction>[];
 
   @override
-  void sendBroadcast(Action action) {
-    final List<OnAction> list = _onActionContainer.toList(
-      growable: false,
-    );
+  void sendBroadcast(Action action, {OnAction excluded}) {
+    final List<OnAction> list = _onActionContainer
+        .where((OnAction onAction) => onAction != excluded)
+        .toList(growable: false);
 
     for (OnAction onAction in list) {
       onAction(action);
@@ -32,12 +34,44 @@ class _Broadcast<T> implements Broadcast {
 }
 
 class _PageStore<T> extends PageStore<T> with _Broadcast<T> {
+  final List<void Function()> _listeners = <void Function()>[];
+  bool isBatching = false;
+
   _PageStore(Store<T> store) : assert(store != null) {
     getState = store.getState;
-    subscribe = store.subscribe;
+
+    store.subscribe(_batchedNotify);
+    subscribe = (void Function() callback) {
+      assert(callback != null);
+      _listeners.add(callback);
+      return () {
+        _listeners.remove(callback);
+      };
+    };
+
     replaceReducer = store.replaceReducer;
     dispatch = store.dispatch;
     observable = store.observable;
+  }
+
+  void _batchedNotify() {
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      if (!isBatching) {
+        isBatching = true;
+        SchedulerBinding.instance.addPostFrameCallback((Duration duration) {
+          _batchedNotify();
+        });
+      }
+    } else {
+      final List<void Function()> notifyListeners = _listeners.toList(
+        growable: false,
+      );
+      for (void Function() listener in notifyListeners) {
+        listener();
+      }
+      isBatching = false;
+    }
   }
 }
 

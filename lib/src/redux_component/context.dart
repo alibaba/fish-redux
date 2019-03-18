@@ -14,35 +14,37 @@ class _ExtraMixin {
 class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   final AbstractLogic<T> factors;
   final PageStore<Object> store;
-  final Get<BuildContext> getBuildContext;
   final Get<T> getState;
 
+  BuildContext _buildContext;
   Dispatch _dispatch;
+  OnAction _onBroadcast;
 
   DefaultContext({
     @required this.factors,
     @required this.store,
-    @required this.getBuildContext,
+    @required BuildContext buildContext,
     @required this.getState,
   })  : assert(factors != null),
         assert(store != null),
-        assert(getBuildContext != null),
-        assert(getState != null) {
+        assert(buildContext != null),
+        assert(getState != null),
+        _buildContext = buildContext {
     final OnAction onAction = factors.createHandlerOnAction(this);
 
     /// create Dispatch
     _dispatch = factors.createDispatch(onAction, this, store.dispatch);
 
     /// Register inter-component broadcast
-    final OnAction onBroadcast =
+    _onBroadcast =
         factors.createHandlerOnBroadcast(onAction, this, store.dispatch);
-    registerOnDisposed(store.registerReceiver(onBroadcast));
+    registerOnDisposed(store.registerReceiver(_onBroadcast));
   }
 
   @override
   BuildContext get context {
     assert(_throwIfDisposed());
-    return getBuildContext();
+    return _buildContext;
   }
 
   @override
@@ -85,9 +87,18 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   }
 
   @override
-  void pageBroadcast(Action action) {
+  void pageBroadcast(Action action, {bool excludeSelf}) {
     assert(_throwIfDisposed());
-    store.sendBroadcast(action);
+    store.sendBroadcast(
+      action,
+      excluded: excludeSelf == true ? _onBroadcast : null,
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _buildContext = null;
   }
 
   bool _throwIfDisposed() {
@@ -96,6 +107,16 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
           'Ctx has been disposed which could not been used any more.');
     }
     return true;
+  }
+
+  @override
+  State<StatefulWidget> get stfState {
+    assert(_buildContext is StatefulElement);
+    if (_buildContext is StatefulElement) {
+      final StatefulElement stfElement = _buildContext;
+      return stfElement.state;
+    }
+    return null;
   }
 }
 
@@ -134,7 +155,11 @@ class _TwinceContext<T> extends ContextSys<T> with _ExtraMixin {
   T get state => mainCtx.state;
 
   @override
-  void pageBroadcast(Action action) => mainCtx.pageBroadcast(action);
+  void pageBroadcast(Action action, {bool excludeSelf}) =>
+      mainCtx.pageBroadcast(action, excludeSelf: excludeSelf);
+
+  @override
+  State<StatefulWidget> get stfState => mainCtx.stfState;
 }
 
 ContextSys<T> mergeContext<T>(ContextSys<T> mainCtx, ContextSys<T> sidecarCtx) {

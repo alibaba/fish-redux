@@ -6,7 +6,7 @@ import 'action.dart';
 import 'exception.dart';
 import 'state.dart';
 
-Widget toDoView(ToDo toDo, BuildContext context, Dispatch dispatch) {
+Widget toDoView(Todo toDo, BuildContext context, Dispatch dispatch) {
   return Container(
     margin: const EdgeInsets.all(8.0),
     color: Colors.grey,
@@ -87,7 +87,7 @@ Widget toDoListView(
       Expanded(
           child: ListView.builder(
         itemBuilder: (context, index) {
-          ToDo toDo = state.list[index];
+          Todo toDo = state.list[index];
           return toDoView(toDo, context, dispatch);
         },
         itemCount: state.list.length,
@@ -134,14 +134,14 @@ Widget toDoListView(
 bool toDoListEffect(Action action, Context<ToDoList> ctx) {
   if (action.type == ToDoListAction.onAdd) {
     print('onAdd');
-    ctx.dispatch(Action(ToDoListAction.add, payload: ToDo.mock()));
+    ctx.dispatch(Action(ToDoListAction.add, payload: Todo.mock()));
 
     return true;
   } else if (action.type == ToDoListAction.onEdit) {
     print('onEdit');
-    assert(action.payload is ToDo);
+    assert(action.payload is Todo);
 
-    ToDo toDo = ctx.state.list
+    Todo toDo = ctx.state.list
         .firstWhere((i) => i.id == action.payload.id, orElse: () => null);
 
     assert(toDo != null);
@@ -177,9 +177,9 @@ OnAction toDoListHigherEffect(Context<ToDoList> ctx) =>
 
 ToDoList toDoListReducer(ToDoList state, Action action) {
   print('onReduce:${action.type}');
-  if (!(action.payload is ToDo)) return state;
+  if (!(action.payload is Todo)) return state;
 
-  ToDo item = action.payload as ToDo;
+  Todo item = action.payload as Todo;
 
   if (action.type == ToDoListAction.add) {
     return state.clone()..list.add(item);
@@ -219,9 +219,9 @@ Composeable<Dispatch> toDoListMiddleware({
 }) =>
     (next) => (Action action) {
           if (action.type == ToDoListAction.middlewareEdit) {
-            assert(action.payload is ToDo);
+            assert(action.payload is Todo);
 
-            ToDo toDo = getState().list.firstWhere(
+            Todo toDo = getState().list.firstWhere(
                 (i) => i.id == action.payload.id,
                 orElse: () => null);
 

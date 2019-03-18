@@ -11,22 +11,22 @@ import 'package:test_widgets/test_base.dart';
 import 'instrument.dart';
 import 'track.dart';
 
-class ToDoComponentInstrument extends TestComponent<ToDo> {
+class ToDoComponentInstrument extends TestComponent<Todo> {
   ToDoComponentInstrument(final Track track, int index,
       {bool hasReducer = true})
       : super(
-            view: instrumentView<ToDo>(toDoView,
-                (ToDo state, Dispatch dispatch, ViewService viewService) {
+            view: instrumentView<Todo>(toDoView,
+                (Todo state, Dispatch dispatch, ViewService viewService) {
               track.append('toDo$index-build', state.clone());
             }),
             reducer: hasReducer
-                ? instrumentReducer<ToDo>(toDoReducer,
-                    change: (ToDo state, Action action) {
+                ? instrumentReducer<Todo>(toDoReducer,
+                    change: (Todo state, Action action) {
                     track.append('toDo$index-onReduce', state.clone());
                   })
                 : null,
-            effect: instrumentEffect<ToDo>(toDoEffect,
-                (Action action, Get<ToDo> getState) {
+            effect: instrumentEffect<Todo>(toDoEffect,
+                (Action action, Get<Todo> getState) {
               if (action.type == ToDoAction.onEdit) {
                 track.append('toDo$index-onEdit', getState().clone());
               } else if (action.type == ToDoAction.broadcast) {
@@ -36,21 +36,21 @@ class ToDoComponentInstrument extends TestComponent<ToDo> {
             shouldUpdate: shouldUpdate);
 }
 
-class ToDoAdapterInstrument extends TestAdapter<ToDo> {
+class ToDoAdapterInstrument extends TestAdapter<Todo> {
   ToDoAdapterInstrument(final Track track, int index, {bool hasReducer = true})
       : super(
-          adapter: asAdapter(instrumentView<ToDo>(toDoView,
-              (ToDo state, Dispatch dispatch, ViewService viewService) {
+          adapter: asAdapter(instrumentView<Todo>(toDoView,
+              (Todo state, Dispatch dispatch, ViewService viewService) {
             track.append('toDo$index-build', state.clone());
           })),
           reducer: hasReducer
-              ? instrumentReducer<ToDo>(toDoReducer,
-                  change: (ToDo state, Action action) {
+              ? instrumentReducer<Todo>(toDoReducer,
+                  change: (Todo state, Action action) {
                   track.append('toDo$index-onReduce', state.clone());
                 })
               : null,
-          effect: instrumentEffect<ToDo>(toDoEffect,
-              (Action action, Get<ToDo> getState) {
+          effect: instrumentEffect<Todo>(toDoEffect,
+              (Action action, Get<Todo> getState) {
             if (action.type == ToDoAction.onEdit) {
               track.append('toDo$index-onEdit', getState().clone());
             } else if (action.type == ToDoAction.broadcast) {
@@ -69,7 +69,7 @@ class Adapter1 extends ToDoAdapterInstrument {
 }
 
 class Component2 extends ToDoComponentInstrument {
-  Component2(final Track track) : super(track, 2,hasReducer: false);
+  Component2(final Track track) : super(track, 2, hasReducer: false);
 }
 
 class Adapter3 extends ToDoAdapterInstrument {
@@ -80,18 +80,18 @@ Dependencies<ToDoList> toDoListDependencies(final Track track) =>
     Dependencies<ToDoList>(
         adapter: TestStaticFlowAdapter<ToDoList>(
             slots: [
-          Component0(track).asDependent(Connector<ToDoList, ToDo>(
+          Component0(track).asDependent(Connector<ToDoList, Todo>(
               get: (ToDoList toDoList) => toDoList.list[0],
-              set: (ToDoList toDoList, ToDo toDo) => toDoList.list[0] = toDo)),
-          Adapter1(track).asDependent(Connector<ToDoList, ToDo>(
+              set: (ToDoList toDoList, Todo toDo) => toDoList.list[0] = toDo)),
+          Adapter1(track).asDependent(Connector<ToDoList, Todo>(
               get: (ToDoList toDoList) => toDoList.list[1],
-              set: (ToDoList toDoList, ToDo toDo) => toDoList.list[1] = toDo)),
-          Component2(track).asDependent(Connector<ToDoList, ToDo>(
+              set: (ToDoList toDoList, Todo toDo) => toDoList.list[1] = toDo)),
+          Component2(track).asDependent(Connector<ToDoList, Todo>(
               get: (ToDoList toDoList) => toDoList.list[2],
-              set: (ToDoList toDoList, ToDo toDo) => toDoList.list[2] = toDo)),
-          Adapter3(track).asDependent(Connector<ToDoList, ToDo>(
+              set: (ToDoList toDoList, Todo toDo) => toDoList.list[2] = toDo)),
+          Adapter3(track).asDependent(Connector<ToDoList, Todo>(
               get: (ToDoList toDoList) => toDoList.list[3],
-              set: (ToDoList toDoList, ToDo toDo) => toDoList.list[3] = toDo))
+              set: (ToDoList toDoList, Todo toDo) => toDoList.list[3] = toDo))
         ],
             reducer: instrumentReducer<ToDoList>(toDoListReducer,
                 change: (ToDoList state, Action action) {
@@ -110,7 +110,7 @@ void main() {
   group('static_flow_adapter', () {
     test('create', () {
       final Track track = Track();
-      final TestComponent<ToDo> component = ToDoComponentInstrument(track, 0);
+      final TestComponent<Todo> component = ToDoComponentInstrument(track, 0);
       expect(component, isNotNull);
 
       Widget page = TestPage<ToDoList, Map>(

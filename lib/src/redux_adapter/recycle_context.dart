@@ -12,13 +12,13 @@ class RecycleContext<T> extends DefaultContext<T> {
   RecycleContext({
     AbstractLogic<T> factors,
     PageStore<Object> store,
-    Get<BuildContext> getBuildContext,
+    BuildContext buildContext,
     Get<T> getState,
   }) : super(
           factors: factors,
           store: store,
+          buildContext: buildContext,
           getState: getState,
-          getBuildContext: getBuildContext,
         );
 
   @override
@@ -44,7 +44,7 @@ class RecycleContext<T> extends DefaultContext<T> {
     if (length > list.length) {
       _cachedMap[key].add(
         create()
-          ..follow(this)
+          ..setParent(this)
           ..onLifecycle(LifecycleCreator.initState()),
       );
     }
@@ -71,13 +71,13 @@ abstract class RecycleContextMixin<T> implements Logic<T> {
   @override
   RecycleContext<T> createContext({
     PageStore<Object> store,
-    Get<BuildContext> getBuildContext,
+    BuildContext buildContext,
     Get<T> getState,
   }) {
     return RecycleContext<T>(
       factors: this,
       store: store,
-      getBuildContext: getBuildContext,
+      buildContext: buildContext,
       getState: getState,
     );
   }

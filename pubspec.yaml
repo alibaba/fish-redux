@@ -1,7 +1,7 @@
 name: fish_redux
 description: Fish Redux is an assembled flutter application framework based on Redux state management.
-version: 0.1.0
-author: Alibaba Xianyu Team
+version: 0.1.2
+author: Alibaba Xianyu Team <tino.wjf@alibaba-inc.com>
 homepage: https://github.com/alibaba/fish-redux
 
 environment:

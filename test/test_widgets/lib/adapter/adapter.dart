@@ -5,7 +5,7 @@ import 'action.dart';
 import 'state.dart';
 
 Widget toDoView(
-  ToDo toDo,
+  Todo toDo,
   Dispatch dispatch,
   ViewService viewService,
 ) {
@@ -79,14 +79,14 @@ Widget toDoView(
 bool toDoListEffect(Action action, Context<ToDoList> ctx) {
   if (action.type == ToDoListAction.onAdd) {
     print('onAdd');
-    ctx.dispatch(Action(ToDoListAction.add, payload: ToDo.mock()));
+    ctx.dispatch(Action(ToDoListAction.add, payload: Todo.mock()));
 
     return true;
   } else if (action.type == ToDoListAction.onEdit) {
     print('onEdit');
-    assert(action.payload is ToDo);
+    assert(action.payload is Todo);
 
-    ToDo toDo = ctx.state.list
+    Todo toDo = ctx.state.list
         .firstWhere((i) => i.id == action.payload.id, orElse: () => null)
         .clone();
     toDo.desc = '${toDo.desc}-effect';
@@ -114,9 +114,9 @@ OnAction toDoListHigherEffect(Context<ToDoList> ctx) =>
 
 ToDoList toDoListReducer(ToDoList state, Action action) {
   print('onReduce:${action.type}');
-  if (!(action.payload is ToDo)) return state;
+  if (!(action.payload is Todo)) return state;
 
-  ToDo item = action.payload as ToDo;
+  Todo item = action.payload as Todo;
 
   if (action.type == ToDoListAction.add) {
     return state.clone()..list.add(item);
@@ -128,7 +128,7 @@ ToDoList toDoListReducer(ToDoList state, Action action) {
   } else if (action.type == ToDoListAction.remove) {
     return state.clone()..list.removeWhere((toDo) => toDo.id == item.id);
   } else if (action.type == ToDoListAction.edit) {
-    ToDo toDo = state.list.firstWhere((toDo) => toDo.id == item.id);
+    Todo toDo = state.list.firstWhere((toDo) => toDo.id == item.id);
     int index = state.list.indexOf(toDo);
     toDo = toDo.clone()..desc = item.desc;
     return state.clone()..list[index] = toDo;
@@ -143,7 +143,7 @@ ListAdapter toDoListAdapter(
   ViewService viewService,
 ) {
   return ListAdapter((context, index) {
-    ToDo toDo = state.list[index];
+    Todo toDo = state.list[index];
 
     return toDoView(toDo, dispatch, viewService);
   }, state.list.length);

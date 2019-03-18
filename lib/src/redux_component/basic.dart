@@ -37,6 +37,7 @@ typedef AdapterBuilder<T> = ListAdapter Function(
 abstract class ViewUpdater<T> {
   Widget buildView(T state, Dispatch dispatch, ViewService viewService);
   void onNotify(T now, void Function() markNeedsBuild, Dispatch dispatch);
+  void reassemble();
 }
 
 /// A little different with Dispatch (with if it is interrupted).
@@ -60,7 +61,7 @@ typedef OnError<T> = bool Function(Exception exception, Context<T> ctx);
 
 abstract class Broadcast {
   /// Broadcast in all receivers;
-  void sendBroadcast(Action action);
+  void sendBroadcast(Action action, {OnAction excluded});
 
   /// Register a receiver and return the unregister function
   void Function() registerReceiver(OnAction onAction);
@@ -84,7 +85,7 @@ abstract class ViewService {
   void appBroadcast(Action action);
 
   /// Broadcast action(the intent) in page (inter-components)
-  void pageBroadcast(Action action);
+  void pageBroadcast(Action action, {bool excludeSelf});
 }
 
 ///  Seen in effect-part
@@ -98,14 +99,37 @@ abstract class Context<T> extends AutoDispose {
   /// Get BuildContext from the host-widget
   BuildContext get context;
 
+  /// In general, we should not need this field.
+  /// When we have to use this field, it means that we have encountered difficulties.
+  /// This is a contradiction between presentation & logical separation, and Flutter's Widgets system.
+  ///
+  /// How to use ?
+  /// For example, we want to use SingleTickerProviderStateMixin
+  /// We should
+  /// 1. Define a new ComponentState
+  ///    class CustomStfState extends ComponentState<T> with SingleTickerProviderStateMixin {}
+  /// 2. Override the createState method of the Component with the newly defined CustomStfState.
+  ///    @override
+  ///    CustomStfState createState() => CustomStfState();
+  /// 3. Get the CustomStfState via context.stfState in Effect.
+  ///    /// Through BuildContext -> StatefulElement -> State
+  ///    final TickerProvider tickerProvider = context.stfState;
+  ///    AnimationController controller = AnimationController(vsync: tickerProvider);
+  ///    context.dispatch(ActionCreator.createController(controller));
+  State get stfState;
+
   /// Get|Set extra data in context if needed.
   Map<String, Object> get extra;
+
+  /// The way to build slot component which is configed in Dependencies.slots
+  /// such as custom mask or dialog
+  Widget buildComponent(String name);
 
   /// Broadcast action in app (inter-pages)
   void appBroadcast(Action action);
 
   /// Broadcast action in page (inter-components)
-  void pageBroadcast(Action action);
+  void pageBroadcast(Action action, {bool excludeSelf});
 }
 
 /// Seen in framework-component
@@ -131,7 +155,7 @@ abstract class Dependent<T> {
 
   ContextSys<Object> createContext({
     PageStore<Object> store,
-    Get<BuildContext> getBuildContext,
+    BuildContext buildContext,
     Get<T> getState,
   });
 
@@ -165,7 +189,7 @@ abstract class AbstractLogic<T> {
   /// To create each instance's context
   ContextSys<T> createContext({
     PageStore<Object> store,
-    Get<BuildContext> getBuildContext,
+    BuildContext buildContext,
     Get<T> getState,
   });
 

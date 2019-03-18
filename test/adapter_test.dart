@@ -201,20 +201,20 @@ void main() {
             Pin('onAdd', mockState.clone()),
             Pin('onReduce', () {
               mockState = toDoListReducer(
-                  mockState, Action(ToDoListAction.add, payload: ToDo.mock()));
+                  mockState, Action(ToDoListAction.add, payload: Todo.mock()));
               return mockState.clone();
             }),
             Pin('build', mockState.clone()),
             Pin('onAdd', mockState.clone()),
             Pin('onReduce', () {
               mockState = toDoListReducer(
-                  mockState, Action(ToDoListAction.add, payload: ToDo.mock()));
+                  mockState, Action(ToDoListAction.add, payload: Todo.mock()));
               return mockState.clone();
             }),
             Pin('build', mockState.clone()),
             Pin('onEdit', mockState.clone()),
             Pin('onReduce', () {
-              ToDo toDo = mockState.list[0].clone();
+              Todo toDo = mockState.list[0].clone();
               toDo.desc = '${toDo.desc}-effect';
               mockState = toDoListReducer(
                   mockState, Action(ToDoListAction.edit, payload: toDo));
@@ -276,20 +276,20 @@ void main() {
             Pin('onAdd', mockState.clone()),
             Pin('onReduce', () {
               mockState = toDoListReducer(
-                  mockState, Action(ToDoListAction.add, payload: ToDo.mock()));
+                  mockState, Action(ToDoListAction.add, payload: Todo.mock()));
               return mockState.clone();
             }),
             Pin('build', mockState.clone()),
             Pin('onAdd', mockState.clone()),
             Pin('onReduce', () {
               mockState = toDoListReducer(
-                  mockState, Action(ToDoListAction.add, payload: ToDo.mock()));
+                  mockState, Action(ToDoListAction.add, payload: Todo.mock()));
               return mockState.clone();
             }),
             Pin('build', mockState.clone()),
             Pin('onEdit', mockState.clone()),
             Pin('onReduce', () {
-              ToDo toDo = mockState.list[0].clone();
+              Todo toDo = mockState.list[0].clone();
               toDo.desc = '${toDo.desc}-effect';
               mockState = toDoListReducer(
                   mockState, Action(ToDoListAction.edit, payload: toDo));
@@ -352,20 +352,20 @@ void main() {
             Pin('onAdd', mockState.clone()),
             Pin('onReduce', () {
               mockState = toDoListReducer(
-                  mockState, Action(ToDoListAction.add, payload: ToDo.mock()));
+                  mockState, Action(ToDoListAction.add, payload: Todo.mock()));
               return mockState.clone();
             }),
             Pin('build', mockState.clone()),
             Pin('onAdd', mockState.clone()),
             Pin('onReduce', () {
               mockState = toDoListReducer(
-                  mockState, Action(ToDoListAction.add, payload: ToDo.mock()));
+                  mockState, Action(ToDoListAction.add, payload: Todo.mock()));
               return mockState.clone();
             }),
             Pin('build', mockState.clone()),
             Pin('onEdit', mockState.clone()),
             Pin('onReduce', () {
-              ToDo toDo = mockState.list[0].clone();
+              Todo toDo = mockState.list[0].clone();
               toDo.desc = '${toDo.desc}-effect';
               mockState = toDoListReducer(
                   mockState, Action(ToDoListAction.edit, payload: toDo));
