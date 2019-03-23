@@ -44,6 +44,13 @@ flutter run
 
 -   [answers](doc/concept/what's-the-diiference.md)
 
+## Plugins
+
+### Code Template
+
+-   [Fish Redux Template For Android Studio](https://github.com/BakerJQ/FishReduxTemplateForAS), by BakerJQ.
+-   [Fish Redux Template For VSCode](https://github.com/huangjianke/fish-redux-template), by huangjianke.
+
 ## License
 
 -   Fish Redux is released under the Apache 2.0 license. See [LICENSE](LICENSE) for details.
