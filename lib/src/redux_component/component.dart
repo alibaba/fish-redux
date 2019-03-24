@@ -272,12 +272,12 @@ typedef InitState<T extends Cloneable<T>, P> = T Function(P params);
 
 @immutable
 abstract class Page<T extends Cloneable<T>, P> extends Component<T> {
-  final List<Middleware<T>> middlewares;
+  final List<Middleware<T>> middleware;
   final InitState<T, P> initState;
 
   Page({
     @required this.initState,
-    this.middlewares,
+    this.middleware,
     @required ViewBuilder<T> view,
     Reducer<T> reducer,
     ReducerFilter<T> filter,
@@ -303,9 +303,9 @@ abstract class Page<T extends Cloneable<T>, P> extends Component<T> {
         );
 
   /// Expansion capability
-  List<Middleware<T>> buildMiddlewares(List<Middleware<T>> middlewares) {
+  List<Middleware<T>> buildMiddleware(List<Middleware<T>> middleware) {
     return Collections.merge<Middleware<T>>(
-        <Middleware<T>>[interrupt$<T>()], middlewares);
+        <Middleware<T>>[interrupt$<T>()], middleware);
   }
 
   Widget buildPage(P param) {
@@ -314,7 +314,7 @@ abstract class Page<T extends Cloneable<T>, P> extends Component<T> {
       storeBuilder: () => createPageStore<T>(
             initState(param),
             reducer,
-            applyMiddleware<T>(buildMiddlewares(middlewares)),
+            applyMiddleware<T>(buildMiddleware(middleware)),
           ),
     ));
   }
@@ -323,7 +323,7 @@ abstract class Page<T extends Cloneable<T>, P> extends Component<T> {
     return ({Dispatch dispatch, Get<T> getState}) {
       return (Dispatch next) {
         return (Action action) {
-          if (!shouldBeInterrupttedBeforeReducer(action)) {
+          if (!shouldBeInterruptedBeforeReducer(action)) {
             next(action);
           }
         };

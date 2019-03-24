@@ -38,9 +38,9 @@ class $DebugOrReportCreator {
   }
 }
 
-/// action-type which starts with '$' should be interruptted,
+/// action-type which starts with '$' should be interrupted,
 /// like $DebugOrReport
-bool shouldBeInterrupttedBeforeReducer(Action action) {
+bool shouldBeInterruptedBeforeReducer(Action action) {
   final Object actionType = action.type;
   return actionType != null && actionType.toString().startsWith('\$');
 }

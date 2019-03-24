@@ -213,7 +213,7 @@ bool toDoListErrorHandler(Exception exception, Context<ToDoList> ctx) {
   return false;
 }
 
-Composeable<Dispatch> toDoListMiddleware({
+Composable<Dispatch> toDoListMiddleware({
   Dispatch dispatch,
   Get<ToDoList> getState,
 }) =>

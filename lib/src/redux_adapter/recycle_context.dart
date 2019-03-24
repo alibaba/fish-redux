@@ -7,7 +7,7 @@ import '../redux_component/redux_component.dart';
 class RecycleContext<T> extends DefaultContext<T> {
   final Map<Object, List<ContextSys<Object>>> _cachedMap =
       <Object, List<ContextSys<Object>>>{};
-  final Map<Object, int> _usedIndextMap = <Object, int>{};
+  final Map<Object, int> _usedIndexMap = <Object, int>{};
 
   RecycleContext({
     AbstractLogic<T> factors,
@@ -33,11 +33,11 @@ class RecycleContext<T> extends DefaultContext<T> {
   }
 
   void markAllUnused() {
-    _usedIndextMap.clear();
+    _usedIndexMap.clear();
   }
 
   ContextSys<Object> reuseOrCreate(Object key, Get<ContextSys<Object>> create) {
-    final int length = _usedIndextMap[key] = (_usedIndextMap[key] ?? 0) + 1;
+    final int length = _usedIndexMap[key] = (_usedIndexMap[key] ?? 0) + 1;
     final List<ContextSys<Object>> list =
         _cachedMap[key] ??= <ContextSys<Object>>[];
 
@@ -54,7 +54,7 @@ class RecycleContext<T> extends DefaultContext<T> {
 
   void cleanUnused() {
     _cachedMap.removeWhere((Object key, List<ContextSys<Object>> value) {
-      final int usedCount = _usedIndextMap[key] ?? 0;
+      final int usedCount = _usedIndexMap[key] ?? 0;
 
       for (int i = usedCount; i < value.length; i++) {
         value[i].onLifecycle(LifecycleCreator.dispose());

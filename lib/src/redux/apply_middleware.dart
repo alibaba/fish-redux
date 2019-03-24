@@ -1,13 +1,13 @@
 import 'basic.dart';
 
-/// Accumulate a list of Middleware that enhances Disptach to the Store.
+/// Accumulate a list of Middleware that enhances Dispatch to the Store.
 /// The wrapped direction of the Store.dispatch is from inside to outside.
-StoreEnhancer<T> applyMiddleware<T>(List<Middleware<T>> middlewares) {
-  if (middlewares == null || middlewares.isEmpty) {
+StoreEnhancer<T> applyMiddleware<T>(List<Middleware<T>> middleware) {
+  if (middleware == null || middleware.isEmpty) {
     return null;
   } else {
     return (StoreCreator<T> creator) => (T initState, Reducer<T> reducer) {
-          assert(middlewares != null && middlewares.isNotEmpty);
+          assert(middleware != null && middleware.isNotEmpty);
 
           final Store<T> store = creator(initState, reducer);
           final Dispatch initialValue = store.dispatch;
@@ -16,7 +16,7 @@ StoreEnhancer<T> applyMiddleware<T>(List<Middleware<T>> middlewares) {
                 'Dispatching while constructing your middleware is not allowed. '
                 'Other middleware would not be applied to this dispatch.');
           };
-          store.dispatch = middlewares
+          store.dispatch = middleware
               .map((Middleware<T> middleware) => middleware(
                     dispatch: (Action action) => store.dispatch(action),
                     getState: store.getState,

@@ -38,7 +38,7 @@ class TestPage<T extends Cloneable<T>, P> extends Page<T, P> {
     Key Function(T) key,
   }) : super(
           initState: initState,
-          middlewares: middlewares,
+          middleware: middlewares,
           view: view,
           reducer: reducer,
           filter: filter,
