@@ -6,7 +6,7 @@ import '../redux_component/redux_component.dart';
 import '../utils/utils.dart';
 import 'recycle_context.dart';
 
-/// template is an array, drived by maplike
+/// template is an array, driven by map like
 class StaticFlowAdapter<T> extends Logic<T>
     with RecycleContextMixin<T>
     implements AbstractAdapter<T> {
@@ -54,7 +54,7 @@ class StaticFlowAdapter<T> extends Logic<T>
       final Dependent<T> dependent = _slots[i];
       final Object subObject = dependent.subGetter(ctx.getState)();
       if (!dependent.isComponent()) {
-        /// pred is subObject != null
+        /// precondition is subObject != null
         if (subObject != null) {
           /// use index of key
           final ContextSys<Object> subCtx = ctx.reuseOrCreate(i, () {

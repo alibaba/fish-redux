@@ -49,13 +49,13 @@ typedef ReplaceReducer<T> = void Function(Reducer<T> reducer);
 typedef Observable<T> = Stream<T> Function();
 
 /// Definition of synthesizable functions.
-typedef Composeable<T> = T Function(T next);
+typedef Composable<T> = T Function(T next);
 
 /// Definition of the function type that returns type R.
 typedef Get<R> = R Function();
 
 /// Definition of the standard Middleware.
-typedef Middleware<T> = Composeable<Dispatch> Function({
+typedef Middleware<T> = Composable<Dispatch> Function({
   Dispatch dispatch,
   Get<T> getState,
 });

@@ -13,7 +13,7 @@ class TodoEditPage extends Page<TodoEditState, ToDoState> {
           effect: buildEffect(),
           reducer: buildReducer(),
           view: buildView,
-          middlewares: <Middleware<TodoEditState>>[
+          middleware: <Middleware<TodoEditState>>[
             logMiddleware(tag: 'TodoEditPage'),
           ],
         );

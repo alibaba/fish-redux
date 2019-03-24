@@ -41,16 +41,16 @@ abstract class ViewUpdater<T> {
 }
 
 /// A little different with Dispatch (with if it is interrupted).
-/// bool for sync-functions , interrupted if true
-/// Futur<void> for async-functions ,should always be interrupted,
+/// bool for sync-functions, interrupted if true
+/// Futur<void> for async-functions, should always be interrupted.
 typedef OnAction = dynamic Function(Action action);
 
 /// Predicate if a component should be updated when the store is changed.
 typedef ShouldUpdate<T> = bool Function(T old, T now);
 
 /// Interrupt if not null not false
-/// bool for sync-functions , interrupted if true
-/// Futur<void> for async-functions ,should always be interrupted,
+/// bool for sync-functions, interrupted if true
+/// Futur<void> for async-functions, should always be interrupted.
 typedef Effect<T> = dynamic Function(Action action, Context<T> ctx);
 
 /// Because Effect<T> is an aysnc-function, if it has some self-state, we should use HigherEffect<T>
@@ -72,10 +72,10 @@ abstract class PageStore<T> extends Store<T> implements Broadcast {}
 
 /// Seen in view-part or adapter-part
 abstract class ViewService {
-  /// The way to build adapter which is configed in Dependencies.adapter
+  /// The way to build adapter which is configured in Dependencies.adapter
   ListAdapter buildAdapter();
 
-  /// The way to build slot component which is configed in Dependencies.slots
+  /// The way to build slot component which is configured in Dependencies.slots
   Widget buildComponent(String name);
 
   /// Get BuildContext from the host-widget
@@ -121,7 +121,7 @@ abstract class Context<T> extends AutoDispose {
   /// Get|Set extra data in context if needed.
   Map<String, Object> get extra;
 
-  /// The way to build slot component which is configed in Dependencies.slots
+  /// The way to build slot component which is configured in Dependencies.slots
   /// such as custom mask or dialog
   Widget buildComponent(String name);
 

@@ -3,7 +3,7 @@ import 'dart:async';
 import '../aop.dart';
 import '../debug.dart';
 
-int _microsecsSinceEpoch() => DateTime.now().microsecondsSinceEpoch;
+int _microSecsSinceEpoch() => DateTime.now().microsecondsSinceEpoch;
 
 ApplyLikeEnhancer performanceAOP(String tag) {
   return isDebug()
@@ -15,11 +15,11 @@ ApplyLikeEnhancer performanceAOP(String tag) {
             if (result is Future) {
               result.then((Object r) {
                 print(
-                    '$tag performance <Future>: ${_microsecsSinceEpoch() - marked}');
+                    '$tag performance <Future>: ${_microSecsSinceEpoch() - marked}');
                 return r;
               });
             } else {
-              print('$tag performance: ${_microsecsSinceEpoch() - marked}');
+              print('$tag performance: ${_microSecsSinceEpoch() - marked}');
             }
             return result;
           };

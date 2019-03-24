@@ -120,11 +120,11 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   }
 }
 
-class _TwinceContext<T> extends ContextSys<T> with _ExtraMixin {
+class _TwinContext<T> extends ContextSys<T> with _ExtraMixin {
   final ContextSys<T> mainCtx;
   final ContextSys<T> sidecarCtx;
 
-  _TwinceContext(this.mainCtx, this.sidecarCtx)
+  _TwinContext(this.mainCtx, this.sidecarCtx)
       : assert(mainCtx != null && sidecarCtx != null) {
     mainCtx.setParent(this);
     sidecarCtx.setParent(this);
@@ -163,5 +163,5 @@ class _TwinceContext<T> extends ContextSys<T> with _ExtraMixin {
 }
 
 ContextSys<T> mergeContext<T>(ContextSys<T> mainCtx, ContextSys<T> sidecarCtx) {
-  return sidecarCtx != null ? _TwinceContext<T>(mainCtx, sidecarCtx) : mainCtx;
+  return sidecarCtx != null ? _TwinContext<T>(mainCtx, sidecarCtx) : mainCtx;
 }

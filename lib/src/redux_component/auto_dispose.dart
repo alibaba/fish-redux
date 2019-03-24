@@ -14,8 +14,8 @@ class _Fields {
 class AutoDispose {
   final _Fields _fields = _Fields();
 
-  void visit(void Function(AutoDispose) visiter) =>
-      _fields.children?.forEach(visiter);
+  void visit(void Function(AutoDispose) visitor) =>
+      _fields.children?.forEach(visitor);
 
   bool get isDisposed => _fields.isDisposed;
 

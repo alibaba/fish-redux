@@ -27,7 +27,7 @@ class _ItemBean implements ItemBean {
   _ItemBean clone() => _ItemBean(type, data);
 }
 
-/// template is a map, drived by array
+/// template is a map, driven by array
 class DynamicFlowAdapter<T> extends Logic<T>
     with RecycleContextMixin<T>
     implements AbstractAdapter<T> {
