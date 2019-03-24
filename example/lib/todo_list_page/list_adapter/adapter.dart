@@ -36,4 +36,9 @@ class _ToDoListConnector implements Connector<PageState, List<ItemBean>> {
       state.toDos = <ToDoState>[];
     }
   }
+
+  @override
+  PageState deepSet(PageState state, List<ItemBean> substate) {
+    return state;
+  }
 }

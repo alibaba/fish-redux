@@ -28,6 +28,7 @@ SubReducer<T> subReducer<T, P>(Connector<T, P> connector, Reducer<P> reducer) {
     final T copy = (hasChanged && !isStateCopied) ? _clone<T>(state) : state;
     if (hasChanged) {
       connector.set(copy, newProps);
+      return connector.deepSet(copy, newProps);
     }
     return copy;
   };

@@ -6,15 +6,27 @@ import 'logic.dart';
 class ConnOp<S, P> implements Connector<S, P> {
   final P Function(S) _getter;
   final void Function(S, P) _setter;
+  final S Function(S, P) _deepSetter;
 
-  ConnOp({P Function(S) get, void Function(S, P) set})
+  ConnOp({P Function(S) get, void Function(S, P) set, S Function(S, P) deepSet})
       : _getter = get,
-        _setter = set;
+        _setter = set,
+        _deepSetter = deepSet;
 
   @override
   P get(S state) => _getter(state);
   @override
-  void set(S state, P substate) => _setter(state, substate);
+  void set(S state, P substate){
+    if(_setter != null)
+      _setter(state, substate);
+  }
+
+  @override
+  S deepSet(S state, P substate){
+    if(_deepSetter != null)
+      return _deepSetter(state, substate);
+    return state;
+  }
 
   Dependent<S> operator +(Logic<P> logic) => createDependent<S, P>(this, logic);
 }

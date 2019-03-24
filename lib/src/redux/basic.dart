@@ -92,20 +92,24 @@ abstract class Cloneable<T extends Cloneable<T>> {
 /// 1. How to get an object of type P from an object of type S.
 /// 2. How to synchronize change of an object of type P to an object of type S.
 abstract class Connector<S, P> {
-  factory Connector({P Function(S) get, void Function(S, P) set}) =>
-      _Connector<S, P>(get, set);
+  factory Connector({P Function(S) get, void Function(S, P) set, S Function(S, P) deepSet}) =>
+      _Connector<S, P>(get, set, deepSet);
 
   P get(S state);
   void set(S state, P substate);
+  S deepSet(S state, P substate) => state;
 }
 
 /// An implementation of the default Connector<S, P>
 class _Connector<S, P> implements Connector<S, P> {
   final P Function(S) getter;
   final void Function(S, P) setter;
-  const _Connector(this.getter, this.setter);
+  final S Function(S, P) deepSetter;
+  const _Connector(this.getter, this.setter, this.deepSetter);
   @override
   P get(S state) => getter(state);
   @override
   void set(S state, P substate) => setter(state, substate);
+  @override
+  S deepSet(S state, P substate) => deepSetter(state, substate);
 }
