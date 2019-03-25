@@ -24,8 +24,8 @@ dynamic _clone<T>(T state) {
   }
 }
 
-abstract class BaseConn<T, P> implements AbstractConnector<T, P> {
-  const BaseConn();
+abstract class ImmutableConn<T, P> implements AbstractConnector<T, P> {
+  const ImmutableConn();
 
   void set(T state, P subState);
 
@@ -47,7 +47,7 @@ abstract class BaseConn<T, P> implements AbstractConnector<T, P> {
   }
 }
 
-class Connector<T, P> extends BaseConn<T, P> {
+class Connector<T, P> extends ImmutableConn<T, P> {
   final P Function(T) _getter;
   final void Function(T, P) _setter;
 
@@ -64,7 +64,7 @@ class Connector<T, P> extends BaseConn<T, P> {
   void set(T state, P subState) => _setter(state, subState);
 }
 
-class ConnOp<S, P> extends BaseConn<S, P> {
+class ConnOp<S, P> extends ImmutableConn<S, P> {
   final P Function(S) _getter;
   final void Function(S, P) _setter;
 
