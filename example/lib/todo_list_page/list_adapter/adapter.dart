@@ -15,7 +15,7 @@ class ToDoListAdapter extends DynamicFlowAdapter<PageState> {
         );
 }
 
-class _ToDoListConnector implements Connector<PageState, List<ItemBean>> {
+class _ToDoListConnector extends Connector<PageState, List<ItemBean>> {
   @override
   List<ItemBean> get(PageState state) {
     if (state.toDos?.isNotEmpty == true) {

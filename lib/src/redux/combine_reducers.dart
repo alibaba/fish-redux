@@ -1,38 +1,5 @@
 import 'basic.dart';
 
-/// how to clone an object
-dynamic _clone<T>(T state) {
-  if (state is Cloneable) {
-    return state.clone();
-  } else if (state is List) {
-    return state.toList();
-  } else if (state is Map<String, dynamic>) {
-    return <String, dynamic>{}..addAll(state);
-  } else if (state == null) {
-    return null;
-  } else {
-    throw ArgumentError(
-        'Could not clone this state of type ${state.runtimeType}.');
-  }
-}
-
-/// Connector<T, P> + Reducer<P> => SubReducer<T>
-SubReducer<T> subReducer<T, P>(Connector<T, P> connector, Reducer<P> reducer) {
-  return (T state, Action action, bool isStateCopied) {
-    final P props = connector.get(state);
-    if (props == null) {
-      return state;
-    }
-    final P newProps = reducer(props, action);
-    final bool hasChanged = newProps != props;
-    final T copy = (hasChanged && !isStateCopied) ? _clone<T>(state) : state;
-    if (hasChanged) {
-      connector.set(copy, newProps);
-    }
-    return copy;
-  };
-}
-
 /// Combine an iterable of SubReducer<T> into one Reducer<T>
 Reducer<T> combineSubReducers<T>(Iterable<SubReducer<T>> subReducers) {
   final List<SubReducer<T>> notNullReducers = subReducers

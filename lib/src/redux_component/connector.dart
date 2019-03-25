@@ -3,7 +3,68 @@ import 'basic.dart';
 import 'dependent.dart';
 import 'logic.dart';
 
-class ConnOp<S, P> implements Connector<S, P> {
+/// Definition of Cloneable
+abstract class Cloneable<T extends Cloneable<T>> {
+  T clone();
+}
+
+/// how to clone an object
+dynamic _clone<T>(T state) {
+  if (state is Cloneable) {
+    return state.clone();
+  } else if (state is List) {
+    return state.toList();
+  } else if (state is Map<String, dynamic>) {
+    return <String, dynamic>{}..addAll(state);
+  } else if (state == null) {
+    return null;
+  } else {
+    throw ArgumentError(
+        'Could not clone this state of type ${state.runtimeType}.');
+  }
+}
+
+abstract class BaseConn<T, P> implements AbstractConnector<T, P> {
+  const BaseConn();
+
+  void set(T state, P subState);
+
+  @override
+  SubReducer<T> subReducer(Reducer<P> reducer) {
+    return (T state, Action action, bool isStateCopied) {
+      final P props = get(state);
+      if (props == null) {
+        return state;
+      }
+      final P newProps = reducer(props, action);
+      final bool hasChanged = newProps != props;
+      final T copy = (hasChanged && !isStateCopied) ? _clone<T>(state) : state;
+      if (hasChanged) {
+        set(copy, newProps);
+      }
+      return copy;
+    };
+  }
+}
+
+class Connector<T, P> extends BaseConn<T, P> {
+  final P Function(T) _getter;
+  final void Function(T, P) _setter;
+
+  const Connector({
+    P Function(T) get,
+    void Function(T, P) set,
+  })  : _getter = get,
+        _setter = set;
+
+  @override
+  P get(T state) => _getter(state);
+
+  @override
+  void set(T state, P subState) => _setter(state, subState);
+}
+
+class ConnOp<S, P> extends BaseConn<S, P> {
   final P Function(S) _getter;
   final void Function(S, P) _setter;
 
@@ -34,7 +95,8 @@ abstract class MapLike {
       _fieldsMap = <String, Object>{}..addAll(from._fieldsMap);
 }
 
-Connector<T, P> withMapLike<T extends MapLike, P>(String key) => ConnOp<T, P>(
+AbstractConnector<T, P> withMapLike<T extends MapLike, P>(String key) =>
+    ConnOp<T, P>(
       get: (T state) => state[key],
       set: (T state, P sub) => state[key] = sub,
     );

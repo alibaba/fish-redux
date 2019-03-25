@@ -217,7 +217,7 @@ Composable<Dispatch> toDoListMiddleware({
   Dispatch dispatch,
   Get<ToDoList> getState,
 }) =>
-    (next) => (Action action) {
+    (Dispatch next) => (Action action) {
           if (action.type == ToDoListAction.middlewareEdit) {
             assert(action.payload is Todo);
 
@@ -286,5 +286,5 @@ Widget createPageWidget(BuildContext context) {
       effect: toDoListEffectAsync,
 //      shouldUpdate: forbidRefreshWhenAddOrRemove,
 //      onError: toDoListErrorHandler,
-      middlewares: [toDoListMiddleware]).buildPage(pageInitParams);
+      middleware: [toDoListMiddleware]).buildPage(pageInitParams);
 }

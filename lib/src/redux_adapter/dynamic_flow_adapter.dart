@@ -32,7 +32,7 @@ class DynamicFlowAdapter<T> extends Logic<T>
     with RecycleContextMixin<T>
     implements AbstractAdapter<T> {
   final Map<String, AbstractLogic<Object>> pool;
-  final Connector<T, List<ItemBean>> connector;
+  final AbstractConnector<T, List<ItemBean>> connector;
 
   DynamicFlowAdapter({
     @required this.pool,
@@ -112,7 +112,7 @@ class DynamicFlowAdapter<T> extends Logic<T>
 Reducer<T> _dynamicReducer<T>(
   Reducer<T> reducer,
   Map<String, AbstractLogic<Object>> pool,
-  Connector<T, List<ItemBean>> connector,
+  AbstractConnector<T, List<ItemBean>> connector,
 ) {
   final Reducer<List<ItemBean>> dyReducer =
       (List<ItemBean> state, Action action) {
@@ -133,7 +133,7 @@ Reducer<T> _dynamicReducer<T>(
 
   return combineReducers(<Reducer<T>>[
     reducer,
-    combineSubReducers(<SubReducer<T>>[subReducer(connector, dyReducer)]),
+    combineSubReducers(<SubReducer<T>>[connector.subReducer(dyReducer)]),
   ]);
 }
 

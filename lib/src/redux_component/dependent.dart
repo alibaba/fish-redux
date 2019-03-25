@@ -5,7 +5,7 @@ import '../redux/redux.dart';
 import 'basic.dart';
 
 class _Dependent<T, P> implements Dependent<T> {
-  final Connector<T, P> connector;
+  final AbstractConnector<T, P> connector;
   final AbstractLogic<P> factors;
 
   _Dependent({
@@ -17,7 +17,7 @@ class _Dependent<T, P> implements Dependent<T> {
   @override
   SubReducer<T> createSubReducer() {
     final Reducer<P> reducer = factors.reducer;
-    return reducer != null ? subReducer(connector, reducer) : null;
+    return reducer != null ? connector.subReducer(reducer) : null;
   }
 
   @override
@@ -59,5 +59,5 @@ class _Dependent<T, P> implements Dependent<T> {
 }
 
 Dependent<K> createDependent<K, T>(
-        Connector<K, T> connector, Logic<T> factors) =>
+        AbstractConnector<K, T> connector, Logic<T> factors) =>
     _Dependent<K, T>(connector: connector, factors: factors);
