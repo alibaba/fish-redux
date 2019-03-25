@@ -132,7 +132,7 @@ class Logic<T> implements AbstractLogic<T> {
   }
 
   @override
-  Object key(T state) => _key?.call(state);
+  Object key(T state) => _key?.call(state) ?? ValueKey<Type>(runtimeType);
 
   static bool _onError<T>(OnError<T> onError, Object e, Context<T> ctx) {
     return (e is SelfHealingError ? e.heal(ctx) : onError?.call(e, ctx)) ??
