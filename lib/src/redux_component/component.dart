@@ -268,10 +268,10 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
 }
 
 /// init store's state by route-params
-typedef InitState<T extends Cloneable<T>, P> = T Function(P params);
+typedef InitState<T, P> = T Function(P params);
 
 @immutable
-abstract class Page<T extends Cloneable<T>, P> extends Component<T> {
+abstract class Page<T, P> extends Component<T> {
   final List<Middleware<T>> middleware;
   final InitState<T, P> initState;
 
