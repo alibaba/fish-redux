@@ -10,4 +10,12 @@
 -   add stfState field in Context #58
 -   add batchedNotify feature in page-store
 -   add some docs
--   fix some misspellings
+-   correct spelling
+
+## [0.1.3]
+
+-   add support for immutable-state #111
+-   fix the same type of state component reuse in listview #107
+-   remove warnings in logMiddleware for debug-actions #98
+-   correct spelling
+-   modify bindAction #73
