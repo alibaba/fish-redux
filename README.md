@@ -1,5 +1,7 @@
 # Fish Redux
 
+[![Build Status](https://travis-ci.org/alibaba/fish-redux.svg?branch=master)](https://travis-ci.org/alibaba/fish-redux) [![codecov](https://codecov.io/gh/alibaba/fish-redux/branch/master/graph/badge.svg)](https://codecov.io/gh/alibaba/fish-redux)
+
 <img src="https://img.alicdn.com/tfs/TB1r74NJyLaK1RjSZFxXXamPFXa-1024-1024.png" width="128px" height="128px">
 
 ## What is Fish Redux ?
