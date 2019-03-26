@@ -62,7 +62,9 @@ abstract class ImmutableConn<T, P> implements AbstractConnector<T, P> {
       final P newProps = reducer(props, action);
       final bool hasChanged = newProps != props;
       if (hasChanged) {
-        return set(state, newProps);
+        final T result = set(state, newProps);
+        assert(result != null);
+        return result;
       }
       return state;
     };
