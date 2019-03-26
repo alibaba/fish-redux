@@ -24,8 +24,8 @@ dynamic _clone<T>(T state) {
   }
 }
 
-abstract class ImmutableConn<T, P> implements AbstractConnector<T, P> {
-  const ImmutableConn();
+abstract class MutableConn<T, P> implements AbstractConnector<T, P> {
+  const MutableConn();
 
   void set(T state, P subState);
 
@@ -47,7 +47,33 @@ abstract class ImmutableConn<T, P> implements AbstractConnector<T, P> {
   }
 }
 
-class Connector<T, P> extends ImmutableConn<T, P> {
+abstract class ImmutableConn<T, P> implements AbstractConnector<T, P> {
+  const ImmutableConn();
+
+  T set(T state, P subState);
+
+  @override
+  SubReducer<T> subReducer(Reducer<P> reducer) {
+    return (T state, Action action, bool isStateCopied) {
+      final P props = get(state);
+      if (props == null) {
+        return state;
+      }
+      final P newProps = reducer(props, action);
+      final bool hasChanged = newProps != props;
+      if (hasChanged) {
+        return set(state, newProps);
+      }
+      return state;
+    };
+  }
+}
+
+mixin ConnOpMixin<T, P> on AbstractConnector<T, P> {
+  Dependent<T> operator +(Logic<P> logic) => createDependent<T, P>(this, logic);
+}
+
+class Connector<T, P> extends MutableConn<T, P> {
   final P Function(T) _getter;
   final void Function(T, P) _setter;
 
@@ -64,20 +90,9 @@ class Connector<T, P> extends ImmutableConn<T, P> {
   void set(T state, P subState) => _setter(state, subState);
 }
 
-class ConnOp<S, P> extends ImmutableConn<S, P> {
-  final P Function(S) _getter;
-  final void Function(S, P) _setter;
-
-  ConnOp({P Function(S) get, void Function(S, P) set})
-      : _getter = get,
-        _setter = set;
-
-  @override
-  P get(S state) => _getter(state);
-  @override
-  void set(S state, P subState) => _setter(state, subState);
-
-  Dependent<S> operator +(Logic<P> logic) => createDependent<S, P>(this, logic);
+class ConnOp<T, P> extends Connector<T, P> with ConnOpMixin<T, P> {
+  ConnOp({P Function(T) get, void Function(T, P) set})
+      : super(get: get, set: set);
 }
 
 abstract class MapLike {
