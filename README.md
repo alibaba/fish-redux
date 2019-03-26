@@ -51,6 +51,9 @@ flutter run
 -   [Fish Redux Template For Android Studio](https://github.com/BakerJQ/FishReduxTemplateForAS), by BakerJQ.
 -   [Fish Redux Template For VSCode](https://github.com/huangjianke/fish-redux-template), by huangjianke.
 
+## Dev-Tools
+-   Redux Inspector (use [Flutter Debugger](https://github.com/blankapp/flutter-debugger) and [flipperkit_fish_redux_middleware](https://pub.dartlang.org/packages/flipperkit_fish_redux_middleware)) for Fish Redux apps
+
 ## License
 
 -   Fish Redux is released under the Apache 2.0 license. See [LICENSE](LICENSE) for details.
