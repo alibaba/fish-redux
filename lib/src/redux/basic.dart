@@ -10,7 +10,6 @@ import 'dart:async';
 ///    Store<T>        ---- State management center
 /// 2. Additional abstractions beyond the basic concepts of the ReduxJs community.
 ///    Connector<S, P> ---- The connection between big object <T> and small object <P>
-///    Cloneable       ---- Clone an object
 ///    SubReducer<T>   ---- A function that modifies data of partial <T>
 ///    The role of this layer of abstraction
 ///    a. It is obvious that the implementation of combineReducers are decoupled with the grammatical features of JS
@@ -83,29 +82,12 @@ typedef StoreEnhancer<T> = StoreCreator<T> Function(StoreCreator<T> creator);
 /// Ensure that a T will be cloned at most once during the entire process.
 typedef SubReducer<T> = T Function(T state, Action action, bool isStateCopied);
 
-/// Definition of Cloneable
-abstract class Cloneable<T extends Cloneable<T>> {
-  T clone();
-}
-
 /// Definition of Connector
 /// 1. How to get an object of type P from an object of type S.
 /// 2. How to synchronize change of an object of type P to an object of type S.
-abstract class Connector<S, P> {
-  factory Connector({P Function(S) get, void Function(S, P) set}) =>
-      _Connector<S, P>(get, set);
-
+abstract class AbstractConnector<S, P> {
   P get(S state);
-  void set(S state, P subState);
-}
 
-/// An implementation of the default Connector<S, P>
-class _Connector<S, P> implements Connector<S, P> {
-  final P Function(S) getter;
-  final void Function(S, P) setter;
-  const _Connector(this.getter, this.setter);
-  @override
-  P get(S state) => getter(state);
-  @override
-  void set(S state, P subState) => setter(state, subState);
+  /// Todo
+  SubReducer<S> subReducer(Reducer<P> reducer);
 }

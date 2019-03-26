@@ -114,7 +114,7 @@ class Logic<T> implements AbstractLogic<T> {
   Dependent<T> slot(String type) => dependencies?.slot(type);
 
   @override
-  Dependent<K> asDependent<K>(Connector<K, T> connector) =>
+  Dependent<K> asDependent<K>(AbstractConnector<K, T> connector) =>
       createDependent<K, T>(connector, this);
 
   @override

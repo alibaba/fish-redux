@@ -25,7 +25,7 @@ class _StubState extends State<TestStub> {
 class TestPage<T extends Cloneable<T>, P> extends Page<T, P> {
   TestPage({
     @required InitState<T, P> initState,
-    List<Middleware<T>> middlewares,
+    List<Middleware<T>> middleware,
     @required ViewBuilder<T> view,
     Reducer<T> reducer,
     ReducerFilter<T> filter,
@@ -38,7 +38,7 @@ class TestPage<T extends Cloneable<T>, P> extends Page<T, P> {
     Key Function(T) key,
   }) : super(
           initState: initState,
-          middleware: middlewares,
+          middleware: middleware,
           view: view,
           reducer: reducer,
           filter: filter,

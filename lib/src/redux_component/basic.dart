@@ -197,7 +197,7 @@ abstract class AbstractLogic<T> {
   Object key(T state);
 
   /// It's a convenient way to create a dependency
-  Dependent<K> asDependent<K>(Connector<K, T> connector);
+  Dependent<K> asDependent<K>(AbstractConnector<K, T> connector);
 
   /// Find a dependent by name
   Dependent<T> slot(String name);

@@ -477,7 +477,7 @@ void main() {
             track.append('onReduce', state.clone());
           }),
           higherEffect: toDoListHigherEffect,
-          middlewares: <Middleware<ToDoList>>[
+          middleware: <Middleware<ToDoList>>[
             instrumentMiddleware<ToDoList>(toDoListMiddleware,
                 pre: (action, getState) {
               if (action.type == ToDoListAction.middlewareEdit) {

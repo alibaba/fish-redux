@@ -3,20 +3,112 @@ import 'basic.dart';
 import 'dependent.dart';
 import 'logic.dart';
 
-class ConnOp<S, P> implements Connector<S, P> {
-  final P Function(S) _getter;
-  final void Function(S, P) _setter;
+/// Definition of Cloneable
+abstract class Cloneable<T extends Cloneable<T>> {
+  T clone();
+}
 
-  ConnOp({P Function(S) get, void Function(S, P) set})
-      : _getter = get,
+/// how to clone an object
+dynamic _clone<T>(T state) {
+  if (state is Cloneable) {
+    return state.clone();
+  } else if (state is List) {
+    return state.toList();
+  } else if (state is Map<String, dynamic>) {
+    return <String, dynamic>{}..addAll(state);
+  } else if (state == null) {
+    return null;
+  } else {
+    throw ArgumentError(
+        'Could not clone this state of type ${state.runtimeType}.');
+  }
+}
+
+abstract class MutableConn<T, P> implements AbstractConnector<T, P> {
+  const MutableConn();
+
+  void set(T state, P subState);
+
+  @override
+  SubReducer<T> subReducer(Reducer<P> reducer) {
+    return (T state, Action action, bool isStateCopied) {
+      final P props = get(state);
+      if (props == null) {
+        return state;
+      }
+      final P newProps = reducer(props, action);
+      final bool hasChanged = newProps != props;
+      final T copy = (hasChanged && !isStateCopied) ? _clone<T>(state) : state;
+      if (hasChanged) {
+        set(copy, newProps);
+      }
+      return copy;
+    };
+  }
+}
+
+abstract class ImmutableConn<T, P> implements AbstractConnector<T, P> {
+  const ImmutableConn();
+
+  T set(T state, P subState);
+
+  @override
+  SubReducer<T> subReducer(Reducer<P> reducer) {
+    return (T state, Action action, bool isStateCopied) {
+      final P props = get(state);
+      if (props == null) {
+        return state;
+      }
+      final P newProps = reducer(props, action);
+      final bool hasChanged = newProps != props;
+      if (hasChanged) {
+        final T result = set(state, newProps);
+        assert(result != null);
+        return result;
+      }
+      return state;
+    };
+  }
+}
+
+mixin ConnOpMixin<T, P> on AbstractConnector<T, P> {
+  Dependent<T> operator +(Logic<P> logic) => createDependent<T, P>(this, logic);
+}
+
+/// use ConnOp<T, P> instead of Connector<T, P>
+@deprecated
+class Connector<T, P> extends MutableConn<T, P> {
+  final P Function(T) _getter;
+  final void Function(T, P) _setter;
+
+  const Connector({
+    P Function(T) get,
+    void Function(T, P) set,
+  })  : _getter = get,
         _setter = set;
 
   @override
-  P get(S state) => _getter(state);
-  @override
-  void set(S state, P subState) => _setter(state, subState);
+  P get(T state) => _getter(state);
 
-  Dependent<S> operator +(Logic<P> logic) => createDependent<S, P>(this, logic);
+  @override
+  void set(T state, P subState) => _setter(state, subState);
+}
+
+class ConnOp<T, P> extends MutableConn<T, P> with ConnOpMixin<T, P> {
+  final P Function(T) _getter;
+  final void Function(T, P) _setter;
+
+  const ConnOp({
+    P Function(T) get,
+    void Function(T, P) set,
+  })  : _getter = get,
+        _setter = set;
+
+  @override
+  P get(T state) => _getter(state);
+
+  @override
+  void set(T state, P subState) => _setter(state, subState);
 }
 
 abstract class MapLike {
@@ -34,7 +126,8 @@ abstract class MapLike {
       _fieldsMap = <String, Object>{}..addAll(from._fieldsMap);
 }
 
-Connector<T, P> withMapLike<T extends MapLike, P>(String key) => ConnOp<T, P>(
+AbstractConnector<T, P> withMapLike<T extends MapLike, P>(String key) =>
+    ConnOp<T, P>(
       get: (T state) => state[key],
       set: (T state, P sub) => state[key] = sub,
     );
