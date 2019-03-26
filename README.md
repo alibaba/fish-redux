@@ -52,7 +52,8 @@ flutter run
 -   [Fish Redux Template For VSCode](https://github.com/huangjianke/fish-redux-template), by huangjianke.
 
 ## Dev-Tools
--   Redux Inspector (use [Flutter Debugger](https://github.com/blankapp/flutter-debugger) and [flipperkit_fish_redux_middleware](https://pub.dartlang.org/packages/flipperkit_fish_redux_middleware)) for Fish Redux apps, by [JianyingLi](https://github.com/lijy91)
+
+-   Redux Inspector (using [Flutter Debugger](https://github.com/blankapp/flutter-debugger) and [flipperkit_fish_redux_middleware](https://pub.dartlang.org/packages/flipperkit_fish_redux_middleware)) for Fish Redux apps, by [JianyingLi](https://github.com/lijy91)
 
 ## License
 
