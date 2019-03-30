@@ -6,25 +6,13 @@ import '../redux_component/redux_component.dart';
 import '../utils/utils.dart';
 import 'recycle_context.dart';
 
-abstract class ItemBean implements Cloneable<ItemBean> {
-  String get type;
-  set type(String type);
-  Object get data;
-  set data(Object data);
-
-  factory ItemBean(String type, Object data) => _ItemBean(type, data);
-}
-
-class _ItemBean implements ItemBean {
-  @override
+class ItemBean {
   String type;
-  @override
   Object data;
 
-  _ItemBean(this.type, this.data);
+  ItemBean(this.type, this.data);
 
-  @override
-  _ItemBean clone() => _ItemBean(type, data);
+  ItemBean clone() => ItemBean(type, data);
 }
 
 /// template is a map, driven by array

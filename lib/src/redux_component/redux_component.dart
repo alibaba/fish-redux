@@ -1,7 +1,6 @@
 export 'auto_dispose.dart';
 export 'basic.dart';
 export 'component.dart';
-export 'connector.dart';
 export 'debug_or_report.dart';
 export 'dependencies.dart';
 export 'helper.dart';
