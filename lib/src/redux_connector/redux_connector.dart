@@ -3,4 +3,4 @@ export 'immutable.dart';
 export 'map_like.dart';
 export 'mutable.dart';
 export 'op_mixin.dart';
-export 'resellect.dart';
+export 'reselect.dart';
