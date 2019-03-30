@@ -8,4 +8,5 @@ export 'lifecycle.dart';
 export 'logic.dart';
 export 'oop.dart';
 export 'page_store.dart';
+export 'private_reducer_mixin.dart';
 export 'provider.dart';
