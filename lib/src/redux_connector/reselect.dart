@@ -19,7 +19,7 @@ bool _listEquals<E>(List<E> list1, List<E> list2) {
   return true;
 }
 
-abstract class _BasicResellect<T, P> extends MutableConn<T, P> {
+abstract class _BasicReselect<T, P> extends MutableConn<T, P> {
   List<dynamic> _subsCache;
   P _pCache;
 
@@ -38,7 +38,7 @@ abstract class _BasicResellect<T, P> extends MutableConn<T, P> {
   }
 }
 
-abstract class Resellect1<T, P, K0> extends _BasicResellect<T, P> {
+abstract class Reselect1<T, P, K0> extends _BasicReselect<T, P> {
   K0 getSub0(T state);
   P cumputed(K0 state);
 
@@ -49,7 +49,7 @@ abstract class Resellect1<T, P, K0> extends _BasicResellect<T, P> {
   P reduceSubs(List<dynamic> list) => Function.apply(cumputed, list);
 }
 
-abstract class Resellect2<T, P, K0, K1> extends _BasicResellect<T, P> {
+abstract class Reselect2<T, P, K0, K1> extends _BasicReselect<T, P> {
   K0 getSub0(T state);
   K1 getSub1(T state);
   P cumputed(K0 sub0, K1 sub1);
@@ -61,7 +61,7 @@ abstract class Resellect2<T, P, K0, K1> extends _BasicResellect<T, P> {
   P reduceSubs(List<dynamic> list) => Function.apply(cumputed, list);
 }
 
-abstract class Resellect3<T, P, K0, K1, K2> extends _BasicResellect<T, P> {
+abstract class Reselect3<T, P, K0, K1, K2> extends _BasicReselect<T, P> {
   K0 getSub0(T state);
   K1 getSub1(T state);
   K2 getSub2(T state);
@@ -78,7 +78,7 @@ abstract class Resellect3<T, P, K0, K1, K2> extends _BasicResellect<T, P> {
   P reduceSubs(List<dynamic> list) => Function.apply(cumputed, list);
 }
 
-abstract class Resellect4<T, P, K0, K1, K2, K3> extends _BasicResellect<T, P> {
+abstract class Reselect4<T, P, K0, K1, K2, K3> extends _BasicReselect<T, P> {
   K0 getSub0(T state);
   K1 getSub1(T state);
   K2 getSub2(T state);
@@ -97,8 +97,8 @@ abstract class Resellect4<T, P, K0, K1, K2, K3> extends _BasicResellect<T, P> {
   P reduceSubs(List<dynamic> list) => Function.apply(cumputed, list);
 }
 
-abstract class Resellect5<T, P, K0, K1, K2, K3, K4>
-    extends _BasicResellect<T, P> {
+abstract class Reselect5<T, P, K0, K1, K2, K3, K4>
+    extends _BasicReselect<T, P> {
   K0 getSub0(T state);
   K1 getSub1(T state);
   K2 getSub2(T state);
@@ -119,8 +119,8 @@ abstract class Resellect5<T, P, K0, K1, K2, K3, K4>
   P reduceSubs(List<dynamic> list) => Function.apply(cumputed, list);
 }
 
-abstract class Resellect6<T, P, K0, K1, K2, K3, K4, K5>
-    extends _BasicResellect<T, P> {
+abstract class Reselect6<T, P, K0, K1, K2, K3, K4, K5>
+    extends _BasicReselect<T, P> {
   K0 getSub0(T state);
   K1 getSub1(T state);
   K2 getSub2(T state);
@@ -143,7 +143,7 @@ abstract class Resellect6<T, P, K0, K1, K2, K3, K4, K5>
   P reduceSubs(List<dynamic> list) => Function.apply(cumputed, list);
 }
 
-abstract class Resellect<T, P> extends _BasicResellect<T, P> {
+abstract class Reselect<T, P> extends _BasicReselect<T, P> {
   P cumputed(List<dynamic> list);
 
   @override
