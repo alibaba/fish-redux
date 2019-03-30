@@ -383,6 +383,7 @@ class _PageState<T> extends State<_PageWidget<T>> {
   void dispose() {
     unregister?.call();
     unregister = null;
+    _store.teardown();
     super.dispose();
   }
 }

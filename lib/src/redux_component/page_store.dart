@@ -52,6 +52,7 @@ class _PageStore<T> extends PageStore<T> with _Broadcast<T> {
     replaceReducer = store.replaceReducer;
     dispatch = store.dispatch;
     observable = store.observable;
+    teardown = store.teardown;
   }
 
   void _batchedNotify() {
@@ -60,7 +61,9 @@ class _PageStore<T> extends PageStore<T> with _Broadcast<T> {
       if (!isBatching) {
         isBatching = true;
         SchedulerBinding.instance.addPostFrameCallback((Duration duration) {
-          _batchedNotify();
+          if (isBatching) {
+            _batchedNotify();
+          }
         });
       }
     } else {
