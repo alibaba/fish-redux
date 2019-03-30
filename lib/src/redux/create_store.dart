@@ -6,10 +6,15 @@ Reducer<T> _noop<T>() => (T state, Action action) => state;
 
 typedef _VoidCallback = void Function();
 
-Store<T> _createBasicStore<T>(T preloadedState, Reducer<T> reducer) {
-  if (preloadedState == null) {
-    throw ArgumentError('Please provide a preloadedState.');
+void _throwIfNot(bool condition, [String message]) {
+  if (!condition) {
+    throw ArgumentError(message);
   }
+}
+
+Store<T> _createBasicStore<T>(T preloadedState, Reducer<T> reducer) {
+  _throwIfNot(preloadedState != null,
+      'Expected the preloadedState to be non-null value.');
 
   T state = preloadedState;
   reducer = reducer ?? _noop<T>();
@@ -20,14 +25,10 @@ Store<T> _createBasicStore<T>(T preloadedState, Reducer<T> reducer) {
       StreamController<T>.broadcast(sync: true);
 
   final Dispatch dispatch = (Action action) {
-    assert(action != null && action.type != null, 'Invalide action.');
-    assert(!isDispatching, 'Reducer is executing!');
-
-    if (action.type == ActionType.destroy) {
-      notifyController.close();
-      listeners.clear();
-      return;
-    }
+    _throwIfNot(action != null, 'Expected the action to be non-null value.');
+    _throwIfNot(
+        action.type != null, 'Expected the action.type to be non-null value.');
+    _throwIfNot(!isDispatching, 'Reducers may not dispatch actions.');
 
     try {
       isDispatching = true;
@@ -54,17 +55,24 @@ Store<T> _createBasicStore<T>(T preloadedState, Reducer<T> reducer) {
       dispatch(const Action(ActionType.replace));
     }
     ..subscribe = (_VoidCallback listener) {
-      assert(listener != null, 'Invalide listener!');
-      assert(!isDispatching, 'Reducer is executing!');
+      _throwIfNot(
+          listener != null, 'Expected the listener to be non-null value.');
+      _throwIfNot(!isDispatching,
+          'You may not call store.subscribe() while the reducer is executing.');
 
       listeners.add(listener);
 
       return () {
-        assert(!isDispatching, 'Reducer is executing!');
+        _throwIfNot(!isDispatching,
+            'You may not unsubscribe from a store listener while the reducer is executing.');
         listeners.remove(listener);
       };
     }
-    ..observable = (() => notifyController.stream);
+    ..observable = (() => notifyController.stream)
+    ..teardown = () {
+      listeners.clear();
+      return notifyController.close();
+    };
 }
 
 /// create a store with enhancer
@@ -74,9 +82,8 @@ Store<T> createStore<T>(T preloadedState, Reducer<T> reducer,
         ? enhancer(_createBasicStore)(preloadedState, reducer)
         : _createBasicStore(preloadedState, reducer);
 
-StoreEnhancer<T> composeStoreEnhancer<T>(List<StoreEnhancer<T>> enhancers) {
-  return enhancers?.isNotEmpty == true
-      ? null
-      : enhancers.reduce((StoreEnhancer<T> previous, StoreEnhancer<T> next) =>
-          (StoreCreator<T> creator) => next(previous(creator)));
-}
+StoreEnhancer<T> composeStoreEnhancer<T>(List<StoreEnhancer<T>> enhancers) =>
+    enhancers == null || enhancers.isEmpty
+        ? null
+        : enhancers.reduce((StoreEnhancer<T> previous, StoreEnhancer<T> next) =>
+            (StoreCreator<T> creator) => next(previous(creator)));

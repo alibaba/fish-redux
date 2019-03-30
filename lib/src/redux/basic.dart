@@ -66,6 +66,7 @@ class Store<T> {
   Subscribe subscribe;
   Observable<T> observable;
   ReplaceReducer<T> replaceReducer;
+  Future<dynamic> Function() teardown;
 }
 
 /// Create a store definition
