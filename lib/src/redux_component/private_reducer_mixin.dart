@@ -4,8 +4,8 @@ import 'basic.dart';
 import 'logic.dart';
 
 class PrivateAction extends Action {
-  final Object ref;
-  PrivateAction(Object type, {dynamic payload, this.ref})
+  final Object target;
+  PrivateAction(Object type, {dynamic payload, this.target})
       : super(type, payload: payload);
 
   Action asAction() => Action(type, payload: payload);
@@ -13,14 +13,16 @@ class PrivateAction extends Action {
 
 mixin PrivateReducerMixin<T> on Logic<T> {
   @override
-  Reducer<T> get reducer {
-    final Reducer<T> superReducer = super.reducer;
-    return (T state, Action action) {
-      if (action is PrivateAction && action.ref == state) {
-        return superReducer(state, action.asAction());
-      }
-      return state;
-    };
+  Reducer<T> get privateReducer {
+    final Reducer<T> superReducer = super.privateReducer;
+    return superReducer != null
+        ? (T state, Action action) {
+            if (action is PrivateAction && action.target == state) {
+              return superReducer(state, action.asAction());
+            }
+            return state;
+          }
+        : null;
   }
 
   @override
@@ -36,7 +38,7 @@ mixin PrivateReducerMixin<T> on Logic<T> {
         action = PrivateAction(
           action.type,
           payload: action.payload,
-          ref: ctx.state,
+          target: ctx.state,
         );
       }
       superDispatch(action);

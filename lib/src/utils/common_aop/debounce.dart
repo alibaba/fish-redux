@@ -2,6 +2,8 @@ import 'dart:async';
 
 import '../aop.dart';
 
+/// debounce the stream, means the [millis] span functor call once and drop other event.
+/// it difference with [throttle].
 ApplyLikeEnhancer debounce(int millis) {
   return (dynamic Function(List<dynamic>) functor) {
     int idGenerator = 0;
