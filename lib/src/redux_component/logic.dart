@@ -51,9 +51,11 @@ class Logic<T> implements AbstractLogic<T> {
     return result;
   }
 
+  Reducer<T> get privateReducer => _reducer;
+
   @override
   Reducer<T> get reducer => filterReducer(
-      combineReducers<T>(<Reducer<T>>[_reducer, dependencies?.reducer]),
+      combineReducers<T>(<Reducer<T>>[privateReducer, dependencies?.reducer]),
       filter);
 
   @override
