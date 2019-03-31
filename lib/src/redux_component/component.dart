@@ -55,7 +55,6 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
         getter: _asGetter<T>(getter),
         store: store,
         key: key(getter()),
-        identifier: identifier,
       ),
     );
   }
@@ -201,14 +200,12 @@ class ComponentWidget<T> extends StatefulWidget {
   final Component<T> component;
   final PageStore<Object> store;
   final Get<T> getter;
-  final String identifier;
 
   const ComponentWidget({
     @required this.component,
     @required this.store,
     @required this.getter,
     Key key,
-    this.identifier,
   })  : assert(component != null),
         assert(store != null),
         assert(getter != null),
@@ -245,7 +242,7 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
       getState: () => widget.getter(),
     );
 
-    _mainCtx.extra['identifier'] = widget.identifier;
+    _mainCtx.extra['identifier'] = widget.component.identifier;
 
     _viewUpdater = widget.component.createViewUpdater(_mainCtx.state);
 
