@@ -5,6 +5,7 @@ import '../debug.dart';
 
 int _microSecsSinceEpoch() => DateTime.now().microsecondsSinceEpoch;
 
+/// functor performance by time consuming.
 ApplyLikeEnhancer performanceAOP(String tag) {
   return isDebug()
       ? (dynamic Function(List<dynamic>) functor) {

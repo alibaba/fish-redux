@@ -3,6 +3,8 @@ import 'package:fish_redux/fish_redux.dart';
 import '../../redux/redux.dart';
 import '../../utils/debug.dart';
 
+/// Middleware for print action dispatch.
+/// is works on debug mode.
 Middleware<T> logMiddleware<T>({
   String tag = 'redux',
   String Function(T) monitor,

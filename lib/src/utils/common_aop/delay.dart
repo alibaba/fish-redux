@@ -2,6 +2,7 @@ import 'dart:async';
 
 import '../aop.dart';
 
+/// functor will be call after [millis].
 ApplyLikeEnhancer delay(int millis) {
   return (dynamic Function(List<dynamic>) functor) {
     return (List<dynamic> positionalArguments,

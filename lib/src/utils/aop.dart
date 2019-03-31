@@ -1,7 +1,9 @@
 typedef TypedApplyLike<R> = R Function(List<dynamic>, [Map<Symbol, dynamic>]);
 
+/// todo 这个函数签名的含义？
 typedef ApplyLike = dynamic Function(List<dynamic>, [Map<Symbol, dynamic>]);
 
+/// todo 同上
 typedef ApplyLikeEnhancer = ApplyLike Function(ApplyLike functor);
 
 ApplyLike _identity(ApplyLike f) => f;
@@ -11,6 +13,9 @@ ApplyLikeEnhancer _combine(ApplyLikeEnhancer e0, ApplyLikeEnhancer e1) =>
 
 const ApplyLikeEnhancer ApplyLikeEnhancerIdentity = _identity;
 
+/// Implement AOP with Currying tec.
+/// [AOP]: https://en.wikipedia.org/wiki/Aspect-oriented_programming
+/// [Currying]: https://en.wikipedia.org/wiki/Currying
 class AOP {
   final ApplyLikeEnhancer _enhancer;
 
