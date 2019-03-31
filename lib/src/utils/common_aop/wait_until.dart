@@ -1,6 +1,7 @@
 import 'dart:async';
 import '../aop.dart';
 
+/// Wait the future return.
 ApplyLikeEnhancer waitUntil() {
   return (dynamic Function(List<dynamic>) functor) {
     bool isLocked = false;
