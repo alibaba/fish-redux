@@ -20,6 +20,7 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
   final ViewBuilder<T> view;
   final ShouldUpdate<T> shouldUpdate;
   final WidgetWrapper wrapper;
+  final String identifier;
 
   Component({
     @required this.view,
@@ -32,6 +33,7 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
     ShouldUpdate<T> shouldUpdate,
     WidgetWrapper wrapper,
     Key Function(T) key,
+    this.identifier,
   })  : assert(view != null),
         wrapper = wrapper ?? _wrapperByDefault,
         shouldUpdate = shouldUpdate ?? updateByDefault<T>(),
@@ -53,6 +55,7 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
         getter: _asGetter<T>(getter),
         store: store,
         key: key(getter()),
+        identifier: identifier,
       ),
     );
   }
@@ -125,6 +128,23 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
     }
     return runtimeGetter;
   }
+
+  @override
+  Reducer<T> get privateReducer {
+    final Reducer<T> superReducer = super.privateReducer;
+    return superReducer != null
+        ? (T state, Action action) {
+            if(action.identifier == null)
+              return superReducer(state, action);
+
+            if(action.identifier == identifier){
+              return superReducer(state, action);
+            }
+            return state;
+          }
+          : null;
+  }
+
 }
 
 class _ViewUpdater<T> implements ViewUpdater<T> {
@@ -181,12 +201,14 @@ class ComponentWidget<T> extends StatefulWidget {
   final Component<T> component;
   final PageStore<Object> store;
   final Get<T> getter;
+  final String identifier;
 
   const ComponentWidget({
     @required this.component,
     @required this.store,
     @required this.getter,
     Key key,
+    this.identifier,
   })  : assert(component != null),
         assert(store != null),
         assert(getter != null),
@@ -222,6 +244,8 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
       buildContext: context,
       getState: () => widget.getter(),
     );
+
+    _mainCtx.extra['identifier'] = widget.identifier;
 
     _viewUpdater = widget.component.createViewUpdater(_mainCtx.state);
 

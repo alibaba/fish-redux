@@ -5,10 +5,10 @@ import 'logic.dart';
 
 class PrivateAction extends Action {
   final Object target;
-  PrivateAction(Object type, {dynamic payload, this.target})
-      : super(type, payload: payload);
+  PrivateAction(Object type, {dynamic payload, this.target, String identifier})
+      : super(type, payload: payload, identifier: identifier);
 
-  Action asAction() => Action(type, payload: payload);
+  Action asAction() => Action(type, payload: payload, identifier: identifier);
 }
 
 mixin PrivateReducerMixin<T> on Logic<T> {
@@ -39,6 +39,7 @@ mixin PrivateReducerMixin<T> on Logic<T> {
           action.type,
           payload: action.payload,
           target: ctx.state,
+          identifier: action.identifier ?? ctx.extra['identifier']
         );
       }
       superDispatch(action);

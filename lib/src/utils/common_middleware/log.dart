@@ -14,7 +14,7 @@ Middleware<T> logMiddleware<T>({
       return isDebug()
           ? (Action action) {
               print('---------- [$tag] ----------');
-              print('[$tag] ${action.type} ${action.payload}');
+              print('[$tag] ${action.type} ${action.payload} ${action.identifier == null ? "" : "identifier ${action.identifier}"}');
 
               final T prevState = getState();
               if (monitor != null) {

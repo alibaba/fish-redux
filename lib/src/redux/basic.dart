@@ -21,9 +21,10 @@ import 'dart:async';
 ///     3. type: indicates the type of intent; payload: the original information loaded with the intent.
 ///     4. Action definitions and standards, strictly follow the definition and standards of Action in the Redux community.
 class Action {
-  const Action(this.type, {this.payload});
+  const Action(this.type, {this.payload, this.identifier});
   final Object type;
   final dynamic payload;
+  final String identifier;
 }
 
 /// Store internal intent type definition.
