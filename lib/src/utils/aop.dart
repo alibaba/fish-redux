@@ -1,9 +1,9 @@
 typedef TypedApplyLike<R> = R Function(List<dynamic>, [Map<Symbol, dynamic>]);
 
-/// todo 这个函数签名的含义？
+/// Unified abstraction of functions which used in [Function.apply]
 typedef ApplyLike = dynamic Function(List<dynamic>, [Map<Symbol, dynamic>]);
 
-/// todo 同上
+/// Unified abstraction of function AOP, input one function output another with some enhancement inside.
 typedef ApplyLikeEnhancer = ApplyLike Function(ApplyLike functor);
 
 ApplyLike _identity(ApplyLike f) => f;
