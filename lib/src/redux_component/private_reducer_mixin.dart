@@ -1,3 +1,5 @@
+import 'package:fish_redux/src/redux_component/extra_state.dart';
+
 import '../../fish_redux.dart';
 import '../redux/redux.dart';
 import 'basic.dart';
@@ -35,11 +37,12 @@ mixin PrivateReducerMixin<T> on Logic<T> {
     );
     return (Action action) {
       if (action is! PrivateAction) {
+        final T state = ctx.state;
         action = PrivateAction(
           action.type,
           payload: action.payload,
           target: ctx.state,
-          identifier: action.identifier ?? ctx.extra['identifier']
+          identifier: action.identifier ?? (state is ExtraState ? state.identifier : null),
         );
       }
       superDispatch(action);

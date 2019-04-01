@@ -1,3 +1,4 @@
+import 'package:fish_redux/src/redux_component/extra_state.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../fish_redux.dart';
@@ -20,7 +21,6 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
   final ViewBuilder<T> view;
   final ShouldUpdate<T> shouldUpdate;
   final WidgetWrapper wrapper;
-  final String identifier;
 
   Component({
     @required this.view,
@@ -33,7 +33,6 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
     ShouldUpdate<T> shouldUpdate,
     WidgetWrapper wrapper,
     Key Function(T) key,
-    this.identifier,
   })  : assert(view != null),
         wrapper = wrapper ?? _wrapperByDefault,
         shouldUpdate = shouldUpdate ?? updateByDefault<T>(),
@@ -136,14 +135,15 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
             if(action.identifier == null)
               return superReducer(state, action);
 
-            if(action.identifier == identifier){
-              return superReducer(state, action);
+            if(state is ExtraState){
+              if(action.identifier == state.identifier)
+                return superReducer(state, action);
             }
+
             return state;
           }
           : null;
   }
-
 }
 
 class _ViewUpdater<T> implements ViewUpdater<T> {
@@ -241,8 +241,6 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
       buildContext: context,
       getState: () => widget.getter(),
     );
-
-    _mainCtx.extra['identifier'] = widget.component.identifier;
 
     _viewUpdater = widget.component.createViewUpdater(_mainCtx.state);
 
