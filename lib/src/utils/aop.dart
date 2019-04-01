@@ -16,6 +16,13 @@ const ApplyLikeEnhancer ApplyLikeEnhancerIdentity = _identity;
 /// Implement AOP with Currying tec.
 /// [AOP]: https://en.wikipedia.org/wiki/Aspect-oriented_programming
 /// [Currying]: https://en.wikipedia.org/wiki/Currying
+/// Process
+/// 1. Input user [Function]
+/// 2. Cast to [ApplyLike]
+/// 3. Add some enhancement (by [ApplyLikeEnhancer])
+/// 4. Get new [ApplyLike]
+/// 5. Cast to [TypedApplyLike]
+/// 6. Cast to user [Function]
 class AOP {
   final ApplyLikeEnhancer _enhancer;
 
