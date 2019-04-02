@@ -69,6 +69,7 @@ class AppRoutes<T> implements AbstractRoutes {
     ]);
 
     return (T state, Action action) {
+      /// Forward RouteAction._route action to the matching subReducer with same payload.
       if (action.type == RouteAction._route) {
         final Tuple2<String, Map<String, dynamic>> payload = action.payload;
         final String path = payload.i0;
