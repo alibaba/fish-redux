@@ -142,3 +142,41 @@ abstract class HybridRoutes implements AbstractRoutes {
     return null;
   }
 }
+
+/// How to define ?
+///     MainRoutes extends HybridRoutes with OnRouteNotFoundMixin {
+///       MainRoutes():super(
+///           routes: [
+///             PageRoutes(
+///               pages: <String, Page<Object, Map<String, dynamic>>>{
+///                 'home': HomePage(),
+///                 'detail': DetailPage(),
+///               },
+///             ),
+///             AppRoutes<T>(
+///               preloadedState: T(),
+///               middleware:[],
+///               slots: {
+///                 'message': MsgConn() + MessageComponent(),
+///                 'personal': PersonalConn() + PersonalComponent(),
+///               },
+///             ),
+///           ]
+///         );
+///
+///       Widget onRouteNotFound(String path, Map<String, dynamic> map) {
+///         return Text('route of $path not found.');
+///       }
+///     }
+///
+/// How to use ?
+///     const Routes mainRoutes = MainRoutes();
+///     mainRoutes.buildPage('test', {});
+mixin OnRouteNotFoundMixin on AbstractRoutes {
+  @override
+  Widget buildPage(String path, Map<String, dynamic> map) {
+    return super.buildPage(path, map) ?? onRouteNotFound(path, map);
+  }
+
+  Widget onRouteNotFound(String path, Map<String, dynamic> map);
+}
