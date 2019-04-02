@@ -13,6 +13,6 @@ bool isDebug() {
 
 /// wrap println with bool return.
 bool println(Object object) {
-  println(object);
+  print(object);
   return true;
 }
