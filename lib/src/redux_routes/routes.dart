@@ -174,9 +174,8 @@ abstract class HybridRoutes implements AbstractRoutes {
 ///     mainRoutes.buildPage('test', {});
 mixin OnRouteNotFoundMixin on AbstractRoutes {
   @override
-  Widget buildPage(String path, Map<String, dynamic> map) {
-    return super.buildPage(path, map) ?? onRouteNotFound(path, map);
-  }
+  Widget buildPage(String path, Map<String, dynamic> map) =>
+      super.buildPage(path, map) ?? onRouteNotFound(path, map);
 
   Widget onRouteNotFound(String path, Map<String, dynamic> map);
 }
