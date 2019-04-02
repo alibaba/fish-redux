@@ -118,10 +118,6 @@ class PageRoutes implements AbstractRoutes {
 ///             ),
 ///           ]
 ///         );
-///
-///       Widget onRouteNotFound(String path, Map<String, dynamic> map) {
-///         /// todo
-///       }
 ///     }
 ///
 /// How to use ?
@@ -142,8 +138,6 @@ abstract class HybridRoutes implements AbstractRoutes {
         return result;
       }
     }
-    return onRouteNotFound(path, map);
+    return null;
   }
-
-  Widget onRouteNotFound(String path, Map<String, dynamic> map);
 }
