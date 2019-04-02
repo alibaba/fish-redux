@@ -99,7 +99,7 @@ class PageRoutes implements AbstractRoutes {
 }
 
 /// How to define ?
-///     MainRoutes extends Routes {
+///     MainRoutes extends HybridRoutes {
 ///       MainRoutes():super(
 ///           routes: [
 ///             PageRoutes(
@@ -127,10 +127,10 @@ class PageRoutes implements AbstractRoutes {
 /// How to use ?
 ///     const Routes mainRoutes = MainRoutes();
 ///     mainRoutes.buildPage('home', {});
-abstract class Routes implements AbstractRoutes {
+abstract class HybridRoutes implements AbstractRoutes {
   final List<AbstractRoutes> routes;
 
-  const Routes({
+  const HybridRoutes({
     @required this.routes,
   }) : assert(routes != null);
 
