@@ -4,7 +4,7 @@ import '../../redux/redux.dart';
 import '../../utils/debug.dart';
 
 /// Middleware for print action dispatch performance by time consuming.
-/// is works on debug mode.
+/// It works on debug mode.
 Middleware<T> performanceMiddleware<T>({String tag = 'redux'}) {
   return ({Dispatch dispatch, Get<T> getState}) {
     return (Dispatch next) {
