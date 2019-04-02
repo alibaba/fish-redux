@@ -1,6 +1,6 @@
 # Fish Redux
 
-[![Build Status](https://travis-ci.org/alibaba/fish-redux.svg?branch=master)](https://travis-ci.org/alibaba/fish-redux) [![pub package](https://img.shields.io/pub/v/fish_redux.svg)](https://pub.dartlang.org/packages/fish_redux)[![codecov](https://codecov.io/gh/alibaba/fish-redux/branch/master/graph/badge.svg)](https://codecov.io/gh/alibaba/fish-redux)
+[![Build Status](https://travis-ci.org/alibaba/fish-redux.svg?branch=master)](https://travis-ci.org/alibaba/fish-redux) [![pub package](https://img.shields.io/pub/v/fish_redux.svg)](https://pub.dartlang.org/packages/fish_redux) [![codecov](https://codecov.io/gh/alibaba/fish-redux/branch/master/graph/badge.svg)](https://codecov.io/gh/alibaba/fish-redux)
 
 <img src="https://img.alicdn.com/tfs/TB1r74NJyLaK1RjSZFxXXamPFXa-1024-1024.png" width="128px" height="128px">
 
