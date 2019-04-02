@@ -4,7 +4,7 @@ import '../redux/redux.dart';
 import '../redux_component/redux_component.dart';
 import '../utils/utils.dart';
 
-/// Define a basic behavior of route.
+/// Define a basic behavior of routes.
 abstract class AbstractRoutes {
   Widget buildPage(String path, Map<String, dynamic> map);
 }
@@ -30,26 +30,26 @@ class _RouteActionCreator {
 
 /// Multi-page(a route component is a page) sharing a store.
 class AppRoutes<T> implements AbstractRoutes {
-  final Map<String, Dependent<T>> slots;
+  final Map<String, Dependent<T>> pages;
   final PageStore<T> _store;
 
   AppRoutes({
     @required T preloadedState,
-    @required this.slots,
+    @required this.pages,
     Reducer<T> reducer,
     List<Middleware<T>> middleware,
   })  : assert(preloadedState != null,
             'Expected the preloadedState to be non-null value.'),
-        assert(slots != null, 'Expected the slots to be non-null value.'),
+        assert(pages != null, 'Expected the slots to be non-null value.'),
         _store = createPageStore<T>(
           preloadedState,
-          _createReducer<T>(slots, reducer),
+          _createReducer<T>(pages, reducer),
           applyMiddleware<T>(middleware),
         );
 
   @override
   Widget buildPage(String path, Map<String, dynamic> map) {
-    final Dependent<T> dependent = slots[path];
+    final Dependent<T> dependent = pages[path];
     if (dependent != null) {
       _store.dispatch(_RouteActionCreator._route(path, map));
     }
@@ -156,7 +156,7 @@ abstract class HybridRoutes implements AbstractRoutes {
 ///             AppRoutes<T>(
 ///               preloadedState: T(),
 ///               middleware:[],
-///               slots: {
+///               pages: {
 ///                 'message': MsgConn() + MessageComponent(),
 ///                 'personal': PersonalConn() + PersonalComponent(),
 ///               },
