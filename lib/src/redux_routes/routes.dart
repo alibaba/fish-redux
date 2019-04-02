@@ -4,10 +4,18 @@ import '../redux/redux.dart';
 import '../redux_component/redux_component.dart';
 import '../utils/utils.dart';
 
+/// Define a basic behavior of route.
 abstract class AbstractRoutes {
   Widget buildPage(String path, Map<String, dynamic> map);
 }
 
+/// Use RouteAction.route in reducer.
+///     asReducer<T>({
+///       RouteAction.route: _route,
+///     });
+///     T _route(T state, Action action) {}
+///
+/// Never use RouteAction._route. It is hidden.
 enum RouteAction {
   route,
   _route,
@@ -20,11 +28,12 @@ class _RouteActionCreator {
       );
 }
 
-class DependentRoutes<T> implements AbstractRoutes {
+/// Multi-page(a route component is a page) sharing a store.
+class AppRoutes<T> implements AbstractRoutes {
   final Map<String, Dependent<T>> slots;
   final PageStore<T> _store;
 
-  DependentRoutes({
+  AppRoutes({
     @required T preloadedState,
     @required this.slots,
     Reducer<T> reducer,
@@ -76,6 +85,7 @@ class DependentRoutes<T> implements AbstractRoutes {
   }
 }
 
+/// Each page has a unique store.
 class PageRoutes implements AbstractRoutes {
   final Map<String, Page<Object, Map<String, dynamic>>> pages;
 
@@ -88,6 +98,35 @@ class PageRoutes implements AbstractRoutes {
       pages[path]?.buildPage(map);
 }
 
+/// How to define ?
+///     MainRoutes extends Routes {
+///       MainRoutes():super(
+///           routes: [
+///             PageRoutes(
+///               pages: <String, Page<Object, Map<String, dynamic>>>{
+///                 'home': HomePage(),
+///                 'detail': DetailPage(),
+///               },
+///             ),
+///             AppRoutes<T>(
+///               preloadedState: T(),
+///               middleware:[],
+///               slots: {
+///                 'message': MsgConn() + MessageComponent(),
+///                 'personal': PersonalConn() + PersonalComponent(),
+///               },
+///             ),
+///           ]
+///         );
+///
+///       Widget onRouteNotFound(String path, Map<String, dynamic> map) {
+///         /// todo
+///       }
+///     }
+///
+/// How to use ?
+///     const Routes mainRoutes = MainRoutes();
+///     mainRoutes.buildPage('home', {});
 abstract class Routes implements AbstractRoutes {
   final List<AbstractRoutes> routes;
 
