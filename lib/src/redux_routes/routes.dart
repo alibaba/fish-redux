@@ -40,7 +40,7 @@ class AppRoutes<T> implements AbstractRoutes {
     List<Middleware<T>> middleware,
   })  : assert(preloadedState != null,
             'Expected the preloadedState to be non-null value.'),
-        assert(pages != null, 'Expected the slots to be non-null value.'),
+        assert(pages != null, 'Expected the pages to be non-null value.'),
         _store = createPageStore<T>(
           preloadedState,
           _createReducer<T>(pages, reducer),
@@ -57,8 +57,8 @@ class AppRoutes<T> implements AbstractRoutes {
   }
 
   static Reducer<T> _createReducer<T>(
-      Map<String, Dependent<T>> slots, Reducer<T> reducer) {
-    final Map<String, SubReducer<T>> subReducerMap = slots.map((String path,
+      Map<String, Dependent<T>> pages, Reducer<T> reducer) {
+    final Map<String, SubReducer<T>> subReducerMap = pages.map((String path,
             Dependent<T> dependent) =>
         MapEntry<String, SubReducer<T>>(path, dependent.createSubReducer()));
 
@@ -112,7 +112,7 @@ class PageRoutes implements AbstractRoutes {
 ///             AppRoutes<T>(
 ///               preloadedState: T(),
 ///               middleware:[],
-///               slots: {
+///               pages: {
 ///                 'message': MsgConn() + MessageComponent(),
 ///                 'personal': PersonalConn() + PersonalComponent(),
 ///               },
