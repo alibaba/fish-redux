@@ -13,7 +13,11 @@ abstract class AbstractRoutes {
 ///     asReducer<T>({
 ///       RouteAction.route: _route,
 ///     });
-///     T _route(T state, Action action) {}
+///
+///     T _route(T state, Action action) {
+///       final Map<String, dynamic> options = action.payload;
+///       /// handle the options
+///     }
 ///
 /// Never use RouteAction._route. It is hidden.
 enum RouteAction {
