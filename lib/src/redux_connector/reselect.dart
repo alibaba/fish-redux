@@ -1,4 +1,4 @@
-import 'mutable.dart';
+import '../redux/redux.dart';
 
 bool _listEquals<E>(List<E> list1, List<E> list2) {
   if (identical(list1, list2)) {
