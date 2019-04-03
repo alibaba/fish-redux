@@ -6,7 +6,7 @@ import '../utils/utils.dart';
 
 /// Define a basic behavior of routes.
 abstract class AbstractRoutes {
-  Widget buildPage(String path, Map<String, dynamic> map);
+  Widget buildPage(String path, dynamic arguments);
 }
 
 /// Use RouteAction.route in reducer.
@@ -15,8 +15,8 @@ abstract class AbstractRoutes {
 ///     });
 ///
 ///     T _route(T state, Action action) {
-///       final Map<String, dynamic> options = action.payload;
-///       /// handle the options
+///       final dynamic arguments = action.payload;
+///       /// handle the arguments
 ///     }
 ///
 /// Never use RouteAction._route. It is hidden.
@@ -26,9 +26,9 @@ enum RouteAction {
 }
 
 class _RouteActionCreator {
-  static Action _route(String path, Map<String, dynamic> map) => Action(
+  static Action _route(String path, dynamic arguments) => Action(
         RouteAction._route,
-        payload: Tuple2<String, Map<String, dynamic>>(path, map),
+        payload: Tuple2<String, dynamic>(path, arguments),
       );
 }
 
@@ -52,10 +52,10 @@ class AppRoutes<T> implements AbstractRoutes {
         );
 
   @override
-  Widget buildPage(String path, Map<String, dynamic> map) {
+  Widget buildPage(String path, dynamic arguments) {
     final Dependent<T> dependent = pages[path];
     if (dependent != null) {
-      _store.dispatch(_RouteActionCreator._route(path, map));
+      _store.dispatch(_RouteActionCreator._route(path, arguments));
     }
     return dependent?.buildComponent(_store, _store.getState);
   }
@@ -75,7 +75,7 @@ class AppRoutes<T> implements AbstractRoutes {
     return (T state, Action action) {
       /// Forward RouteAction._route action to the matching subReducer with same payload.
       if (action.type == RouteAction._route) {
-        final Tuple2<String, Map<String, dynamic>> payload = action.payload;
+        final Tuple2<String, dynamic> payload = action.payload;
         final String path = payload.i0;
         final SubReducer<T> subReducer = subReducerMap[path];
         assert(subReducer != null);
@@ -92,15 +92,15 @@ class AppRoutes<T> implements AbstractRoutes {
 
 /// Each page has a unique store.
 class PageRoutes implements AbstractRoutes {
-  final Map<String, Page<Object, Map<String, dynamic>>> pages;
+  final Map<String, Page<Object, dynamic>> pages;
 
   PageRoutes({
     @required this.pages,
   }) : assert(pages != null, 'Expected the pages to be non-null value.');
 
   @override
-  Widget buildPage(String path, Map<String, dynamic> map) =>
-      pages[path]?.buildPage(map);
+  Widget buildPage(String path, dynamic arguments) =>
+      pages[path]?.buildPage(arguments);
 }
 
 /// How to define ?
@@ -108,7 +108,7 @@ class PageRoutes implements AbstractRoutes {
 ///       MainRoutes():super(
 ///           routes: [
 ///             PageRoutes(
-///               pages: <String, Page<Object, Map<String, dynamic>>>{
+///               pages: <String, Page<Object, dynamic>>{
 ///                 'home': HomePage(),
 ///                 'detail': DetailPage(),
 ///               },
@@ -128,7 +128,7 @@ class PageRoutes implements AbstractRoutes {
 /// How to use ?
 ///     const Routes mainRoutes = MainRoutes();
 ///     mainRoutes.buildPage('home', {});
-abstract class HybridRoutes implements AbstractRoutes {
+class HybridRoutes implements AbstractRoutes {
   final List<AbstractRoutes> routes;
 
   const HybridRoutes({
@@ -136,9 +136,9 @@ abstract class HybridRoutes implements AbstractRoutes {
   }) : assert(routes != null);
 
   @override
-  Widget buildPage(String path, Map<String, dynamic> map) {
+  Widget buildPage(String path, dynamic arguments) {
     for (AbstractRoutes aRoutes in routes) {
-      final Widget result = aRoutes.buildPage(path, map);
+      final Widget result = aRoutes.buildPage(path, arguments);
       if (result != null) {
         return result;
       }
@@ -152,7 +152,7 @@ abstract class HybridRoutes implements AbstractRoutes {
 ///       MainRoutes():super(
 ///           routes: [
 ///             PageRoutes(
-///               pages: <String, Page<Object, Map<String, dynamic>>>{
+///               pages: <String, Page<Object, dynamic>>{
 ///                 'home': HomePage(),
 ///                 'detail': DetailPage(),
 ///               },
@@ -168,7 +168,7 @@ abstract class HybridRoutes implements AbstractRoutes {
 ///           ]
 ///         );
 ///
-///       Widget onRouteNotFound(String path, Map<String, dynamic> map) {
+///       Widget onRouteNotFound(String path, dynamic map) {
 ///         return Text('route of $path not found.');
 ///       }
 ///     }
@@ -178,8 +178,8 @@ abstract class HybridRoutes implements AbstractRoutes {
 ///     mainRoutes.buildPage('test', {});
 mixin OnRouteNotFoundMixin on AbstractRoutes {
   @override
-  Widget buildPage(String path, Map<String, dynamic> map) =>
-      super.buildPage(path, map) ?? onRouteNotFound(path, map);
+  Widget buildPage(String path, dynamic arguments) =>
+      super.buildPage(path, arguments) ?? onRouteNotFound(path, arguments);
 
-  Widget onRouteNotFound(String path, Map<String, dynamic> map);
+  Widget onRouteNotFound(String path, dynamic arguments);
 }

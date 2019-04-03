@@ -17,7 +17,6 @@ dependencies:
         path: ../
     flutter:
         sdk: flutter
-
     path_provider: ^0.4.1
 
 dev_dependencies:
