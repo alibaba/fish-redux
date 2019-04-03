@@ -1,7 +1,6 @@
-import 'package:fish_redux/fish_redux.dart';
-
 import '../../redux/redux.dart';
-import '../../utils/debug.dart';
+import '../../redux_component/redux_component.dart';
+import '../../utils/utils.dart';
 
 /// Middleware for print action detail when middleware update,
 /// It works on debug mode.

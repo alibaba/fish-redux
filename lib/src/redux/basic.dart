@@ -90,12 +90,12 @@ typedef SubReducer<T> = T Function(T state, Action action, bool isStateCopied);
 abstract class AbstractConnector<S, P> {
   P get(S state);
 
-  /// For mutable state, there should be three abilities needed to be met.
+  /// For mutable state, there are three abilities needed to be met.
   ///     1. get: (S) => P
   ///     2. set: (S, P) => void
   ///     3. shallow copy: s.clone()
   ///
-  /// For immutable state, there should be two abilities needed to be met.
+  /// For immutable state, there are two abilities needed to be met.
   ///     1. get: (S) => P
   ///     2. set: (S, P) => S
   ///
