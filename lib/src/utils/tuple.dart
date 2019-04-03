@@ -1,4 +1,3 @@
-
 /// Jenkins hash function, optimized for small integers.
 ///
 /// Borrowed from the dart sdk: sdk/lib/math/jenkins_smi_hash.dart.
@@ -18,9 +17,8 @@ int _hash(Iterable<int> values) {
   return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
 }
 
-
 /// Represents a 1-tuple
-/// todo 变量final会好些？构造参数可选的考虑是？
+/// Mutable data types are easier to use.
 class Tuple1<T0> {
   T0 i0;
 

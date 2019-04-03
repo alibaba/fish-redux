@@ -12,7 +12,7 @@ void _throwIfNot(bool condition, [String message]) {
   }
 }
 
-Store<T> _createBasicStore<T>(T preloadedState, Reducer<T> reducer) {
+Store<T> _createStore<T>(T preloadedState, Reducer<T> reducer) {
   _throwIfNot(preloadedState != null,
       'Expected the preloadedState to be non-null value.');
 
@@ -79,8 +79,8 @@ Store<T> _createBasicStore<T>(T preloadedState, Reducer<T> reducer) {
 Store<T> createStore<T>(T preloadedState, Reducer<T> reducer,
         [StoreEnhancer<T> enhancer]) =>
     enhancer != null
-        ? enhancer(_createBasicStore)(preloadedState, reducer)
-        : _createBasicStore(preloadedState, reducer);
+        ? enhancer(_createStore)(preloadedState, reducer)
+        : _createStore(preloadedState, reducer);
 
 StoreEnhancer<T> composeStoreEnhancer<T>(List<StoreEnhancer<T>> enhancers) =>
     enhancers == null || enhancers.isEmpty

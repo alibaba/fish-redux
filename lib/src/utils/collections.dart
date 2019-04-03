@@ -2,7 +2,6 @@ import 'dart:core';
 
 /// Util for collections.
 class Collections {
-
   /// Wrap List.reduce with a check list is null or empty.
   static E reduce<E>(List<E> list, E combine(E e0, E e1)) =>
       (list == null || list.isEmpty) ? null : list.reduce(combine);

@@ -3,6 +3,7 @@ export 'basic.dart';
 export 'component.dart';
 export 'debug_or_report.dart';
 export 'dependencies.dart';
+export 'dependent.dart';
 export 'helper.dart';
 export 'lifecycle.dart';
 export 'logic.dart';

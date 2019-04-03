@@ -10,9 +10,3 @@ bool isDebug() {
   }());
   return _debugFlag;
 }
-
-/// wrap println with bool return.
-bool println(Object object) {
-  print(object);
-  return true;
-}

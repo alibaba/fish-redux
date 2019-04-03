@@ -1,4 +1,5 @@
-import 'mutable.dart';
+import '../redux/redux.dart';
+
 import 'op_mixin.dart';
 
 /// use ConnOp<T, P> instead of Connector<T, P>

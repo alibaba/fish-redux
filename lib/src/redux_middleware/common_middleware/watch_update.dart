@@ -1,10 +1,9 @@
-import 'package:fish_redux/fish_redux.dart';
-
 import '../../redux/redux.dart';
-import '../../utils/debug.dart';
+import '../../redux_component/redux_component.dart';
+import '../../utils/utils.dart';
 
 /// Middleware for print action detail when middleware update,
-/// is works on debug mode.
+/// It works on debug mode.
 Middleware<T> watchUpdateMiddleware<T>({String tag = 'redux'}) {
   return ({Dispatch dispatch, Get<T> getState}) {
     return (Dispatch next) {
