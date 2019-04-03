@@ -15,10 +15,11 @@ Effect<ToDoState> buildEffect() {
 void _onEdit(Action action, Context<ToDoState> ctx) {
   if (action.payload == ctx.state.uniqueId) {
     Navigator.of(ctx.context)
-        .push<ToDoState>(MaterialPageRoute<ToDoState>(
-            builder: (BuildContext buildCtx) =>
-                edit_page.TodoEditPage().buildPage(ctx.state)))
-        .then((ToDoState toDo) {
+        // .push<ToDoState>(MaterialPageRoute<ToDoState>(
+        //     builder: (BuildContext buildCtx) =>
+        //         edit_page.TodoEditPage().buildPage(ctx.state)))
+        .pushNamed('todo_edit', arguments: ctx.state)
+        .then((dynamic toDo) {
       if (toDo != null) {
         ctx.dispatch(ToDoActionCreator.editAction(toDo));
       }
