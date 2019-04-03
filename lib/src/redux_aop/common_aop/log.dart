@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import '../aop.dart';
-import '../debug.dart';
+import 'debug.dart';
 
 /// AOP for functor log.
 ApplyLikeEnhancer logAOP(String tag) {

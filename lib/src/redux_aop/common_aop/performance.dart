@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import '../aop.dart';
-import '../debug.dart';
+import 'debug.dart';
 
 int _microSecsSinceEpoch() => DateTime.now().microsecondsSinceEpoch;
 
