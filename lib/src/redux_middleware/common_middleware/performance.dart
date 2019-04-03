@@ -1,7 +1,5 @@
-import 'package:fish_redux/fish_redux.dart';
-
 import '../../redux/redux.dart';
-import '../../utils/debug.dart';
+import '../../utils/utils.dart';
 
 /// Middleware for print action dispatch performance by time consuming.
 /// It works on debug mode.
