@@ -5,6 +5,8 @@ enum Lifecycle {
   didChangeDependencies,
   build,
 
+  reassemble,
+
   didUpdateWidget,
   deactivate,
   dispose,
@@ -18,6 +20,8 @@ class LifecycleCreator {
   static Action initState() => const Action(Lifecycle.initState);
 
   static Action build() => const Action(Lifecycle.build);
+
+  static Action reassemble() => const Action(Lifecycle.reassemble);
 
   static Action dispose() => const Action(Lifecycle.dispose);
 

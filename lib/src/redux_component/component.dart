@@ -210,6 +210,7 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
   void reassemble() {
     super.reassemble();
     _viewUpdater.reassemble();
+    _mainCtx.onLifecycle(LifecycleCreator.reassemble());
   }
 
   @override
