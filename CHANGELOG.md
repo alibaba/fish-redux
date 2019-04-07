@@ -19,3 +19,12 @@
 -   remove warnings in logMiddleware for debug-actions #98
 -   correct spelling
 -   modify bindAction #73
+
+## [0.1.4]
+
+-   add support for AppStore
+-   add routes
+-   move middleware/aop to the top dir.
+-   add PrivateReducerMixin
+-   add reselect
+-   add docs
