@@ -22,6 +22,7 @@ bool _listEquals<E>(List<E> list1, List<E> list2) {
 abstract class _BasicReselect<T, P> extends MutableConn<T, P> {
   List<dynamic> _subsCache;
   P _pCache;
+  bool _hasBeenCalled = false;
 
   List<dynamic> getSubs(T state);
 
@@ -30,9 +31,10 @@ abstract class _BasicReselect<T, P> extends MutableConn<T, P> {
   @override
   P get(T state) {
     final List<dynamic> subs = getSubs(state);
-    if (!_listEquals<dynamic>(subs, _subsCache)) {
+    if (!_hasBeenCalled || !_listEquals<dynamic>(subs, _subsCache)) {
       _subsCache = subs;
-      return _pCache = reduceSubs(_subsCache);
+      _pCache = reduceSubs(_subsCache);
+      _hasBeenCalled = true;
     }
     return _pCache;
   }
