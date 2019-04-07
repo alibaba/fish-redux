@@ -29,8 +29,10 @@ class PageProvider extends InheritedWidget {
       store != oldWidget.store && extra != oldWidget.extra;
 }
 
+/// This class is no longer recommended, it has been discarded.
+@deprecated
 class AppProvider extends InheritedWidget {
-  final Set<Dispatch> _onActionContainer = Set<Dispatch>();
+  static final Set<Dispatch> _onActionContainer = Set<Dispatch>();
   final Map<String, dynamic> extra = <String, dynamic>{};
 
   AppProvider({
@@ -40,38 +42,25 @@ class AppProvider extends InheritedWidget {
         super(key: key, child: child);
 
   static void Function() register(BuildContext context, Dispatch dispatch) {
-    final AppProvider provider =
-        context.inheritFromWidgetOfExactType(AppProvider);
+    assert(!_onActionContainer.contains(dispatch),
+        'Do not register a dispatch which is already existed');
 
-    if (provider != null) {
-      assert(!provider._onActionContainer.contains(dispatch),
-          'Do not register a dispatch which is already existed');
-
-      if (!provider._onActionContainer.contains(dispatch) && dispatch != null) {
-        provider._onActionContainer.add(dispatch);
-      }
-
-      return () {
-        provider._onActionContainer.remove(dispatch);
-      };
-    } else {
-      return null;
+    if (!_onActionContainer.contains(dispatch) && dispatch != null) {
+      _onActionContainer.add(dispatch);
     }
+
+    return () {
+      _onActionContainer.remove(dispatch);
+    };
   }
 
   static void appBroadcast(BuildContext context, Action action) {
-    final AppProvider provider = context.inheritFromWidgetOfExactType(
-      AppProvider,
+    final List<OnAction> copy = _onActionContainer.toList(
+      growable: false,
     );
-    assert(provider != null, 'Please check if the AppProvider is mounted.');
-    if (provider != null) {
-      final List<OnAction> copy = provider._onActionContainer.toList(
-        growable: false,
-      );
 
-      for (OnAction onAction in copy) {
-        onAction(action);
-      }
+    for (OnAction onAction in copy) {
+      onAction(action);
     }
   }
 
