@@ -29,6 +29,7 @@ class PageProvider extends InheritedWidget {
       store != oldWidget.store && extra != oldWidget.extra;
 }
 
+/// Instead of requiring external use class, use AppProvider only as internal use class of the framework.
 @deprecated
 class AppProvider extends InheritedWidget {
   static final Set<Dispatch> _onActionContainer = Set<Dispatch>();
