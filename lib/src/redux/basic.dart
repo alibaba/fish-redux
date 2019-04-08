@@ -26,9 +26,6 @@ class Action {
   final dynamic payload;
 }
 
-/// Store internal intent type definition.
-enum ActionType { unknown, init, replace, destroy }
-
 /// Definition of the standard Reducer.
 /// If the Reducer needs to respond to the Action, it returns a new state, otherwise it returns the old state.
 typedef Reducer<T> = T Function(T state, Action action);
