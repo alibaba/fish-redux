@@ -6,8 +6,8 @@ import 'package:test_widgets/page/exception.dart';
 import 'package:test_widgets/page/page.dart';
 import 'package:test_widgets/page/state.dart';
 import 'package:test_widgets/test_base.dart';
-import 'instrument.dart';
-import 'track.dart';
+import '../instrument.dart';
+import '../track.dart';
 
 void main() {
   group('page', () {
