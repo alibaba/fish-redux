@@ -141,8 +141,9 @@ class _ViewUpdater<T> implements ViewUpdater<T> {
 
   @override
   Widget buildView(T state, Dispatch dispatch, ViewService viewService) {
-    if (_widgetCache == null) {
-      _widgetCache = view(state, dispatch, viewService);
+    Widget result = _widgetCache;
+    if (result == null) {
+      result = _widgetCache = view(state, dispatch, viewService);
 
       dispatch(LifecycleCreator.build());
 
@@ -152,7 +153,7 @@ class _ViewUpdater<T> implements ViewUpdater<T> {
         return true;
       }());
     }
-    return _widgetCache;
+    return result;
   }
 
   @override

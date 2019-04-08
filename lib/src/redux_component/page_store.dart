@@ -56,7 +56,7 @@ class _PageStore<T> extends PageStore<T> with _Broadcast<T> {
   }
 
   void _batchedNotify() {
-    if (SchedulerBinding.instance.schedulerPhase ==
+    if (SchedulerBinding.instance?.schedulerPhase ==
         SchedulerPhase.persistentCallbacks) {
       if (!isBatching) {
         isBatching = true;
