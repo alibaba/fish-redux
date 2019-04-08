@@ -6,8 +6,8 @@ import 'package:test_widgets/adapter/page.dart';
 import 'package:test_widgets/adapter/state.dart';
 import 'package:test_widgets/adapter/action.dart';
 import 'package:test_widgets/test_base.dart';
-import 'instrument.dart';
-import 'track.dart';
+import '../instrument.dart';
+import '../track.dart';
 
 void main() {
   group('adapter', () {

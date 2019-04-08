@@ -8,8 +8,8 @@ import 'package:test_widgets/dynamic_flow_adapter/page.dart';
 import 'package:test_widgets/dynamic_flow_adapter/state.dart';
 import 'package:test_widgets/test_base.dart';
 
-import 'instrument.dart';
-import 'track.dart';
+import '../instrument.dart';
+import '../track.dart';
 
 class ToDoComponentInstrument extends TestComponent<Todo> {
   ToDoComponentInstrument(final Track track)

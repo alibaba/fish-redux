@@ -4,8 +4,8 @@ import 'dart:ui';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:test/test.dart';
 
-import 'instrument.dart';
-import 'track.dart';
+import '../instrument.dart';
+import '../track.dart';
 
 enum ToDoAction { add, remove, done }
 
