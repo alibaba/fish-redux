@@ -304,33 +304,15 @@ abstract class Page<T, P> extends Component<T> {
           key: key,
         );
 
-  /// Expansion capability
-  List<Middleware<T>> buildMiddleware(List<Middleware<T>> middleware) {
-    return Collections.merge<Middleware<T>>(
-        <Middleware<T>>[interrupt$<T>()], middleware);
-  }
-
   Widget buildPage(P param) {
     return wrapper(_PageWidget<T>(
       component: this,
       storeBuilder: () => createPageStore<T>(
             initState(param),
             reducer,
-            applyMiddleware<T>(buildMiddleware(middleware)),
+            applyMiddleware<T>(mergeMiddleware$(middleware)),
           ),
     ));
-  }
-
-  static Middleware<T> interrupt$<T>() {
-    return ({Dispatch dispatch, Get<T> getState}) {
-      return (Dispatch next) {
-        return (Action action) {
-          if (!shouldBeInterruptedBeforeReducer(action)) {
-            next(action);
-          }
-        };
-      };
-    };
   }
 }
 

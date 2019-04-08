@@ -48,7 +48,7 @@ class AppRoutes<T> implements AbstractRoutes {
         _store = createPageStore<T>(
           preloadedState,
           _createReducer<T>(pages, reducer),
-          applyMiddleware<T>(middleware),
+          applyMiddleware<T>(mergeMiddleware$(middleware)),
         );
 
   @override
