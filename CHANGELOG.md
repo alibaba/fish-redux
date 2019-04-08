@@ -24,7 +24,13 @@
 
 -   add support for AppStore
 -   add routes
--   move middleware/aop to the top dir.
+-   move middleware/aop to the top dir
 -   add PrivateReducerMixin
 -   add reselect
 -   add docs
+
+## [0.1.5]
+
+-   fix bug if notified on building
+-   reconstruct test
+-   add mergeMiddleware\$
