@@ -78,12 +78,13 @@ class AppRoutes<T> implements AbstractRoutes {
         final Tuple2<String, dynamic> payload = action.payload;
         final String path = payload.i0;
         final SubReducer<T> subReducer = subReducerMap[path];
-        assert(subReducer != null);
-        return subReducer(
-          state,
-          Action(RouteAction.route, payload: payload.i1),
-          false,
-        );
+        return subReducer == null
+            ? state
+            : subReducer(
+                state,
+                Action(RouteAction.route, payload: payload.i1),
+                false,
+              );
       }
       return mainReducer(state, action);
     };
