@@ -35,7 +35,7 @@ class _RouteActionCreator {
 /// Multi-page(a route component is a page) sharing a store.
 class AppRoutes<T> implements AbstractRoutes {
   final Map<String, Dependent<T>> pages;
-  final PageStore<T> _store;
+  final PageStore<T> store;
 
   AppRoutes({
     @required T preloadedState,
@@ -45,7 +45,7 @@ class AppRoutes<T> implements AbstractRoutes {
   })  : assert(preloadedState != null,
             'Expected the preloadedState to be non-null value.'),
         assert(pages != null, 'Expected the pages to be non-null value.'),
-        _store = createPageStore<T>(
+        store = createPageStore<T>(
           preloadedState,
           _createReducer<T>(pages, reducer),
           applyMiddleware<T>(mergeMiddleware$(middleware)),
@@ -55,9 +55,9 @@ class AppRoutes<T> implements AbstractRoutes {
   Widget buildPage(String path, dynamic arguments) {
     final Dependent<T> dependent = pages[path];
     if (dependent != null) {
-      _store.dispatch(_RouteActionCreator._route(path, arguments));
+      store.dispatch(_RouteActionCreator._route(path, arguments));
     }
-    return dependent?.buildComponent(_store, _store.getState);
+    return dependent?.buildComponent(store, store.getState);
   }
 
   static Reducer<T> _createReducer<T>(
@@ -78,12 +78,13 @@ class AppRoutes<T> implements AbstractRoutes {
         final Tuple2<String, dynamic> payload = action.payload;
         final String path = payload.i0;
         final SubReducer<T> subReducer = subReducerMap[path];
-        assert(subReducer != null);
-        return subReducer(
-          state,
-          Action(RouteAction.route, payload: payload.i1),
-          false,
-        );
+        return subReducer == null
+            ? state
+            : subReducer(
+                state,
+                Action(RouteAction.route, payload: payload.i1),
+                false,
+              );
       }
       return mainReducer(state, action);
     };
