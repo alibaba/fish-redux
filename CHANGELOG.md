@@ -34,3 +34,9 @@
 -   fix bug if notified on building
 -   reconstruct test
 -   add mergeMiddleware\$
+
+## [0.1.6]
+
+-   fix bug if component has no reducer in app-routes
+-   reconstruct createStore
+-   app-routes's store to be visible
