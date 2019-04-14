@@ -18,7 +18,7 @@ class _Info {
 
 class _InfoConn extends Reselect2<_Parent, _Info, int, String> {
   @override
-  _Info cumputed(int sub0, String sub1) => _Info(sub0, sub1);
+  _Info computed(int sub0, String sub1) => _Info(sub0, sub1);
 
   @override
   int getSub0(_Parent state) => state.value;

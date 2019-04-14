@@ -67,7 +67,7 @@ class RecycleContext<T> extends DefaultContext<T> {
   }
 }
 
-abstract class RecycleContextMixin<T> implements Logic<T> {
+mixin RecycleContextMixin<T> on Logic<T> {
   @override
   RecycleContext<T> createContext({
     PageStore<Object> store,
@@ -89,6 +89,7 @@ ListAdapter combineListAdapters(Iterable<ListAdapter> adapters) {
       .toList(growable: false);
 
   if (list.every((ListAdapter e) => e.itemCount == 1)) {
+    /// The result is AbstractComponent
     return ListAdapter(
       (BuildContext buildContext, final int index) =>
           list[index].itemBuilder(buildContext, 0),
@@ -102,6 +103,7 @@ ListAdapter combineListAdapters(Iterable<ListAdapter> adapters) {
     return count + adapter.itemCount;
   });
 
+  /// The result is AbstractAdapter
   return ListAdapter(
     (BuildContext buildContext, final int index) {
       assert(index >= 0 && index < maxItemCount);
