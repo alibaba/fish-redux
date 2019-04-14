@@ -97,6 +97,7 @@ class DynamicFlowAdapter<T> extends Logic<T>
   }
 }
 
+/// Generate reducer for List<ItemBean> and combine them into one
 Reducer<T> _dynamicReducer<T>(
   Reducer<T> reducer,
   Map<String, AbstractLogic<Object>> pool,
@@ -125,6 +126,12 @@ Reducer<T> _dynamicReducer<T>(
   ]);
 }
 
+/// Define itemBean how to get state with connector
+///
+/// [_isSimilar] return true just use newState after reducer safely
+/// [_isSimilar] return false we should use cache state before reducer invoke.
+/// for reducer change state immediately but sub component will refresh on next
+/// frame. in this time the sub component will use cache state.
 Get<Object> _subGetter(Get<List<ItemBean>> getter, int index) {
   final List<ItemBean> curState = getter();
   final Object subCache = curState[index].data;
@@ -140,6 +147,10 @@ Get<Object> _subGetter(Get<List<ItemBean>> getter, int index) {
   };
 }
 
+/// Judge [oldList] and [newList] is similar
+///
+/// if true: means the list size and every itemBean type & data.runtimeType
+/// is equal.
 bool _isSimilar(
   List<ItemBean> oldList,
   List<ItemBean> newList,
