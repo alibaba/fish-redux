@@ -39,7 +39,7 @@ class StaticFlowAdapter<T> extends Logic<T>
           key: key,
         );
 
-  ListAdapter buildAdapter2(PageStore<Object> store, Get<T> getter) {
+  ListAdapter buildAdapter2(MixedStore<Object> store, Get<T> getter) {
     return null;
   }
 

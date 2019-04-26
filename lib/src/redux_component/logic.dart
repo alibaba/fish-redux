@@ -121,12 +121,12 @@ class Logic<T> implements AbstractLogic<T> {
 
   @override
   ContextSys<T> createContext({
-    PageStore<Object> store,
+    MixedStore<Object> store,
     BuildContext buildContext,
     Get<T> getState,
   }) {
     return DefaultContext<T>(
-      factors: this,
+      logic: this,
       store: store,
       buildContext: buildContext,
       getState: getState,

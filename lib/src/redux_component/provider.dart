@@ -4,7 +4,7 @@ import '../redux/redux.dart';
 import 'basic.dart';
 
 class PageProvider extends InheritedWidget {
-  final PageStore<Object> store;
+  final MixedStore<Object> store;
 
   /// Used to store page data if needed
   final Map<String, Object> extra;

@@ -1,11 +1,12 @@
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 
+@immutable
 class TestStub extends StatefulWidget {
   final Widget testWidget;
   final String title;
 
-  TestStub(this.testWidget, {this.title = 'FlutterTest'});
+  const TestStub(this.testWidget, {this.title = 'FlutterTest'});
 
   @override
   _StubState createState() => _StubState();

@@ -10,12 +10,12 @@ class RecycleContext<T> extends DefaultContext<T> {
   final Map<Object, int> _usedIndexMap = <Object, int>{};
 
   RecycleContext({
-    AbstractLogic<T> factors,
-    PageStore<Object> store,
+    AbstractLogic<T> logic,
+    MixedStore<Object> store,
     BuildContext buildContext,
     Get<T> getState,
   }) : super(
-          factors: factors,
+          logic: logic,
           store: store,
           buildContext: buildContext,
           getState: getState,
@@ -70,12 +70,12 @@ class RecycleContext<T> extends DefaultContext<T> {
 mixin RecycleContextMixin<T> on Logic<T> {
   @override
   RecycleContext<T> createContext({
-    PageStore<Object> store,
+    MixedStore<Object> store,
     BuildContext buildContext,
     Get<T> getState,
   }) {
     return RecycleContext<T>(
-      factors: this,
+      logic: this,
       store: store,
       buildContext: buildContext,
       getState: getState,

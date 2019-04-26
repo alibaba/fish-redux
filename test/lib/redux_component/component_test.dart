@@ -134,7 +134,7 @@ void main() {
       expect(component, isNotNull);
 
       final Widget componentWidget = component.buildComponent(
-          createPageStore<Todo>(Todo.mock(), null), () => Todo.mock());
+          createMixedStore<Todo>(Todo.mock(), null), () => Todo.mock());
       expect(componentWidget, isNotNull);
 
       expect(

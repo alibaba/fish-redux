@@ -9,7 +9,6 @@ import 'debug_or_report.dart';
 import 'dependencies.dart';
 import 'lifecycle.dart';
 import 'logic.dart';
-import 'page_store.dart';
 import 'provider.dart';
 
 /// Wrapper ComponentWidget if needed like KeepAlive, RepaintBoundary etc.
@@ -46,7 +45,7 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
         );
 
   @override
-  Widget buildComponent(PageStore<Object> store, Get<Object> getter) {
+  Widget buildComponent(MixedStore<Object> store, Get<Object> getter) {
     return wrapper(
       ComponentWidget<T>(
         component: this,
@@ -79,7 +78,7 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
 
   @override
   ContextSys<T> createContext({
-    PageStore<Object> store,
+    MixedStore<Object> store,
     BuildContext buildContext,
     Get<T> getState,
   }) {
@@ -180,7 +179,7 @@ class _ViewUpdater<T> implements ViewUpdater<T> {
 
 class ComponentWidget<T> extends StatefulWidget {
   final Component<T> component;
-  final PageStore<Object> store;
+  final MixedStore<Object> store;
   final Get<T> getter;
 
   const ComponentWidget({
@@ -307,10 +306,11 @@ abstract class Page<T, P> extends Component<T> {
   Widget buildPage(P param) {
     return wrapper(_PageWidget<T>(
       component: this,
-      storeBuilder: () => createPageStore<T>(
+      storeBuilder: () => createMixedStore<T>(
             initState(param),
             reducer,
-            applyMiddleware<T>(mergeMiddleware$(middleware)),
+            enhancer: applyMiddleware<T>(mergeMiddleware$(middleware)),
+            slots: dependencies?.slots,
           ),
     ));
   }
@@ -318,7 +318,7 @@ abstract class Page<T, P> extends Component<T> {
 
 class _PageWidget<T> extends StatefulWidget {
   final Component<T> component;
-  final Get<PageStore<T>> storeBuilder;
+  final Get<MixedStore<T>> storeBuilder;
 
   const _PageWidget({
     Key key,
@@ -331,7 +331,7 @@ class _PageWidget<T> extends StatefulWidget {
 }
 
 class _PageState<T> extends State<_PageWidget<T>> {
-  PageStore<T> _store;
+  MixedStore<T> _store;
   final Map<String, Object> extra = <String, Object>{};
 
   void Function() unregister;
