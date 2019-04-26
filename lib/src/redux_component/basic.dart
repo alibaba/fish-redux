@@ -59,15 +59,16 @@ typedef HigherEffect<T> = OnAction Function(Context<T> ctx);
 /// If an exception is thrown out, we may have some need to handle it.
 typedef OnError<T> = bool Function(Exception exception, Context<T> ctx);
 
-/// A store with broadcast
+/// A mixed store with broadcast & slot-build
 abstract class MixedStore<T> extends Store<T> {
-  Widget buildComponent(String name);
-
   /// Broadcast in all receivers;
   void sendBroadcast(Action action, {OnAction excluded});
 
   /// Register a receiver and return the unregister function
   void Function() registerReceiver(OnAction onAction);
+
+  /// <String, Dependent<T>> slots
+  Widget buildComponent(String name);
 }
 
 /// Seen in view-part or adapter-part

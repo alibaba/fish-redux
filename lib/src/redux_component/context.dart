@@ -5,7 +5,7 @@ import '../redux/redux.dart';
 import 'basic.dart';
 import 'provider.dart';
 
-class _ExtraMixin {
+mixin _ExtraMixin {
   Map<String, Object> _extra;
   Map<String, Object> get extra => _extra ??= <String, Object>{};
 }
@@ -43,7 +43,6 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
 
   @override
   BuildContext get context {
-    assert(_throwIfDisposed());
     return _buildContext;
   }
 
@@ -56,9 +55,7 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   @override
   Widget buildComponent(String name) {
     assert(name != null, 'The name must be NotNull for buildComponent.');
-    assert(_throwIfDisposed());
     final Dependent<T> dependent = logic.slot(name);
-
     final Widget result = dependent?.buildComponent(store, getState) ??
         store.buildComponent(name);
     assert(result != null, 'Could not found component by name "$name."');
@@ -68,7 +65,6 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   @override
   ListAdapter buildAdapter() {
     assert(logic is AbstractAdapter<T>);
-    assert(_throwIfDisposed());
     ListAdapter result;
     if (logic is AbstractAdapter<T>) {
       final AbstractAdapter<T> abstractAdapter = logic;
@@ -91,7 +87,6 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
 
   @override
   void pageBroadcast(Action action, {bool excludeSelf}) {
-    assert(_throwIfDisposed());
     store.sendBroadcast(
       action,
       excluded: excludeSelf == true ? _onBroadcast : null,
