@@ -59,16 +59,16 @@ typedef HigherEffect<T> = OnAction Function(Context<T> ctx);
 /// If an exception is thrown out, we may have some need to handle it.
 typedef OnError<T> = bool Function(Exception exception, Context<T> ctx);
 
-abstract class Broadcast {
+/// A store with broadcast
+abstract class MixedStore<T> extends Store<T> {
+  Widget buildComponent(String name);
+
   /// Broadcast in all receivers;
   void sendBroadcast(Action action, {OnAction excluded});
 
   /// Register a receiver and return the unregister function
   void Function() registerReceiver(OnAction onAction);
 }
-
-/// A store with broadcast
-abstract class PageStore<T> extends Store<T> implements Broadcast {}
 
 /// Seen in view-part or adapter-part
 abstract class ViewService {
@@ -144,7 +144,7 @@ abstract class Dependent<T> {
 
   SubReducer<T> createSubReducer();
 
-  Widget buildComponent(PageStore<Object> store, Get<T> getter);
+  Widget buildComponent(MixedStore<Object> store, Get<T> getter);
 
   /// P state
   ListAdapter buildAdapter(
@@ -154,7 +154,7 @@ abstract class Dependent<T> {
   );
 
   ContextSys<Object> createContext({
-    PageStore<Object> store,
+    MixedStore<Object> store,
     BuildContext buildContext,
     Get<T> getState,
   });
@@ -188,7 +188,7 @@ abstract class AbstractLogic<T> {
 
   /// To create each instance's context
   ContextSys<T> createContext({
-    PageStore<Object> store,
+    MixedStore<Object> store,
     BuildContext buildContext,
     Get<T> getState,
   });
@@ -208,7 +208,7 @@ abstract class AbstractComponent<T> implements AbstractLogic<T> {
   ViewUpdater<T> createViewUpdater(T init);
 
   /// How to build component instance
-  Widget buildComponent(PageStore<Object> store, Get<T> getter);
+  Widget buildComponent(MixedStore<Object> store, Get<T> getter);
 }
 
 abstract class AbstractAdapter<T> implements AbstractLogic<T> {

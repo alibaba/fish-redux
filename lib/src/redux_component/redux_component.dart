@@ -7,7 +7,7 @@ export 'dependent.dart';
 export 'helper.dart';
 export 'lifecycle.dart';
 export 'logic.dart';
+export 'mixed_store.dart';
 export 'oop.dart';
-export 'page_store.dart';
 export 'private_reducer_mixin.dart';
 export 'provider.dart';

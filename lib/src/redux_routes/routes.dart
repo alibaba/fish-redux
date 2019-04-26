@@ -34,26 +34,28 @@ class _RouteActionCreator {
 
 /// Multi-page(a route component is a page) sharing a store.
 class AppRoutes<T> implements AbstractRoutes {
-  final Map<String, Dependent<T>> pages;
-  final PageStore<T> store;
+  final Map<String, Dependent<T>> slots;
+  final MixedStore<T> store;
 
   AppRoutes({
     @required T preloadedState,
-    @required this.pages,
+    @required this.slots,
     Reducer<T> reducer,
     List<Middleware<T>> middleware,
   })  : assert(preloadedState != null,
             'Expected the preloadedState to be non-null value.'),
-        assert(pages != null, 'Expected the pages to be non-null value.'),
-        store = createPageStore<T>(
+        assert(slots != null, 'Expected the pages to be non-null value.'),
+        assert(T != dynamic, 'Expected <T> not to be <dynamic> type.'),
+        store = createMixedStore<T>(
           preloadedState,
-          _createReducer<T>(pages, reducer),
-          applyMiddleware<T>(mergeMiddleware$(middleware)),
+          _createReducer<T>(slots, reducer),
+          enhancer: applyMiddleware<T>(mergeMiddleware$(middleware)),
+          slots: slots,
         );
 
   @override
   Widget buildPage(String path, dynamic arguments) {
-    final Dependent<T> dependent = pages[path];
+    final Dependent<T> dependent = slots[path];
     if (dependent != null) {
       store.dispatch(_RouteActionCreator._route(path, arguments));
     }

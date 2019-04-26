@@ -12,8 +12,8 @@ class _ExtraMixin {
 
 /// Default Context
 class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
-  final AbstractLogic<T> factors;
-  final PageStore<Object> store;
+  final AbstractLogic<T> logic;
+  final MixedStore<Object> store;
   final Get<T> getState;
 
   BuildContext _buildContext;
@@ -21,23 +21,23 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   OnAction _onBroadcast;
 
   DefaultContext({
-    @required this.factors,
+    @required this.logic,
     @required this.store,
     @required BuildContext buildContext,
     @required this.getState,
-  })  : assert(factors != null),
+  })  : assert(logic != null),
         assert(store != null),
         assert(buildContext != null),
         assert(getState != null),
         _buildContext = buildContext {
-    final OnAction onAction = factors.createHandlerOnAction(this);
+    final OnAction onAction = logic.createHandlerOnAction(this);
 
     /// create Dispatch
-    _dispatch = factors.createDispatch(onAction, this, store.dispatch);
+    _dispatch = logic.createDispatch(onAction, this, store.dispatch);
 
     /// Register inter-component broadcast
     _onBroadcast =
-        factors.createHandlerOnBroadcast(onAction, this, store.dispatch);
+        logic.createHandlerOnBroadcast(onAction, this, store.dispatch);
     registerOnDisposed(store.registerReceiver(_onBroadcast));
   }
 
@@ -57,18 +57,21 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   Widget buildComponent(String name) {
     assert(name != null, 'The name must be NotNull for buildComponent.');
     assert(_throwIfDisposed());
-    final Dependent<T> dependent = factors.slot(name);
-    assert(dependent != null, 'Could not found component by name "$name."');
-    return dependent?.buildComponent(store, getState) ?? Container();
+    final Dependent<T> dependent = logic.slot(name);
+
+    final Widget result = dependent?.buildComponent(store, getState) ??
+        store.buildComponent(name);
+    assert(result != null, 'Could not found component by name "$name."');
+    return result ?? Container();
   }
 
   @override
   ListAdapter buildAdapter() {
-    assert(factors is AbstractAdapter<T>);
+    assert(logic is AbstractAdapter<T>);
     assert(_throwIfDisposed());
     ListAdapter result;
-    if (factors is AbstractAdapter<T>) {
-      final AbstractAdapter<T> abstractAdapter = factors;
+    if (logic is AbstractAdapter<T>) {
+      final AbstractAdapter<T> abstractAdapter = logic;
       result = abstractAdapter.buildAdapter(state, dispatch, this);
     }
     return result ?? const ListAdapter(null, 0);
