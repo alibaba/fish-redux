@@ -141,7 +141,7 @@ class Logic<T> implements AbstractLogic<T> {
         false;
   }
 
-  static Middleware<T> _applyOnAction<T>(OnAction onAction, Context<T> ctx) {
+  static Middleware<T> _applyOnAction<T>(OnAction onAction, ContextSys<T> ctx) {
     return ({Dispatch dispatch, Get<T> getState}) {
       return (Dispatch next) {
         return (Action action) {

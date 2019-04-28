@@ -59,17 +59,33 @@ typedef HigherEffect<T> = OnAction Function(Context<T> ctx);
 /// If an exception is thrown out, we may have some need to handle it.
 typedef OnError<T> = bool Function(Exception exception, Context<T> ctx);
 
-/// A mixed store with broadcast & slot-build
-abstract class MixedStore<T> extends Store<T> {
-  /// Broadcast in all receivers;
-  void sendBroadcast(Action action, {OnAction excluded});
+/// todo
+abstract class InterComponent {
+  /// Broadcast in all component receivers;
+  void pageBroadcast(Action action, {Dispatch excluded});
 
   /// Register a receiver and return the unregister function
-  void Function() registerReceiver(OnAction onAction);
+  void Function() registerComponentReceiver(Dispatch dispatch);
+}
 
+/// todo
+abstract class InterStore {
+  /// Broadcast in all store receivers;
+  void broadcast(Action action, {Dispatch excluded});
+
+  /// Register a receiver and return the unregister function
+  void Function() registerStoreReceiver(Dispatch dispatch);
+}
+
+/// todo
+abstract class SlotBuilder {
   /// <String, Dependent<T>> slots
   Widget buildComponent(String name);
 }
+
+/// A mixed store with inter-component, inter-store communication & slot-build
+abstract class MixedStore<T> extends Store<T>
+    implements InterComponent, InterStore, SlotBuilder {}
 
 /// Seen in view-part or adapter-part
 abstract class ViewService {
@@ -83,10 +99,10 @@ abstract class ViewService {
   BuildContext get context;
 
   /// Broadcast action(the intent) in app (inter-pages)
-  void appBroadcast(Action action);
+  void broadcast(Action action);
 
-  /// Broadcast action(the intent) in page (inter-components)
-  void pageBroadcast(Action action, {bool excludeSelf});
+  /// Broadcast in all component receivers;
+  void pageBroadcast(Action action, {bool excluded});
 }
 
 ///  Seen in effect-part
@@ -126,11 +142,11 @@ abstract class Context<T> extends AutoDispose {
   /// such as custom mask or dialog
   Widget buildComponent(String name);
 
-  /// Broadcast action in app (inter-pages)
-  void appBroadcast(Action action);
+  /// Broadcast action in app (inter-stores)
+  void broadcast(Action action);
 
-  /// Broadcast action in page (inter-components)
-  void pageBroadcast(Action action, {bool excludeSelf});
+  /// Broadcast in all component receivers;
+  void pageBroadcast(Action action, {bool excluded});
 }
 
 /// Seen in framework-component

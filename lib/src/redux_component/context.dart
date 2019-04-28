@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 import '../../fish_redux.dart';
 import '../redux/redux.dart';
 import 'basic.dart';
-import 'provider.dart';
 
 mixin _ExtraMixin {
   Map<String, Object> _extra;
@@ -18,7 +17,7 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
 
   BuildContext _buildContext;
   Dispatch _dispatch;
-  OnAction _onBroadcast;
+  Dispatch _onBroadcast;
 
   DefaultContext({
     @required this.logic,
@@ -30,7 +29,7 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
         assert(buildContext != null),
         assert(getState != null),
         _buildContext = buildContext {
-    final OnAction onAction = logic.createHandlerOnAction(this);
+    final Dispatch onAction = logic.createHandlerOnAction(this);
 
     /// create Dispatch
     _dispatch = logic.createDispatch(onAction, this, store.dispatch);
@@ -38,13 +37,11 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
     /// Register inter-component broadcast
     _onBroadcast =
         logic.createHandlerOnBroadcast(onAction, this, store.dispatch);
-    registerOnDisposed(store.registerReceiver(_onBroadcast));
+    registerOnDisposed(store.registerComponentReceiver(_onBroadcast));
   }
 
   @override
-  BuildContext get context {
-    return _buildContext;
-  }
+  BuildContext get context => _buildContext;
 
   @override
   T get state => getState();
@@ -80,17 +77,8 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   }
 
   @override
-  void appBroadcast(Action action) {
-    assert(_throwIfDisposed());
-    AppProvider.appBroadcast(context, action);
-  }
-
-  @override
-  void pageBroadcast(Action action, {bool excludeSelf}) {
-    store.sendBroadcast(
-      action,
-      excluded: excludeSelf == true ? _onBroadcast : null,
-    );
+  void broadcast(Action action) {
+    store.broadcast(action);
   }
 
   @override
@@ -116,6 +104,10 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
     }
     return null;
   }
+
+  @override
+  void pageBroadcast(Action action, {bool excluded}) => store
+      .pageBroadcast(action, excluded: excluded == true ? _onBroadcast : null);
 }
 
 class _TwinContext<T> extends ContextSys<T> with _ExtraMixin {
@@ -129,7 +121,7 @@ class _TwinContext<T> extends ContextSys<T> with _ExtraMixin {
   }
 
   @override
-  void appBroadcast(Action action) => AppProvider.appBroadcast(context, action);
+  void broadcast(Action action) => mainCtx.broadcast(action);
 
   @override
   ListAdapter buildAdapter() => sidecarCtx.buildAdapter();
@@ -153,13 +145,13 @@ class _TwinContext<T> extends ContextSys<T> with _ExtraMixin {
   T get state => mainCtx.state;
 
   @override
-  void pageBroadcast(Action action, {bool excludeSelf}) =>
-      mainCtx.pageBroadcast(action, excludeSelf: excludeSelf);
+  State<StatefulWidget> get stfState => mainCtx.stfState;
 
   @override
-  State<StatefulWidget> get stfState => mainCtx.stfState;
+  void pageBroadcast(Action action, {bool excluded}) =>
+      mainCtx.pageBroadcast(action, excluded: excluded);
 }
 
-ContextSys<T> mergeContext<T>(ContextSys<T> mainCtx, ContextSys<T> sidecarCtx) {
-  return sidecarCtx != null ? _TwinContext<T>(mainCtx, sidecarCtx) : mainCtx;
-}
+ContextSys<T> mergeContext<T>(
+        ContextSys<T> mainCtx, ContextSys<T> sidecarCtx) =>
+    sidecarCtx != null ? _TwinContext<T>(mainCtx, sidecarCtx) : mainCtx;

@@ -81,6 +81,8 @@ abstract class EffectPart<T> extends AutoDispose {
   }
 }
 
+abstract class ComponentOOP<T> {}
+
 HigherEffect<T> higherEffect<T>(EffectPart<T> Function() builder) {
   return (Context<T> ctx) {
     final EffectPart<T> instance = builder();

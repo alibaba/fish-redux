@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 
-import '../redux/redux.dart';
 import 'basic.dart';
 
 class PageProvider extends InheritedWidget {
@@ -27,43 +26,4 @@ class PageProvider extends InheritedWidget {
   @override
   bool updateShouldNotify(PageProvider oldWidget) =>
       store != oldWidget.store && extra != oldWidget.extra;
-}
-
-/// This class is no longer recommended, it has been discarded.
-@deprecated
-class AppProvider extends InheritedWidget {
-  static final Set<Dispatch> _onActionContainer = Set<Dispatch>();
-  final Map<String, dynamic> extra = <String, dynamic>{};
-
-  AppProvider({
-    Key key,
-    @required Widget child,
-  })  : assert(child != null),
-        super(key: key, child: child);
-
-  static void Function() register(BuildContext context, Dispatch dispatch) {
-    assert(!_onActionContainer.contains(dispatch),
-        'Do not register a dispatch which is already existed');
-
-    if (!_onActionContainer.contains(dispatch) && dispatch != null) {
-      _onActionContainer.add(dispatch);
-    }
-
-    return () {
-      _onActionContainer.remove(dispatch);
-    };
-  }
-
-  static void appBroadcast(BuildContext context, Action action) {
-    final List<OnAction> copy = _onActionContainer.toList(
-      growable: false,
-    );
-
-    for (OnAction onAction in copy) {
-      onAction(action);
-    }
-  }
-
-  @override
-  bool updateShouldNotify(AppProvider oldWidget) => true;
 }
