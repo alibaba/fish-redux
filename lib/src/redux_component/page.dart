@@ -87,7 +87,7 @@ class _PageState<T> extends State<_PageWidget<T>> {
     /// Register inter-page broadcast
     unregister?.call();
     unregister = _store.registerStoreReceiver((Action action) {
-      _store.pageBroadcast(action);
+      _store.broadcastEffect(action);
       _store.dispatch(action);
     });
   }

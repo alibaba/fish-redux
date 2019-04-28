@@ -10,7 +10,7 @@ mixin _InterComponent<T> on MixedStore<T> {
   final DispatchBus _bus = DispatchBus();
 
   @override
-  void pageBroadcast(Action action, {Dispatch excluded}) =>
+  void broadcastEffect(Action action, {Dispatch excluded}) =>
       _bus.broadcast(action, excluded: excluded);
 
   @override

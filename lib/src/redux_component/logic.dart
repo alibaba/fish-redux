@@ -156,7 +156,7 @@ class Logic<T> implements AbstractLogic<T> {
           }
 
           if (!shouldBeInterruptedBeforeReducer(action)) {
-            ctx.pageBroadcast(action);
+            ctx.broadcastEffect(action);
           }
 
           next(action);

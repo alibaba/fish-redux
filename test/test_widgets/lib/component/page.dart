@@ -66,7 +66,7 @@ bool toDoListEffect(Action action, Context<ToDoList> ctx) {
     ctx.dispatch(Action(ToDoListAction.add, payload: Todo.mock()));
     return true;
   } else if (action.type == ToDoListAction.onBroadcast) {
-    ctx.pageBroadcast(Action(ToDoListAction.broadcast));
+    ctx.broadcastEffect(Action(ToDoListAction.broadcast));
     return true;
   }
 

@@ -62,7 +62,7 @@ typedef OnError<T> = bool Function(Exception exception, Context<T> ctx);
 /// todo
 abstract class InterComponent {
   /// Broadcast in all component receivers;
-  void pageBroadcast(Action action, {Dispatch excluded});
+  void broadcastEffect(Action action, {Dispatch excluded});
 
   /// Register a receiver and return the unregister function
   void Function() registerComponentReceiver(Dispatch dispatch);
@@ -102,7 +102,7 @@ abstract class ViewService {
   void broadcast(Action action);
 
   /// Broadcast in all component receivers;
-  void pageBroadcast(Action action, {bool excluded});
+  void broadcastEffect(Action action, {bool excluded});
 }
 
 ///  Seen in effect-part
@@ -146,7 +146,7 @@ abstract class Context<T> extends AutoDispose {
   void broadcast(Action action);
 
   /// Broadcast in all component receivers;
-  void pageBroadcast(Action action, {bool excluded});
+  void broadcastEffect(Action action, {bool excluded});
 }
 
 /// Seen in framework-component

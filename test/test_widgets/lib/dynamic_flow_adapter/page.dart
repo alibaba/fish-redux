@@ -35,7 +35,7 @@ Widget pageView(
             },
             onLongPress: () {
               print('dispatch broadcast');
-              viewService.pageBroadcast(const Action(ToDoAction.broadcast));
+              viewService.broadcastEffect(const Action(ToDoAction.broadcast));
             },
           )),
         ],
@@ -76,7 +76,7 @@ const Map<String, dynamic> pageInitParams = <String, dynamic>{
 bool pageEffect(Action action, Context<ToDoList> ctx) {
   if (action.type == PageAction.onAdd) {
     print('page onAdd');
-    ctx.pageBroadcast(Action(ToDoListAction.onAdd, payload: Todo.mock()));
+    ctx.broadcastEffect(Action(ToDoListAction.onAdd, payload: Todo.mock()));
     return true;
   }
 

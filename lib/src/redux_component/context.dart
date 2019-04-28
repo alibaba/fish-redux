@@ -106,8 +106,9 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   }
 
   @override
-  void pageBroadcast(Action action, {bool excluded}) => store
-      .pageBroadcast(action, excluded: excluded == true ? _onBroadcast : null);
+  void broadcastEffect(Action action, {bool excluded}) =>
+      store.broadcastEffect(action,
+          excluded: excluded == true ? _onBroadcast : null);
 }
 
 class _TwinContext<T> extends ContextSys<T> with _ExtraMixin {
@@ -148,8 +149,8 @@ class _TwinContext<T> extends ContextSys<T> with _ExtraMixin {
   State<StatefulWidget> get stfState => mainCtx.stfState;
 
   @override
-  void pageBroadcast(Action action, {bool excluded}) =>
-      mainCtx.pageBroadcast(action, excluded: excluded);
+  void broadcastEffect(Action action, {bool excluded}) =>
+      mainCtx.broadcastEffect(action, excluded: excluded);
 }
 
 ContextSys<T> mergeContext<T>(

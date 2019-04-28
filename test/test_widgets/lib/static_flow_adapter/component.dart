@@ -84,7 +84,7 @@ bool toDoEffect(Action action, Context<Todo> ctx) {
     ctx.dispatch(Action(ToDoAction.edit, payload: toDo));
     return true;
   } else if (action.type == ToDoAction.onBroadcast) {
-    ctx.pageBroadcast(Action(ToDoAction.broadcast));
+    ctx.broadcastEffect(Action(ToDoAction.broadcast));
     return true;
   }
 
