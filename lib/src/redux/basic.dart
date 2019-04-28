@@ -32,7 +32,7 @@ typedef Reducer<T> = T Function(T state, Action action);
 
 /// Definition of the standard Dispatch.
 /// Send an "intention".
-typedef Dispatch = void Function(Action action);
+typedef Dispatch = dynamic Function(Action action);
 
 /// Definition of a standard subscription function.
 /// input a subscriber and output an anti-subscription function.

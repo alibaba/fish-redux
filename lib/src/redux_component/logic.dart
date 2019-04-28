@@ -147,12 +147,12 @@ class Logic<T> implements AbstractLogic<T> {
         return (Action action) {
           final Object result = onAction?.call(action);
           if (result != null && result != false) {
-            return;
+            return result;
           }
 
           //skip-lifecycle-actions
           if (action.type is Lifecycle) {
-            return;
+            return null;
           }
 
           if (!shouldBeInterruptedBeforeReducer(action)) {
@@ -160,6 +160,7 @@ class Logic<T> implements AbstractLogic<T> {
           }
 
           next(action);
+          return null;
         };
       };
     };
