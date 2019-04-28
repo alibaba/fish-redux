@@ -40,3 +40,13 @@
 -   fix bug if component has no reducer in app-routes
 -   reconstruct createStore
 -   app-routes's store to be visible
+
+## [0.1.7]
+-   reconstruct mixed-store
+-   reconstruct communication
+-   rename appBroadcast to broadcast
+-   rename pageBroadcast to broadcastEffect
+-   add dispatch-bus
+-   enhance dispatch-api
+-   add some docs
+-   move test to dev_dependencies
