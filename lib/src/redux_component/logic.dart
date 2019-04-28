@@ -141,25 +141,26 @@ class Logic<T> implements AbstractLogic<T> {
         false;
   }
 
-  static Middleware<T> _applyOnAction<T>(OnAction onAction, Context<T> ctx) {
+  static Middleware<T> _applyOnAction<T>(OnAction onAction, ContextSys<T> ctx) {
     return ({Dispatch dispatch, Get<T> getState}) {
       return (Dispatch next) {
         return (Action action) {
           final Object result = onAction?.call(action);
           if (result != null && result != false) {
-            return;
+            return result;
           }
 
           //skip-lifecycle-actions
           if (action.type is Lifecycle) {
-            return;
+            return null;
           }
 
           if (!shouldBeInterruptedBeforeReducer(action)) {
-            ctx.pageBroadcast(action);
+            ctx.broadcastEffect(action);
           }
 
           next(action);
+          return null;
         };
       };
     };

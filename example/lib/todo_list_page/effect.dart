@@ -1,7 +1,6 @@
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 
-import '../todo_edit_page/page.dart' as edit_page;
 import 'action.dart';
 import 'list_adapter/action.dart' as list_action;
 import 'state.dart';

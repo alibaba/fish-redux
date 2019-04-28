@@ -3,47 +3,46 @@ import 'package:flutter/widgets.dart';
 
 import '../redux/redux.dart';
 import '../redux_component/basic.dart';
+import 'dispatch_bus.dart';
 
 /// inter-component broadcast
-mixin _Broadcast<T> on MixedStore<T> {
-  final List<OnAction> _onActionContainer = <OnAction>[];
+mixin _InterComponent<T> on MixedStore<T> {
+  final DispatchBus _bus = DispatchBus();
 
   @override
-  void sendBroadcast(Action action, {OnAction excluded}) {
-    final List<OnAction> list = _onActionContainer
-        .where((OnAction onAction) => onAction != excluded)
-        .toList(growable: false);
-
-    for (OnAction onAction in list) {
-      onAction(action);
-    }
-  }
+  void broadcastEffect(Action action, {Dispatch excluded}) =>
+      _bus.broadcast(action, excluded: excluded);
 
   @override
-  void Function() registerReceiver(OnAction onAction) {
-    assert(!_onActionContainer.contains(onAction),
-        'Do not register a dispatch which is already existed');
+  void Function() registerComponentReceiver(Dispatch dispatch) =>
+      _bus.registerReceiver(dispatch);
+}
 
-    if (onAction != null) {
-      _onActionContainer.add(onAction);
-      return () {
-        _onActionContainer.remove(onAction);
-      };
-    } else {
-      return null;
-    }
-  }
+/// inter-component broadcast
+mixin _InterStore<T> on MixedStore<T> {
+  DispatchBus _delegate;
+
+  void setupDispatchBus(DispatchBus delegate) => _delegate = delegate;
+
+  @override
+  void broadcast(Action action, {Dispatch excluded}) =>
+      _delegate?.broadcast(action, excluded: excluded);
+
+  @override
+  void Function() registerStoreReceiver(Dispatch onAction) =>
+      _delegate?.registerReceiver(dispatch);
 }
 
 /// build-component from store
 mixin _SlotBuilder<T> on MixedStore<T> {
+  @override
   Widget buildComponent(String name) =>
       slots == null ? null : slots[name]?.buildComponent(this, getState);
 
   Map<String, Dependent<T>> get slots;
 }
 
-///
+/// batch notify to subscribers.
 mixin _BatchNotify<T> on Store<T> {
   final List<void Function()> _listeners = <void Function()>[];
   bool isBatching = false;
@@ -52,7 +51,7 @@ mixin _BatchNotify<T> on Store<T> {
   void setupBatch() {
     if (isSetupBatch) {
       isSetupBatch = true;
-      super.subscribe(_batchedNotify);
+      super.subscribe(_batch);
 
       subscribe = (void Function() callback) {
         assert(callback != null);
@@ -64,14 +63,14 @@ mixin _BatchNotify<T> on Store<T> {
     }
   }
 
-  void _batchedNotify() {
+  void _batch() {
     if (SchedulerBinding.instance?.schedulerPhase ==
         SchedulerPhase.persistentCallbacks) {
       if (!isBatching) {
         isBatching = true;
         SchedulerBinding.instance.addPostFrameCallback((Duration duration) {
           if (isBatching) {
-            _batchedNotify();
+            _batch();
           }
         });
       }
@@ -88,11 +87,12 @@ mixin _BatchNotify<T> on Store<T> {
 }
 
 class _MixedStore<T> extends MixedStore<T>
-    with _Broadcast<T>, _SlotBuilder<T>, _BatchNotify<T> {
+    with _InterComponent<T>, _InterStore<T>, _SlotBuilder<T>, _BatchNotify<T> {
   @override
   final Map<String, Dependent<T>> slots;
 
-  _MixedStore(Store<T> store, {this.slots}) : assert(store != null) {
+  _MixedStore(Store<T> store, {this.slots, DispatchBus bus})
+      : assert(store != null) {
     getState = store.getState;
     subscribe = store.subscribe;
     replaceReducer = store.replaceReducer;
@@ -100,8 +100,8 @@ class _MixedStore<T> extends MixedStore<T>
     observable = store.observable;
     teardown = store.teardown;
 
-    ///
     setupBatch();
+    setupDispatchBus(bus);
   }
 }
 
@@ -110,6 +110,10 @@ MixedStore<T> createMixedStore<T>(
   Reducer<T> reducer, {
   StoreEnhancer<T> enhancer,
   Map<String, Dependent<T>> slots,
+  DispatchBus bus,
 }) =>
-    _MixedStore<T>(createStore(preloadedState, reducer, enhancer),
-        slots: slots);
+    _MixedStore<T>(
+      createStore(preloadedState, reducer, enhancer),
+      slots: slots,
+      bus: bus,
+    );

@@ -33,6 +33,7 @@ class _RouteActionCreator {
 }
 
 /// Multi-page(a route component is a page) sharing a store.
+@immutable
 class AppRoutes<T> implements AbstractRoutes {
   final Map<String, Dependent<T>> slots;
   final MixedStore<T> store;
@@ -42,6 +43,7 @@ class AppRoutes<T> implements AbstractRoutes {
     @required this.slots,
     Reducer<T> reducer,
     List<Middleware<T>> middleware,
+    DispatchBus bus,
   })  : assert(preloadedState != null,
             'Expected the preloadedState to be non-null value.'),
         assert(slots != null, 'Expected the pages to be non-null value.'),
@@ -51,6 +53,7 @@ class AppRoutes<T> implements AbstractRoutes {
           _createReducer<T>(slots, reducer),
           enhancer: applyMiddleware<T>(mergeMiddleware$(middleware)),
           slots: slots,
+          bus: bus,
         );
 
   @override
@@ -94,16 +97,19 @@ class AppRoutes<T> implements AbstractRoutes {
 }
 
 /// Each page has a unique store.
+@immutable
 class PageRoutes implements AbstractRoutes {
   final Map<String, Page<Object, dynamic>> pages;
-
+  final DispatchBus bus;
   PageRoutes({
     @required this.pages,
-  }) : assert(pages != null, 'Expected the pages to be non-null value.');
+    DispatchBus bus,
+  })  : assert(pages != null, 'Expected the pages to be non-null value.'),
+        bus = bus ?? DispatchBus();
 
   @override
   Widget buildPage(String path, dynamic arguments) =>
-      pages[path]?.buildPage(arguments);
+      pages[path]?.buildPage(arguments, bus: bus);
 }
 
 /// How to define ?

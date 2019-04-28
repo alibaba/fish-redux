@@ -1,6 +1,6 @@
 import '../redux/redux.dart';
 
-bool _listEquals<E>(List<E> list1, List<E> list2) {
+bool _listEquals(List<dynamic> list1, List<dynamic> list2) {
   if (identical(list1, list2)) {
     return true;
   }
@@ -12,7 +12,12 @@ bool _listEquals<E>(List<E> list1, List<E> list2) {
     return false;
   }
   for (int i = 0; i < length; i++) {
-    if (list1[i] != list2[i]) {
+    final dynamic e1 = list1[i], e2 = list2[i];
+    if (e1 != e2) {
+      if (e1 is List && e2 is List) {
+        /// e1.runtimeType == e2?.runtimeType
+        return _listEquals(e1, e2);
+      }
       return false;
     }
   }
@@ -31,7 +36,7 @@ abstract class _BasicReselect<T, P> extends MutableConn<T, P> {
   @override
   P get(T state) {
     final List<dynamic> subs = getSubs(state);
-    if (!_hasBeenCalled || !_listEquals<dynamic>(subs, _subsCache)) {
+    if (!_hasBeenCalled || !_listEquals(subs, _subsCache)) {
       _subsCache = subs;
       _pCache = reduceSubs(_subsCache);
       _hasBeenCalled = true;
