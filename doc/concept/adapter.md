@@ -18,6 +18,6 @@
     -   Reducer is long-lived, Effect is medium-lived, View is short-lived.
 
 -   Three implementations of Adapter
-    -   [DynamiFlowAdapter](dynamic-flow-adapter.md)
+    -   [DynamicFlowAdapter](dynamic-flow-adapter.md)
     -   [StaticFlowAdapter](static-flow-adapter.md)
     -   [CustomAdapter](custom-adapter.md)
