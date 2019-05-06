@@ -44,12 +44,10 @@ abstract class Page<T, P> extends Component<T> {
   Widget buildPage(P param, {DispatchBus bus}) {
     return wrapper(_PageWidget<T>(
       component: this,
-      storeBuilder: () => createMixedStore<T>(
-            initState(param),
-            reducer,
-            enhancer: applyMiddleware<T>(mergeMiddleware$(middleware)),
-            slots: dependencies?.slots,
-          ),
+      storeBuilder: () => createMixedStore<T>(initState(param), reducer,
+          enhancer: applyMiddleware<T>(mergeMiddleware$(middleware)),
+          slots: dependencies?.slots,
+          bus: bus),
     ));
   }
 }
