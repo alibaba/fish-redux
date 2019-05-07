@@ -30,7 +30,7 @@ mixin _InterStore<T> on MixedStore<T> {
 
   @override
   void Function() registerStoreReceiver(Dispatch onAction) =>
-      _delegate?.registerReceiver(dispatch);
+      _delegate?.registerReceiver(onAction);
 }
 
 /// build-component from store
