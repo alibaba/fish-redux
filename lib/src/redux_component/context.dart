@@ -47,7 +47,7 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   T get state => getState();
 
   @override
-  Dispatch get dispatch => _dispatch;
+  dynamic dispatch(Action action) => _dispatch(action);
 
   @override
   Widget buildComponent(String name) {
@@ -134,7 +134,7 @@ class _TwinContext<T> extends ContextSys<T> with _ExtraMixin {
   BuildContext get context => mainCtx.context;
 
   @override
-  Dispatch get dispatch => mainCtx.dispatch;
+  dynamic dispatch(Action action) => mainCtx.dispatch(action);
 
   @override
   void onLifecycle(Action action) {
