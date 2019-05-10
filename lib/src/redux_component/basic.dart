@@ -111,7 +111,7 @@ abstract class Context<T> extends AutoDispose {
   T get state;
 
   /// The way to send action, which will be consumed by self, or by broadcast-module and store.
-  Dispatch get dispatch;
+  dynamic dispatch(Action action);
 
   /// Get BuildContext from the host-widget
   BuildContext get context;
