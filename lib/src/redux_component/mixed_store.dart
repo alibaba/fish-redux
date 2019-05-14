@@ -162,14 +162,14 @@ MixedStore<T> createMixedStore<T>(
   Reducer<T> reducer, {
   Map<String, Dependent<T>> slots,
   StoreEnhancer<T> storeEnhancer,
-  ViewMiddleware<T> viewMiddleware,
-  EffectMiddleware<T> effectMiddleware,
+  ViewMiddleware<T> viewEnhancer,
+  EffectMiddleware<T> effectEnhancer,
   DispatchBus bus,
 }) =>
     _MixedStore<T>(
       createStore(preloadedState, reducer, storeEnhancer),
       slots: slots,
       bus: bus,
-      viewMiddleware: viewMiddleware,
-      effectMiddleware: effectMiddleware,
+      viewMiddleware: viewEnhancer,
+      effectMiddleware: effectEnhancer,
     );

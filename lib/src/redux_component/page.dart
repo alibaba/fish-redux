@@ -49,7 +49,17 @@ abstract class Page<T, P> extends Component<T> {
       storeBuilder: () => createMixedStore<T>(
             initState(param),
             reducer,
-            storeEnhancer: applyMiddleware<T>(mergeMiddleware$(middleware)),
+
+            /// try catch
+            storeEnhancer: applyMiddleware<T>(middleware),
+
+            /// try catch
+            viewEnhancer: mergeViewMiddleware<T>(viewMiddleware),
+
+            /// try catch
+            effectEnhancer: mergeEffectMiddleware<T>(effectMiddleware),
+
+            /// onError
             slots: dependencies?.slots,
             bus: bus,
           ),

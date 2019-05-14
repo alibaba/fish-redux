@@ -3,9 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 
 import '../redux/basic.dart';
-import '../utils/utils.dart';
 import 'basic.dart';
-import 'debug_or_report.dart';
 
 AdapterBuilder<T> asAdapter<T>(ViewBuilder<T> view) {
   return (T unstableState, Dispatch dispatch, ViewService service) {
@@ -59,23 +57,6 @@ Effect<T> combineEffects<T>(Map<Object, SubEffect<T>> map) =>
 HigherEffect<T> asHigherEffect<T>(Effect<T> effect) => effect != null
     ? (Context<T> ctx) => (Action action) => effect(action, ctx)
     : null;
-
-List<Middleware<T>> mergeMiddleware$<T>(List<Middleware<T>> middleware) {
-  return Collections.merge<Middleware<T>>(
-      <Middleware<T>>[interrupt$<T>()], middleware);
-}
-
-Middleware<T> interrupt$<T>() {
-  return ({Dispatch dispatch, Get<T> getState}) {
-    return (Dispatch next) {
-      return (Action action) {
-        if (!shouldBeInterruptedBeforeReducer(action)) {
-          next(action);
-        }
-      };
-    };
-  };
-}
 
 ViewMiddleware<T> mergeViewMiddleware<T>(List<ViewMiddleware<T>> middleware) {
   return middleware

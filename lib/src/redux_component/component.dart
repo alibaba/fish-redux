@@ -2,10 +2,8 @@ import 'package:flutter/widgets.dart';
 
 import '../../fish_redux.dart';
 import '../redux/redux.dart';
-import '../utils/utils.dart';
 import 'basic.dart';
 import 'context.dart';
-import 'debug_or_report.dart';
 import 'dependencies.dart';
 import 'lifecycle.dart';
 import 'logic.dart';
@@ -144,13 +142,7 @@ class _ViewUpdater<T> implements ViewUpdater<T> {
     if (result == null) {
       result = _widgetCache = view(ctx.state, ctx.dispatch, ctx);
 
-      ctx.dispatch(LifecycleCreator.build());
-
-      /// to watch component's update in debug-mode
-      assert(() {
-        ctx.dispatch($DebugOrReportCreator.debugUpdate(name));
-        return true;
-      }());
+      ctx.dispatch(LifecycleCreator.build(name));
     }
     return result;
   }
@@ -170,13 +162,7 @@ class _ViewUpdater<T> implements ViewUpdater<T> {
     if (shouldUpdate(_latestState, now)) {
       _widgetCache = null;
 
-      try {
-        markNeedsBuild();
-      } on FlutterError catch (e) {
-        /// 应该区分不同模式下的处理策略？
-        ctx.dispatch(
-            $DebugOrReportCreator.reportSetStateError(e, StackTrace.current));
-      }
+      markNeedsBuild();
 
       _latestState = now;
     }

@@ -28,9 +28,7 @@ Middleware<T> logMiddleware<T>({
               }
 
               if (prevState == nextState) {
-                if (!shouldBeInterruptedBeforeReducer(action)) {
-                  print('[$tag] warning: ${action.type} has not been used.');
-                }
+                print('[$tag] warning: ${action.type} has not been used.');
               }
 
               print('========== [$tag] ================');

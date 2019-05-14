@@ -46,7 +46,9 @@ abstract class Adapter<T> extends Logic<T> implements AbstractAdapter<T> {
           result = listAdapter.itemBuilder(context, index);
         } catch (e, stackTrace) {
           /// The upper layer decides how to consume error.
-          dispatch($DebugOrReportCreator.reportBuildError(e, stackTrace));
+          // dispatch($DebugOrReportCreator.reportBuildError(e, stackTrace));
+          /// todo
+
           result = Container();
         }
         return result;
