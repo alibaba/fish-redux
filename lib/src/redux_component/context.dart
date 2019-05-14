@@ -12,8 +12,11 @@ mixin _ExtraMixin {
 /// Default Context
 class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   final AbstractLogic<T> logic;
+  @override
   final MixedStore<Object> store;
   final Get<T> getState;
+
+  void Function() Function(Subscribe) _observer;
 
   BuildContext _buildContext;
   Dispatch _dispatch;
@@ -38,6 +41,12 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
     _onBroadcast =
         logic.createHandlerOnBroadcast(onAction, this, store.dispatch);
     registerOnDisposed(store.registerComponentReceiver(_onBroadcast));
+  }
+
+  @override
+  void bindObserver(void Function(Subscribe) observer) {
+    assert(_observer == null);
+    _observer = observer;
   }
 
   @override
@@ -109,6 +118,9 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   void broadcastEffect(Action action, {bool excluded}) =>
       store.broadcastEffect(action,
           excluded: excluded == true ? _onBroadcast : null);
+
+  @override
+  void Function() addObservable(Subscribe observable) => _observer(observable);
 }
 
 class _TwinContext<T> extends ContextSys<T> with _ExtraMixin {
@@ -151,6 +163,16 @@ class _TwinContext<T> extends ContextSys<T> with _ExtraMixin {
   @override
   void broadcastEffect(Action action, {bool excluded}) =>
       mainCtx.broadcastEffect(action, excluded: excluded);
+
+  @override
+  void Function() addObservable(Subscribe s) => mainCtx.addObservable(s);
+
+  @override
+  void bindObserver(void Function(Subscribe) observer) =>
+      mainCtx.bindObserver(observer);
+
+  @override
+  MixedStore<dynamic> get store => mainCtx.store;
 }
 
 ContextSys<T> mergeContext<T>(

@@ -16,7 +16,6 @@ abstract class Adapter<T> extends Logic<T> implements AbstractAdapter<T> {
     ReducerFilter<T> filter,
     Effect<T> effect,
     HigherEffect<T> higherEffect,
-    OnError<T> onError,
     Dependencies<T> dependencies,
     Object Function(T) key,
   })  : assert(adapter != null),
@@ -27,7 +26,6 @@ abstract class Adapter<T> extends Logic<T> implements AbstractAdapter<T> {
           filter: filter,
           effect: effect,
           higherEffect: higherEffect,
-          onError: onError,
           dependencies: dependencies,
           key: key,
         );

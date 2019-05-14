@@ -12,21 +12,24 @@ typedef InitState<T, P> = T Function(P params);
 @immutable
 abstract class Page<T, P> extends Component<T> {
   final List<Middleware<T>> middleware;
+  final List<ViewMiddleware<T>> viewMiddleware;
+  final List<EffectMiddleware<T>> effectMiddleware;
   final InitState<T, P> initState;
 
   Page({
     @required this.initState,
-    this.middleware,
     @required ViewBuilder<T> view,
     Reducer<T> reducer,
     ReducerFilter<T> filter,
     Effect<T> effect,
     HigherEffect<T> higherEffect,
-    OnError<T> onError,
     Dependencies<T> dependencies,
     ShouldUpdate<T> shouldUpdate,
     WidgetWrapper wrapper,
     Key Function(T) key,
+    this.middleware,
+    this.viewMiddleware,
+    this.effectMiddleware,
   })  : assert(initState != null),
         super(
           view: view,
@@ -35,7 +38,6 @@ abstract class Page<T, P> extends Component<T> {
           filter: filter,
           effect: effect,
           higherEffect: higherEffect,
-          onError: onError,
           shouldUpdate: shouldUpdate,
           wrapper: wrapper,
           key: key,
@@ -47,7 +49,7 @@ abstract class Page<T, P> extends Component<T> {
       storeBuilder: () => createMixedStore<T>(
             initState(param),
             reducer,
-            enhancer: applyMiddleware<T>(mergeMiddleware$(middleware)),
+            storeEnhancer: applyMiddleware<T>(mergeMiddleware$(middleware)),
             slots: dependencies?.slots,
           ),
     ));

@@ -19,7 +19,6 @@ class Logic<T> implements AbstractLogic<T> {
   final Reducer<T> _reducer;
   final ReducerFilter<T> filter;
   final HigherEffect<T> higherEffect;
-  final OnError<T> onError;
   final Dependencies<T> dependencies;
   final Object Function(T state) _key;
 
@@ -32,7 +31,6 @@ class Logic<T> implements AbstractLogic<T> {
     this.filter,
     Effect<T> effect,
     HigherEffect<T> higherEffect,
-    this.onError,
     Object Function(T state) key,
   })  : assert(effect == null || higherEffect == null,
             'Only one style of effect could be applied.'),
@@ -64,41 +62,41 @@ class Logic<T> implements AbstractLogic<T> {
       state;
 
   @override
-  OnAction createHandlerOnAction(Context<T> ctx) {
-    final OnAction onEffect = higherEffect?.call(ctx);
-    return onEffect != null
-        ? (Action action) {
-            assert(action != null, 'Do not dispatch an action of null.');
-            try {
-              final Object result = onEffect(action);
-              if (result is Future) {
-                return result.catchError((Object e) {
-                  if (!_onError(onError, e, ctx)) {
-                    throw e;
-                  }
-                });
-              } else {
-                return result;
-              }
-            } catch (e) {
-              if (!_onError(onError, e, ctx)) {
-                rethrow;
-              } else {
-                return true;
-              }
-            }
-          }
-        : null;
+  OnAction createHandlerOnAction(ContextSys<T> ctx) {
+    return ctx.store.effectEnhance(higherEffect, this)?.call(ctx);
+    // return onEffect != null
+    //     ? (Action action) {
+    //         assert(action != null, 'Do not dispatch an action of null.');
+    //         try {
+    //           final Object result = onEffect(action);
+    //           if (result is Future) {
+    //             return result.catchError((Object e) {
+    //               if (!_onError(onError, e, ctx)) {
+    //                 throw e;
+    //               }
+    //             });
+    //           } else {
+    //             return result;
+    //           }
+    //         } catch (e) {
+    //           if (!_onError(onError, e, ctx)) {
+    //             rethrow;
+    //           } else {
+    //             return true;
+    //           }
+    //         }
+    //       }
+    //     : null;
   }
 
   @override
   OnAction createHandlerOnBroadcast(
-          OnAction onAction, Context<T> ctx, Dispatch parentDispatch) =>
+          OnAction onAction, ContextSys<T> ctx, Dispatch parentDispatch) =>
       onAction;
 
   @override
   Dispatch createDispatch(
-      OnAction onAction, Context<T> ctx, Dispatch parentDispatch) {
+      OnAction onAction, ContextSys<T> ctx, Dispatch parentDispatch) {
     Dispatch dispatch = (Action action) {
       throw Exception(
           'Dispatching while appending your effect & onError to dispatch is not allowed.');
@@ -136,10 +134,10 @@ class Logic<T> implements AbstractLogic<T> {
   @override
   Object key(T state) => _key?.call(state) ?? ValueKey<Type>(runtimeType);
 
-  static bool _onError<T>(OnError<T> onError, Object e, Context<T> ctx) {
-    return (e is SelfHealingError ? e.heal(ctx) : onError?.call(e, ctx)) ??
-        false;
-  }
+  // static bool _onError<T>(OnError<T> onError, Object e, Context<T> ctx) {
+  //   return (e is SelfHealingError ? e.heal(ctx) : onError?.call(e, ctx)) ??
+  //       false;
+  // }
 
   static Middleware<T> _applyOnAction<T>(OnAction onAction, ContextSys<T> ctx) {
     return ({Dispatch dispatch, Get<T> getState}) {

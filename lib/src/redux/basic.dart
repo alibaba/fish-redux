@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import '../utils/hash.dart';
+
 /// This document describes the core concepts under the Redux system and their standard definitions.
 /// Mainly includes:
 /// 1. The concepts of ReduxJs community
@@ -24,6 +26,13 @@ class Action {
   const Action(this.type, {this.payload});
   final Object type;
   final dynamic payload;
+
+  @override
+  bool operator ==(Object other) =>
+      other is Action && other.type == type && other.payload == payload;
+
+  @override
+  int get hashCode => hash(<int>[type.hashCode, payload.hashCode]);
 }
 
 /// Definition of the standard Reducer.

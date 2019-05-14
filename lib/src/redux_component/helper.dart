@@ -56,10 +56,6 @@ Effect<T> combineEffects<T>(Map<Object, SubEffect<T>> map) =>
             return subEffect?.call(action, ctx) ?? subEffect != null;
           };
 
-OnError<T> combineOnErrors<T>(List<OnError<T>> onErrors) =>
-    (Exception exception, Context<T> ctx) =>
-        onErrors.any((OnError<T> onError) => onError(exception, ctx));
-
 HigherEffect<T> asHigherEffect<T>(Effect<T> effect) => effect != null
     ? (Context<T> ctx) => (Action action) => effect(action, ctx)
     : null;
@@ -79,4 +75,31 @@ Middleware<T> interrupt$<T>() {
       };
     };
   };
+}
+
+ViewMiddleware<T> mergeViewMiddleware<T>(List<ViewMiddleware<T>> middleware) {
+  return middleware
+      ?.reduce((ViewMiddleware<T> first, ViewMiddleware<T> second) {
+    return (AbstractComponent<dynamic> component, MixedStore<T> store) {
+      final Composable<ViewBuilder<dynamic>> inner = first(component, store);
+      final Composable<ViewBuilder<dynamic>> outer = second(component, store);
+      return (ViewBuilder<dynamic> view) {
+        return outer(inner(view));
+      };
+    };
+  });
+}
+
+EffectMiddleware<T> mergeEffectMiddleware<T>(
+    List<EffectMiddleware<T>> middleware) {
+  return middleware
+      ?.reduce((EffectMiddleware<T> first, EffectMiddleware<T> second) {
+    return (AbstractLogic<dynamic> logic, MixedStore<T> store) {
+      final Composable<HigherEffect<dynamic>> inner = first(logic, store);
+      final Composable<HigherEffect<dynamic>> outer = second(logic, store);
+      return (HigherEffect<dynamic> higherEffect) {
+        return outer(inner(higherEffect));
+      };
+    };
+  });
 }

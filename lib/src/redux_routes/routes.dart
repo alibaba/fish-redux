@@ -51,7 +51,7 @@ class AppRoutes<T> implements AbstractRoutes {
         store = createMixedStore<T>(
           preloadedState,
           _createReducer<T>(slots, reducer),
-          enhancer: applyMiddleware<T>(mergeMiddleware$(middleware)),
+          storeEnhancer: applyMiddleware<T>(mergeMiddleware$(middleware)),
           slots: slots,
           bus: bus,
         );

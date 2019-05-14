@@ -529,52 +529,52 @@ void main() {
           ]));
     });
 
-    testWidgets('error', (WidgetTester tester) async {
-      final Track track = Track();
+    // testWidgets('error', (WidgetTester tester) async {
+    //   final Track track = Track();
 
-      await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
-          initState: initState,
-          view: toDoListView,
-          reducer: toDoListReducer,
-          higherEffect: toDoListHigherEffect,
-          onError: instrumentError<ToDoList>(toDoListErrorHandler, (exp, ctx) {
-            track.append('onErr', exp);
-          })).buildPage(pageInitParams)));
+    //   await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
+    //       initState: initState,
+    //       view: toDoListView,
+    //       reducer: toDoListReducer,
+    //       higherEffect: toDoListHigherEffect,
+    //       onError: instrumentError<ToDoList>(toDoListErrorHandler, (exp, ctx) {
+    //         track.append('onErr', exp);
+    //       })).buildPage(pageInitParams)));
 
-      await tester.tap(find.byKey(const ValueKey<String>('Error')));
-      await tester.pump();
+    //   await tester.tap(find.byKey(const ValueKey<String>('Error')));
+    //   await tester.pump();
 
-      expect(
-          track,
-          Track.pins([
-            Pin('onErr', KnowException()),
-          ]));
+    //   expect(
+    //       track,
+    //       Track.pins([
+    //         Pin('onErr', KnowException()),
+    //       ]));
 
-      //expect(exception, UnKnowException());
-    });
+    //   //expect(exception, UnKnowException());
+    // });
 
-    testWidgets('errorAsync', (WidgetTester tester) async {
-      final Track track = Track();
+    // testWidgets('errorAsync', (WidgetTester tester) async {
+    //   final Track track = Track();
 
-      await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
-          initState: initState,
-          view: toDoListView,
-          reducer: toDoListReducer,
-          effect: toDoListEffectAsync,
-          onError: instrumentError<ToDoList>(toDoListErrorHandler, (exp, ctx) {
-            track.append('onErr', exp);
-          })).buildPage(pageInitParams)));
+    //   await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
+    //       initState: initState,
+    //       view: toDoListView,
+    //       reducer: toDoListReducer,
+    //       effect: toDoListEffectAsync,
+    //       onError: instrumentError<ToDoList>(toDoListErrorHandler, (exp, ctx) {
+    //         track.append('onErr', exp);
+    //       })).buildPage(pageInitParams)));
 
-      await tester.tap(find.byKey(const ValueKey<String>('Error')));
-      await tester.pump(Duration(seconds: 3));
+    //   await tester.tap(find.byKey(const ValueKey<String>('Error')));
+    //   await tester.pump(Duration(seconds: 3));
 
-      expect(
-          track,
-          Track.pins([
-            Pin('onErr', KnowException()),
-          ]));
+    //   expect(
+    //       track,
+    //       Track.pins([
+    //         Pin('onErr', KnowException()),
+    //       ]));
 
-      //expect(exception, UnKnowException());
-    });
+    //   //expect(exception, UnKnowException());
+    // });
   });
 }

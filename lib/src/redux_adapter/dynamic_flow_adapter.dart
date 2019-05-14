@@ -29,13 +29,11 @@ class DynamicFlowAdapter<T> extends Logic<T>
     Reducer<T> reducer,
     Effect<T> effect,
     HigherEffect<T> higherEffect,
-    OnError<T> onError,
     Object Function(T) key,
   }) : super(
           reducer: _dynamicReducer(reducer, pool, connector),
           effect: effect,
           higherEffect: higherEffect,
-          onError: onError,
           filter: filter,
           dependencies: null,
           key: key,
