@@ -51,6 +51,7 @@ abstract class Page<T, P> extends Component<T> {
             reducer,
             storeEnhancer: applyMiddleware<T>(mergeMiddleware$(middleware)),
             slots: dependencies?.slots,
+            bus: bus,
           ),
     ));
   }

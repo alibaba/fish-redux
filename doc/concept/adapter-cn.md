@@ -14,6 +14,6 @@
         -   由于 Effect 生命周期的提升，我们就能更加精细的区分 init|dispose 和 appear|disappear。而这在 Component 的模型中是无法区分的。
     -   Reducer is long-lived, Effect is medium-lived, View is short-lived.
 -   Adapter 的三种实现
-    -   [DynamiFlowAdapter](dynamic-flow-adapter-cn.md)
+    -   [DynamicFlowAdapter](dynamic-flow-adapter-cn.md)
     -   [StaticFlowAdapter](static-flow-adapter-cn.md)
     -   [CustomAdapter](custom-adapter-cn.md)
