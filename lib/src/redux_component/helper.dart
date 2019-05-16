@@ -28,13 +28,19 @@ Effect<T> mergeEffects<T extends K, K>(Effect<K> sup, [Effect<T> sub]) {
   };
 }
 
-//combine & as
-Reducer<T> asReducer<T>(
-        Map<Object, Reducer<T>> map) =>
-    (map == null || map.isEmpty)
-        ? null
-        : (T state, Action action) =>
-            map[action.type]?.call(state, action) ?? state;
+/// combine & as
+/// for action.type which override it's == operator
+Reducer<T> asReducer<T>(Map<Object, Reducer<T>> map) => (map == null ||
+        map.isEmpty)
+    ? null
+    : (T state, Action action) =>
+        map.entries
+            .firstWhere(
+                (MapEntry<Object, Reducer<T>> entry) =>
+                    action.type == entry.key,
+                orElse: () => null)
+            ?.value(state, action) ??
+        state;
 
 Reducer<T> filterReducer<T>(Reducer<T> reducer, ReducerFilter<T> filter) {
   return (reducer == null || filter == null)
@@ -46,11 +52,17 @@ Reducer<T> filterReducer<T>(Reducer<T> reducer, ReducerFilter<T> filter) {
 
 typedef SubEffect<T> = FutureOr<void> Function(Action action, Context<T> ctx);
 
+/// for action.type which override it's == operator
 Effect<T> combineEffects<T>(Map<Object, SubEffect<T>> map) =>
     (map == null || map.isEmpty)
         ? null
         : (Action action, Context<T> ctx) {
-            final SubEffect<T> subEffect = map[action.type];
+            final SubEffect<T> subEffect = map.entries
+                .firstWhere(
+                    (MapEntry<Object, SubEffect<T>> entry) =>
+                        action.type == entry.key,
+                    orElse: () => null)
+                ?.value(action, ctx);
             return subEffect?.call(action, ctx) ?? subEffect != null;
           };
 
