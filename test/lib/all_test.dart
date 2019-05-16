@@ -42,29 +42,4 @@ void main() {
     redux_routes.main();
     utils.main();
   });
-
-  group("login", () {
-    test("inputFailEmail result email fail ", () {
-      // mock creation
-      var cat = MockCat();
-      //using mock object
-      when(cat.a).thenReturn(() {});
-      cat.a();
-
-      cat.sound();
-      //verify interaction
-      verify(cat.sound());
-
-      verify(cat.a);
-
-      var mockContext = MockContext();
-      // Action action = null;
-      // //需要mock dispatch函数
-      when<dynamic>(mockContext.dispatch(null)).thenReturn(true);
-      // //测试的登陆函数
-      // onLogin(action, mockContext);
-      mockContext.dispatch(Action(''));
-      verify<dynamic>(mockContext.dispatch(null));
-    });
-  });
 }
