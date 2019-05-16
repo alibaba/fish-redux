@@ -11,12 +11,12 @@ typedef InitState<T, P> = T Function(P params);
 
 @immutable
 abstract class Page<T, P> extends Component<T> {
-  final List<Middleware<T>> _middleware;
+  final List<Middleware<T>> _dispatchMiddleware;
   final List<ViewMiddleware<T>> _viewMiddleware;
   final List<EffectMiddleware<T>> _effectMiddleware;
   final InitState<T, P> _initState;
 
-  List<Middleware<T>> get protectedMiddleware => _middleware;
+  List<Middleware<T>> get protectedDispatchMiddleware => _dispatchMiddleware;
   List<ViewMiddleware<T>> get protectedViewMiddleware => _viewMiddleware;
   List<EffectMiddleware<T>> get protectedEffectMiddleware => _effectMiddleware;
   InitState<T, P> get protectedinitState => _initState;
@@ -36,7 +36,7 @@ abstract class Page<T, P> extends Component<T> {
     List<ViewMiddleware<T>> viewMiddleware,
     List<EffectMiddleware<T>> effectMiddleware,
   })  : assert(initState != null),
-        _middleware = middleware,
+        _dispatchMiddleware = middleware,
         _viewMiddleware = viewMiddleware,
         _effectMiddleware = effectMiddleware,
         _initState = initState,
@@ -58,7 +58,7 @@ abstract class Page<T, P> extends Component<T> {
       storeBuilder: () => createMixedStore<T>(
             protectedinitState(param),
             reducer,
-            storeEnhancer: applyMiddleware<T>(protectedMiddleware),
+            storeEnhancer: applyMiddleware<T>(protectedDispatchMiddleware),
             viewEnhancer: mergeViewMiddleware<T>(protectedViewMiddleware),
             effectEnhancer: mergeEffectMiddleware<T>(protectedEffectMiddleware),
             slots: protectedDependencies?.slots,

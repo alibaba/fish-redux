@@ -13,8 +13,8 @@ class PrivateAction extends Action {
 
 mixin PrivateReducerMixin<T> on Logic<T> {
   @override
-  Reducer<T> get privateReducer {
-    final Reducer<T> superReducer = super.privateReducer;
+  Reducer<T> get protectedReducer {
+    final Reducer<T> superReducer = super.protectedReducer;
     return superReducer != null
         ? (T state, Action action) {
             if (action is PrivateAction && action.target == state) {

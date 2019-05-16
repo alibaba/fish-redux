@@ -83,7 +83,7 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
     );
 
     final ContextSys<T> sidecarCtx =
-        privateDependencies?.adapter?.createContext(
+        protectedDependencies?.adapter?.createContext(
       store: store,
       buildContext: buildContext,
       getState: getState,
