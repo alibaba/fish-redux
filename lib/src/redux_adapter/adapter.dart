@@ -8,10 +8,12 @@ import '../redux_component/redux_component.dart';
 /// abstract for custom extends
 @immutable
 abstract class Adapter<T> extends Logic<T> implements AbstractAdapter<T> {
-  final AdapterBuilder<T> adapter;
+  final AdapterBuilder<T> _adapter;
+
+  AdapterBuilder<T> get protectedAdapter => _adapter;
 
   Adapter({
-    @required this.adapter,
+    @required AdapterBuilder<T> adapter,
     Reducer<T> reducer,
     ReducerFilter<T> filter,
     Effect<T> effect,
@@ -21,6 +23,7 @@ abstract class Adapter<T> extends Logic<T> implements AbstractAdapter<T> {
   })  : assert(adapter != null),
         assert(dependencies?.adapter == null,
             'Unexpected dependencies.adapter for Adapter.'),
+        _adapter = adapter,
         super(
           reducer: reducer,
           filter: filter,
@@ -33,27 +36,9 @@ abstract class Adapter<T> extends Logic<T> implements AbstractAdapter<T> {
   @override
   ListAdapter buildAdapter(
       T state, Dispatch dispatch, ViewService viewService) {
-    final ListAdapter listAdapter = adapter(state, dispatch, viewService);
-    return isDebug() ? listAdapter : _beSafeInRelease(listAdapter, dispatch);
-  }
-
-  static ListAdapter _beSafeInRelease(
-      ListAdapter listAdapter, Dispatch dispatch) {
-    return ListAdapter(
-      (BuildContext context, int index) {
-        Widget result;
-        try {
-          result = listAdapter.itemBuilder(context, index);
-        } catch (e, stackTrace) {
-          /// The upper layer decides how to consume error.
-          // dispatch($DebugOrReportCreator.reportBuildError(e, stackTrace));
-          /// todo
-
-          result = Container();
-        }
-        return result;
-      },
-      listAdapter.itemCount,
-    );
+    final ContextSys<T> ctx = viewService;
+    return ctx.store
+        .adapterEnhance(protectedAdapter, this)
+        .call(state, dispatch, viewService);
   }
 }
