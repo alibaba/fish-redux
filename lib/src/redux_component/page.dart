@@ -11,13 +11,18 @@ typedef InitState<T, P> = T Function(P params);
 
 @immutable
 abstract class Page<T, P> extends Component<T> {
-  final List<Middleware<T>> middleware;
-  final List<ViewMiddleware<T>> viewMiddleware;
-  final List<EffectMiddleware<T>> effectMiddleware;
-  final InitState<T, P> initState;
+  final List<Middleware<T>> _middleware;
+  final List<ViewMiddleware<T>> _viewMiddleware;
+  final List<EffectMiddleware<T>> _effectMiddleware;
+  final InitState<T, P> _initState;
+
+  List<Middleware<T>> get protectedMiddleware => _middleware;
+  List<ViewMiddleware<T>> get protectedViewMiddleware => _viewMiddleware;
+  List<EffectMiddleware<T>> get protectedEffectMiddleware => _effectMiddleware;
+  InitState<T, P> get protectedinitState => _initState;
 
   Page({
-    @required this.initState,
+    @required InitState<T, P> initState,
     @required ViewBuilder<T> view,
     Reducer<T> reducer,
     ReducerFilter<T> filter,
@@ -27,10 +32,14 @@ abstract class Page<T, P> extends Component<T> {
     ShouldUpdate<T> shouldUpdate,
     WidgetWrapper wrapper,
     Key Function(T) key,
-    this.middleware,
-    this.viewMiddleware,
-    this.effectMiddleware,
+    List<Middleware<T>> middleware,
+    List<ViewMiddleware<T>> viewMiddleware,
+    List<EffectMiddleware<T>> effectMiddleware,
   })  : assert(initState != null),
+        _middleware = middleware,
+        _viewMiddleware = viewMiddleware,
+        _effectMiddleware = effectMiddleware,
+        _initState = initState,
         super(
           view: view,
           dependencies: dependencies,
@@ -44,23 +53,15 @@ abstract class Page<T, P> extends Component<T> {
         );
 
   Widget buildPage(P param, {DispatchBus bus}) {
-    return wrapper(_PageWidget<T>(
+    return protectedWrapper(_PageWidget<T>(
       component: this,
       storeBuilder: () => createMixedStore<T>(
-            initState(param),
+            protectedinitState(param),
             reducer,
-
-            /// try catch
-            storeEnhancer: applyMiddleware<T>(middleware),
-
-            /// try catch
-            viewEnhancer: mergeViewMiddleware<T>(viewMiddleware),
-
-            /// try catch
-            effectEnhancer: mergeEffectMiddleware<T>(effectMiddleware),
-
-            /// onError
-            slots: dependencies?.slots,
+            storeEnhancer: applyMiddleware<T>(protectedMiddleware),
+            viewEnhancer: mergeViewMiddleware<T>(protectedViewMiddleware),
+            effectEnhancer: mergeEffectMiddleware<T>(protectedEffectMiddleware),
+            slots: protectedDependencies?.slots,
             bus: bus,
           ),
     ));

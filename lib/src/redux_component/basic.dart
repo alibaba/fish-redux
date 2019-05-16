@@ -92,11 +92,22 @@ typedef EffectMiddleware<T> = Composable<HigherEffect<dynamic>> Function(
 typedef ViewMiddleware<T> = Composable<ViewBuilder<dynamic>> Function(
     AbstractComponent<dynamic>, MixedStore<T>);
 
+typedef AdapterMiddleware<T> = Composable<AdapterBuilder<dynamic>> Function(
+    AbstractAdapter<dynamic>, MixedStore<T>);
+
 /// todo
 abstract class ViewEnhancer<T> {
   ViewBuilder<K> viewEnhance<K>(
     ViewBuilder<K> view,
     AbstractComponent<K> component,
+  );
+}
+
+/// todo
+abstract class AdapterEnhancer<T> {
+  AdapterBuilder<K> adapterEnhance<K>(
+    AdapterBuilder<K> adapterBuilder,
+    AbstractAdapter<K> logic,
   );
 }
 
@@ -111,11 +122,13 @@ abstract class EffectEnhancer<T> {
 /// A mixed store with inter-component, inter-store communication & slot-build
 abstract class MixedStore<T> extends Store<T>
     implements
-        InterComponent,
-        InterStore,
-        SlotBuilder,
-        ViewEnhancer<T>,
-        EffectEnhancer<T> {}
+        InterComponent, //
+        InterStore, //
+        SlotBuilder, //
+        ViewEnhancer<T>, //
+        AdapterEnhancer<T>, //
+        EffectEnhancer<T> //
+{}
 
 /// Seen in view-part or adapter-part
 abstract class ViewService {

@@ -1,4 +1,5 @@
 import 'package:fish_redux/src/redux_component/basic.dart';
+import 'package:fish_redux/src/redux_component/basic.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 
@@ -96,24 +97,6 @@ mixin _EffectEnhance<T> on MixedStore<T> implements EffectEnhancer<T> {
       effectMiddleware?.call(logic, this)?.call(higherEffect) ?? higherEffect;
 }
 
-//  /// view-middleware
-/// Component<Object> ? type
-// ViewBuilder<T> createViewBuilder() {
-//   return isDebug()
-//       ? view
-//       : (T state, Dispatch dispatch, ViewService viewService) {
-//           Widget result;
-//           try {
-//             result = view(state, dispatch, viewService);
-//           } catch (e, stackTrace) {
-//             /// the upper layer decides how to consume the error.
-//             dispatch($DebugOrReportCreator.reportBuildError(e, stackTrace));
-//             result = Container();
-//           }
-//           return result;
-//         };
-// }
-
 mixin _ViewEnhance<T> on MixedStore<T> implements ViewEnhancer<T> {
   ViewMiddleware<T> get viewMiddleware;
 
@@ -123,6 +106,16 @@ mixin _ViewEnhance<T> on MixedStore<T> implements ViewEnhancer<T> {
       viewMiddleware?.call(component, this)?.call(view) ?? view;
 }
 
+mixin _AdapterEnhance<T> on MixedStore<T> implements AdapterEnhancer<T> {
+  AdapterMiddleware<T> get adapterMiddleware;
+
+  @override
+  AdapterBuilder<K> adapterEnhance<K>(
+          AdapterBuilder<K> adapterBuilder, AbstractAdapter<K> adapter) =>
+      adapterMiddleware?.call(adapter, this)?.call(adapterBuilder) ??
+      adapterBuilder;
+}
+
 class _MixedStore<T> extends MixedStore<T>
     with
         _InterComponent<T>,
@@ -130,11 +123,14 @@ class _MixedStore<T> extends MixedStore<T>
         _SlotBuilder<T>,
         _BatchNotify<T>,
         _EffectEnhance<T>,
-        _ViewEnhance<T> {
+        _ViewEnhance<T>,
+        _AdapterEnhance<T> {
   @override
   final Map<String, Dependent<T>> slots;
   @override
   final ViewMiddleware<T> viewMiddleware;
+  @override
+  final AdapterMiddleware<T> adapterMiddleware;
   @override
   final EffectMiddleware<T> effectMiddleware;
 
@@ -142,6 +138,7 @@ class _MixedStore<T> extends MixedStore<T>
     Store<T> store, {
     this.slots,
     this.viewMiddleware,
+    this.adapterMiddleware,
     this.effectMiddleware,
     DispatchBus bus,
   }) : assert(store != null) {
@@ -163,6 +160,7 @@ MixedStore<T> createMixedStore<T>(
   Map<String, Dependent<T>> slots,
   StoreEnhancer<T> storeEnhancer,
   ViewMiddleware<T> viewEnhancer,
+  AdapterMiddleware<T> adapterMiddleware,
   EffectMiddleware<T> effectEnhancer,
   DispatchBus bus,
 }) =>
@@ -171,5 +169,6 @@ MixedStore<T> createMixedStore<T>(
       slots: slots,
       bus: bus,
       viewMiddleware: viewEnhancer,
+      adapterMiddleware: adapterMiddleware,
       effectMiddleware: effectEnhancer,
     );

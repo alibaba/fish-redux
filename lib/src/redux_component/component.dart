@@ -13,12 +13,16 @@ typedef WidgetWrapper = Widget Function(Widget child);
 
 @immutable
 abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
-  final ViewBuilder<T> view;
-  final ShouldUpdate<T> shouldUpdate;
-  final WidgetWrapper wrapper;
+  final ViewBuilder<T> _view;
+  final ShouldUpdate<T> _shouldUpdate;
+  final WidgetWrapper _wrapper;
+
+  ViewBuilder<T> get protectedView => _view;
+  ShouldUpdate<T> get protectedShouldUpdate => _shouldUpdate;
+  WidgetWrapper get protectedWrapper => _wrapper;
 
   Component({
-    @required this.view,
+    @required ViewBuilder<T> view,
     Reducer<T> reducer,
     ReducerFilter<T> filter,
     Effect<T> effect,
@@ -28,8 +32,9 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
     WidgetWrapper wrapper,
     Key Function(T) key,
   })  : assert(view != null),
-        wrapper = wrapper ?? _wrapperByDefault,
-        shouldUpdate = shouldUpdate ?? updateByDefault<T>(),
+        _view = view,
+        _wrapper = wrapper ?? _wrapperByDefault,
+        _shouldUpdate = shouldUpdate ?? updateByDefault<T>(),
         super(
           reducer: reducer,
           filter: filter,
@@ -41,7 +46,7 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
 
   @override
   Widget buildComponent(MixedStore<Object> store, Get<Object> getter) {
-    return wrapper(
+    return protectedWrapper(
       ComponentWidget<T>(
         component: this,
         getter: _asGetter<T>(getter),
@@ -57,10 +62,10 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
     void Function() markNeedsBuild,
   ) =>
       _ViewUpdater<T>(
-        view: ctx.store.viewEnhance(view, this),
+        view: ctx.store.viewEnhance(protectedView, this),
         ctx: ctx,
         markNeedsBuild: markNeedsBuild,
-        shouldUpdate: shouldUpdate,
+        shouldUpdate: protectedShouldUpdate,
         name: name,
       );
 
@@ -77,7 +82,8 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
       getState: getState,
     );
 
-    final ContextSys<T> sidecarCtx = dependencies?.adapter?.createContext(
+    final ContextSys<T> sidecarCtx =
+        privateDependencies?.adapter?.createContext(
       store: store,
       buildContext: buildContext,
       getState: getState,
