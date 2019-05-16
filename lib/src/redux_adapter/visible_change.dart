@@ -94,13 +94,3 @@ class _VisibleChangeDispatch extends AutoDispose {
     }
   }
 }
-
-@immutable
-class TeslaType {
-  final String type;
-
-  const TeslaType(this.type);
-
-  @override
-  bool operator ==(Object other) => type == other.toString();
-}
