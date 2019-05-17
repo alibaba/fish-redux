@@ -11,26 +11,6 @@ import 'redux_middleware/redux_middleware_test.dart' as redux_middleware;
 import 'redux_routes/redux_routes_test.dart' as redux_routes;
 import 'utils/utils_test.dart' as utils;
 
-class MockContext extends Mock implements Context<Object> {}
-
-void onLogin(Action action, Context<Object> ctx) {
-  ctx.dispatch(null);
-}
-
-// Real class
-abstract class Cat {
-  String sound();
-  bool eatFood(String food, {bool hungry}) => true;
-  int walk(List<String> places) => 0;
-  void sleep() {}
-  void hunt(String place, String prey) {}
-  int lives = 9;
-  Function() get a;
-}
-
-// Mock class
-class MockCat extends Mock implements Cat {}
-
 void main() {
   group('all_test', () {
     redux.main();

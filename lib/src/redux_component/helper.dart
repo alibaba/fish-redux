@@ -62,7 +62,7 @@ Effect<T> combineEffects<T>(Map<Object, SubEffect<T>> map) =>
                     (MapEntry<Object, SubEffect<T>> entry) =>
                         action.type == entry.key,
                     orElse: () => null)
-                ?.value(action, ctx);
+                ?.value;
             return subEffect?.call(action, ctx) ?? subEffect != null;
           };
 
