@@ -19,7 +19,7 @@ abstract class Page<T, P> extends Component<T> {
   List<Middleware<T>> get protectedDispatchMiddleware => _dispatchMiddleware;
   List<ViewMiddleware<T>> get protectedViewMiddleware => _viewMiddleware;
   List<EffectMiddleware<T>> get protectedEffectMiddleware => _effectMiddleware;
-  InitState<T, P> get protectedinitState => _initState;
+  InitState<T, P> get protectedInitState => _initState;
 
   Page({
     @required InitState<T, P> initState,
@@ -52,20 +52,22 @@ abstract class Page<T, P> extends Component<T> {
           key: key,
         );
 
-  Widget buildPage(P param, {DispatchBus bus}) {
-    return protectedWrapper(_PageWidget<T>(
-      component: this,
-      storeBuilder: () => createMixedStore<T>(
-            protectedinitState(param),
+  Widget buildPage(P param, {DispatchBus bus}) =>
+      protectedWrapper(_PageWidget<T>(
+        component: this,
+        storeBuilder: createStoreBuilder(param, bus: bus),
+      ));
+
+  Get<MixedStore<T>> createStoreBuilder(P param, {DispatchBus bus}) =>
+      () => createMixedStore<T>(
+            protectedInitState(param),
             reducer,
             storeEnhancer: applyMiddleware<T>(protectedDispatchMiddleware),
             viewEnhancer: mergeViewMiddleware<T>(protectedViewMiddleware),
             effectEnhancer: mergeEffectMiddleware<T>(protectedEffectMiddleware),
             slots: protectedDependencies?.slots,
             bus: bus,
-          ),
-    ));
-  }
+          );
 }
 
 class _PageWidget<T> extends StatefulWidget {

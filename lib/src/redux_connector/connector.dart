@@ -1,6 +1,6 @@
 import '../redux/redux.dart';
 
-import 'op_mixin.dart';
+import '../redux_component/redux_component.dart';
 
 /// use ConnOp<T, P> instead of Connector<T, P>
 @deprecated
@@ -21,7 +21,7 @@ class Connector<T, P> extends MutableConn<T, P> {
   void set(T state, P subState) => _setter(state, subState);
 }
 
-class ConnOp<T, P> extends MutableConn<T, P> with ConnOpMixin<T, P> {
+class ConnOp<T, P> extends MutableConn<T, P> {
   final P Function(T) _getter;
   final void Function(T, P) _setter;
 
@@ -36,4 +36,6 @@ class ConnOp<T, P> extends MutableConn<T, P> with ConnOpMixin<T, P> {
 
   @override
   void set(T state, P subState) => _setter(state, subState);
+
+  Dependent<T> operator +(Logic<P> logic) => createDependent<T, P>(this, logic);
 }
