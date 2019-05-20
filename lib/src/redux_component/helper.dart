@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 
 import '../redux/basic.dart';
+import '../utils/utils.dart';
 import 'basic.dart';
 
 AdapterBuilder<T> asAdapter<T>(ViewBuilder<T> view) {
@@ -71,8 +72,8 @@ HigherEffect<T> asHigherEffect<T>(Effect<T> effect) => effect != null
     : null;
 
 ViewMiddleware<T> mergeViewMiddleware<T>(List<ViewMiddleware<T>> middleware) {
-  return middleware
-      ?.reduce((ViewMiddleware<T> first, ViewMiddleware<T> second) {
+  return Collections.reduce<ViewMiddleware<T>>(middleware,
+      (ViewMiddleware<T> first, ViewMiddleware<T> second) {
     return (AbstractComponent<dynamic> component, MixedStore<T> store) {
       final Composable<ViewBuilder<dynamic>> inner = first(component, store);
       final Composable<ViewBuilder<dynamic>> outer = second(component, store);
@@ -85,8 +86,8 @@ ViewMiddleware<T> mergeViewMiddleware<T>(List<ViewMiddleware<T>> middleware) {
 
 EffectMiddleware<T> mergeEffectMiddleware<T>(
     List<EffectMiddleware<T>> middleware) {
-  return middleware
-      ?.reduce((EffectMiddleware<T> first, EffectMiddleware<T> second) {
+  return Collections.reduce<EffectMiddleware<T>>(middleware,
+      (EffectMiddleware<T> first, EffectMiddleware<T> second) {
     return (AbstractLogic<dynamic> logic, MixedStore<T> store) {
       final Composable<HigherEffect<dynamic>> inner = first(logic, store);
       final Composable<HigherEffect<dynamic>> outer = second(logic, store);
