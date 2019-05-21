@@ -1,6 +1,4 @@
 import 'package:test/test.dart';
-import 'package:fish_redux/fish_redux.dart';
-import 'package:mockito/mockito.dart';
 
 import 'redux/redux_test.dart' as redux;
 import 'redux_adapter/redux_adapter_test.dart' as redux_adapter;
