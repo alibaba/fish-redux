@@ -9,17 +9,24 @@ import 'provider.dart';
 /// init store's state by route-params
 typedef InitState<T, P> = T Function(P params);
 
+typedef StoreUpdater<T> = MixedStore<T> Function(MixedStore<T> store);
+
 @immutable
 abstract class Page<T, P> extends Component<T> {
   final List<Middleware<T>> _dispatchMiddleware;
   final List<ViewMiddleware<T>> _viewMiddleware;
   final List<EffectMiddleware<T>> _effectMiddleware;
+  final List<AdapterMiddleware<T>> _adapterMiddleware;
   final InitState<T, P> _initState;
 
   List<Middleware<T>> get protectedDispatchMiddleware => _dispatchMiddleware;
   List<ViewMiddleware<T>> get protectedViewMiddleware => _viewMiddleware;
   List<EffectMiddleware<T>> get protectedEffectMiddleware => _effectMiddleware;
+  List<AdapterMiddleware<T>> get protectedAdapterMiddleware =>
+      _adapterMiddleware;
   InitState<T, P> get protectedInitState => _initState;
+
+  final List<StoreUpdater<T>> _storeUpdaters = <StoreUpdater<T>>[];
 
   Page({
     @required InitState<T, P> initState,
@@ -35,10 +42,14 @@ abstract class Page<T, P> extends Component<T> {
     List<Middleware<T>> middleware,
     List<ViewMiddleware<T>> viewMiddleware,
     List<EffectMiddleware<T>> effectMiddleware,
+    List<AdapterMiddleware<T>> adapterMiddleware,
   })  : assert(initState != null),
-        _dispatchMiddleware = middleware,
-        _viewMiddleware = viewMiddleware,
-        _effectMiddleware = effectMiddleware,
+        _dispatchMiddleware = Collections.clone<Middleware<T>>(middleware),
+        _viewMiddleware = Collections.clone<ViewMiddleware<T>>(viewMiddleware),
+        _effectMiddleware =
+            Collections.clone<EffectMiddleware<T>>(effectMiddleware),
+        _adapterMiddleware =
+            Collections.clone<AdapterMiddleware<T>>(adapterMiddleware),
         _initState = initState,
         super(
           view: view,
@@ -59,7 +70,7 @@ abstract class Page<T, P> extends Component<T> {
       ));
 
   Get<MixedStore<T>> createStoreBuilder(P param, {DispatchBus bus}) =>
-      () => createMixedStore<T>(
+      () => updateStore(createMixedStore<T>(
             protectedInitState(param),
             reducer,
             storeEnhancer: applyMiddleware<T>(protectedDispatchMiddleware),
@@ -67,7 +78,31 @@ abstract class Page<T, P> extends Component<T> {
             effectEnhancer: mergeEffectMiddleware<T>(protectedEffectMiddleware),
             slots: protectedDependencies?.slots,
             bus: bus,
-          );
+          ));
+
+  MixedStore<T> updateStore(MixedStore<T> store) => _storeUpdaters.fold(
+        store,
+        (MixedStore<T> previousValue, StoreUpdater<T> element) =>
+            element(previousValue),
+      );
+
+  /// page-store connect with app-store
+  void connectExtraStore<K>(Store<K> extraStore, T Function(T, K) update) =>
+      _storeUpdaters.add((MixedStore<T> store) =>
+          connectStores<T, K>(store, extraStore, update));
+
+  /// inject app-middleware
+  void updateProperties({
+    List<Middleware<T>> dispatchMiddleware,
+    List<ViewMiddleware<T>> viewMiddleware,
+    List<EffectMiddleware<T>> effectMiddleware,
+    List<AdapterMiddleware<T>> adapterMiddleware,
+  }) {
+    _dispatchMiddleware.addAll(dispatchMiddleware ?? <Middleware<T>>[]);
+    _viewMiddleware.addAll(viewMiddleware ?? <ViewMiddleware<T>>[]);
+    _effectMiddleware.addAll(effectMiddleware ?? <EffectMiddleware<T>>[]);
+    _adapterMiddleware.addAll(adapterMiddleware ?? <AdapterMiddleware<T>>[]);
+  }
 }
 
 class _PageWidget<T> extends StatefulWidget {

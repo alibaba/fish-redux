@@ -1,9 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 
 import '../redux/redux.dart';
 import '../redux_component/basic.dart';
-import 'auto_dispose.dart';
 import 'basic.dart';
 import 'dispatch_bus.dart';
 
@@ -153,15 +154,21 @@ class _MixedStore<T> extends MixedStore<T>
     replaceReducer = store.replaceReducer;
     dispatch = store.dispatch;
     observable = store.observable;
-    teardown = () {
-      store.teardown();
-      dispose();
-    };
+    teardown = store.teardown;
 
     setupBatch();
     setupDispatchBus(bus);
   }
 }
+
+enum _UpdateState { Assign }
+
+// replace current state
+Reducer<T> _appendUpdateStateReducer<T>(Reducer<T> reducer) => reducer == null
+    ? null
+    : (T state, Action action) => action.type == _UpdateState.Assign
+        ? action.payload
+        : reducer(state, action);
 
 MixedStore<T> createMixedStore<T>(
   T preloadedState,
@@ -174,7 +181,11 @@ MixedStore<T> createMixedStore<T>(
   DispatchBus bus,
 }) =>
     _MixedStore<T>(
-      createStore(preloadedState, reducer, storeEnhancer),
+      createStore(
+        preloadedState,
+        _appendUpdateStateReducer<T>(reducer),
+        storeEnhancer,
+      ),
       slots: slots,
       bus: bus,
       viewMiddleware: viewEnhancer,
@@ -182,34 +193,25 @@ MixedStore<T> createMixedStore<T>(
       effectMiddleware: effectEnhancer,
     );
 
-abstract class StoreConnector<T, K> {
-  T updateT(T t, K k);
-  K updateK(K k, T t);
-}
-
 /// TODO
-void connectStores<T, K>(
-  MixedStore<T> storeT,
-  MixedStore<K> storeK,
-  StoreConnector<T, K> connector,
+MixedStore<T> connectStores<T, K>(
+  MixedStore<T> mainStore,
+  Store<K> extraStore,
+  T Function(T, K) update,
 ) {
-  final void Function() unsubscribeK = storeK.subscribe(() {
-    final T nextT = connector.updateT(storeT.getState(), storeK.getState());
-    storeT.dispatch(Action('UpdateState', payload: nextT));
+  final void Function() unsubscribe = extraStore.subscribe(() {
+    final T prevT = mainStore.getState();
+    final T nextT = update(prevT, extraStore.getState());
+    if (prevT != nextT && nextT != null) {
+      mainStore.dispatch(Action(_UpdateState.Assign, payload: nextT));
+    }
   });
 
-  final void Function() unsubscribeT = storeT.subscribe(() {
-    final K nextK = connector.updateK(storeK.getState(), storeT.getState());
-    storeK.dispatch(Action('UpdateState', payload: nextK));
-  });
+  final Future<dynamic> Function() superMainTD = mainStore.teardown;
+  mainStore.teardown = () {
+    unsubscribe?.call();
+    return superMainTD();
+  };
 
-  storeT.registerOnDisposed(() {
-    unsubscribeK?.call();
-    unsubscribeT?.call();
-  });
-
-  storeK.registerOnDisposed(() {
-    unsubscribeK?.call();
-    unsubscribeT?.call();
-  });
+  return mainStore;
 }

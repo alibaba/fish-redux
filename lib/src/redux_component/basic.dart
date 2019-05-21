@@ -121,7 +121,6 @@ abstract class EffectEnhancer<T> {
 
 /// A mixed store with inter-component, inter-store communication & slot-build
 abstract class MixedStore<T> extends Store<T>
-    with AutoDispose
     implements
         EffectBroadcast,
         InterStoreBroadcast,

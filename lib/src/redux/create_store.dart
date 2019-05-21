@@ -13,8 +13,10 @@ void _throwIfNot(bool condition, [String message]) {
 }
 
 Store<T> _createStore<T>(final T preloadedState, final Reducer<T> reducer) {
-  _throwIfNot(preloadedState != null,
-      'Expected the preloadedState to be non-null value.');
+  _throwIfNot(
+    preloadedState != null,
+    'Expected the preloadedState to be non-null value.',
+  );
 
   final List<_VoidCallback> _listeners = <_VoidCallback>[];
   final StreamController<T> _notifyController =
@@ -53,15 +55,21 @@ Store<T> _createStore<T>(final T preloadedState, final Reducer<T> reducer) {
     }
     ..subscribe = (_VoidCallback listener) {
       _throwIfNot(
-          listener != null, 'Expected the listener to be non-null value.');
-      _throwIfNot(!_isDispatching,
-          'You may not call store.subscribe() while the reducer is executing.');
+        listener != null,
+        'Expected the listener to be non-null value.',
+      );
+      _throwIfNot(
+        !_isDispatching,
+        'You may not call store.subscribe() while the reducer is executing.',
+      );
 
       _listeners.add(listener);
 
       return () {
-        _throwIfNot(!_isDispatching,
-            'You may not unsubscribe from a store listener while the reducer is executing.');
+        _throwIfNot(
+          !_isDispatching,
+          'You may not unsubscribe from a store listener while the reducer is executing.',
+        );
         _listeners.remove(listener);
       };
     }

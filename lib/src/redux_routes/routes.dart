@@ -101,6 +101,7 @@ class AppRoutes<T> implements AbstractRoutes {
 class PageRoutes implements AbstractRoutes {
   final Map<String, Page<Object, dynamic>> pages;
   final DispatchBus bus;
+
   PageRoutes({
     @required this.pages,
     DispatchBus bus,

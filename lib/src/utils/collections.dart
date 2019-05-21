@@ -25,6 +25,9 @@ class Collections {
   static List<T> merge<T>(Iterable<T> a, Iterable<T> b) =>
       <T>[]..addAll(a ?? <T>[])..addAll(b ?? <T>[]);
 
+  static List<T> clone<T>(Iterable<T> a) =>
+      (a == null || a.isEmpty) ? <T>[] : (<T>[]..addAll(a));
+
   /// Cast map to list
   /// Map<String, String> map = {'key0': 'a', 'key1': 'b', 'key2': 'c'};
   /// Function mapFunction = (String value, String key) => value;
