@@ -61,7 +61,7 @@ typedef HigherEffect<T> = OnAction Function(Context<T> ctx);
 typedef OnError<T> = bool Function(Exception exception, Context<T> ctx);
 
 /// todo
-abstract class InterComponent {
+abstract class EffectBroadcast {
   /// Broadcast in all component receivers;
   void broadcastEffect(Action action, {Dispatch excluded});
 
@@ -70,7 +70,7 @@ abstract class InterComponent {
 }
 
 /// todo
-abstract class InterStore {
+abstract class InterStoreBroadcast {
   /// Broadcast in all store receivers;
   void broadcast(Action action, {Dispatch excluded});
 
@@ -121,14 +121,14 @@ abstract class EffectEnhancer<T> {
 
 /// A mixed store with inter-component, inter-store communication & slot-build
 abstract class MixedStore<T> extends Store<T>
+    with AutoDispose
     implements
-        InterComponent, //
-        InterStore, //
-        SlotBuilder, //
-        ViewEnhancer<T>, //
-        AdapterEnhancer<T>, //
-        EffectEnhancer<T> //
-{}
+        EffectBroadcast,
+        InterStoreBroadcast,
+        SlotBuilder,
+        ViewEnhancer<T>,
+        AdapterEnhancer<T>,
+        EffectEnhancer<T> {}
 
 /// Seen in view-part or adapter-part
 abstract class ViewService {

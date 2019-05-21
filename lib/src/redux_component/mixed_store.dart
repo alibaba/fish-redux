@@ -1,10 +1,10 @@
-import 'package:fish_redux/src/redux_component/basic.dart';
-import 'package:fish_redux/src/redux_component/basic.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 
 import '../redux/redux.dart';
 import '../redux_component/basic.dart';
+import 'auto_dispose.dart';
+import 'basic.dart';
 import 'dispatch_bus.dart';
 
 /// inter-component broadcast
@@ -47,12 +47,13 @@ mixin _SlotBuilder<T> on MixedStore<T> {
 /// batch notify to subscribers.
 mixin _BatchNotify<T> on Store<T> {
   final List<void Function()> _listeners = <void Function()>[];
-  bool isBatching = false;
-  bool isSetupBatch = false;
+  bool _isBatching = false;
+  bool _isSetupBatch = false;
+  T _prevState;
 
   void setupBatch() {
-    if (isSetupBatch) {
-      isSetupBatch = true;
+    if (_isSetupBatch) {
+      _isSetupBatch = true;
       super.subscribe(_batch);
 
       subscribe = (void Function() callback) {
@@ -68,22 +69,27 @@ mixin _BatchNotify<T> on Store<T> {
   void _batch() {
     if (SchedulerBinding.instance?.schedulerPhase ==
         SchedulerPhase.persistentCallbacks) {
-      if (!isBatching) {
-        isBatching = true;
+      if (!_isBatching) {
+        _isBatching = true;
         SchedulerBinding.instance.addPostFrameCallback((Duration duration) {
-          if (isBatching) {
+          if (_isBatching) {
             _batch();
           }
         });
       }
     } else {
-      final List<void Function()> notifyListeners = _listeners.toList(
-        growable: false,
-      );
-      for (void Function() listener in notifyListeners) {
-        listener();
+      final T curState = getState();
+      if (_prevState != curState) {
+        _prevState = curState;
+
+        final List<void Function()> notifyListeners = _listeners.toList(
+          growable: false,
+        );
+        for (void Function() listener in notifyListeners) {
+          listener();
+        }
+        _isBatching = false;
       }
-      isBatching = false;
     }
   }
 }
@@ -147,7 +153,10 @@ class _MixedStore<T> extends MixedStore<T>
     replaceReducer = store.replaceReducer;
     dispatch = store.dispatch;
     observable = store.observable;
-    teardown = store.teardown;
+    teardown = () {
+      store.teardown();
+      dispose();
+    };
 
     setupBatch();
     setupDispatchBus(bus);
@@ -172,3 +181,35 @@ MixedStore<T> createMixedStore<T>(
       adapterMiddleware: adapterMiddleware,
       effectMiddleware: effectEnhancer,
     );
+
+abstract class StoreConnector<T, K> {
+  T updateT(T t, K k);
+  K updateK(K k, T t);
+}
+
+/// TODO
+void connectStores<T, K>(
+  MixedStore<T> storeT,
+  MixedStore<K> storeK,
+  StoreConnector<T, K> connector,
+) {
+  final void Function() unsubscribeK = storeK.subscribe(() {
+    final T nextT = connector.updateT(storeT.getState(), storeK.getState());
+    storeT.dispatch(Action('UpdateState', payload: nextT));
+  });
+
+  final void Function() unsubscribeT = storeT.subscribe(() {
+    final K nextK = connector.updateK(storeK.getState(), storeT.getState());
+    storeK.dispatch(Action('UpdateState', payload: nextK));
+  });
+
+  storeT.registerOnDisposed(() {
+    unsubscribeK?.call();
+    unsubscribeT?.call();
+  });
+
+  storeK.registerOnDisposed(() {
+    unsubscribeK?.call();
+    unsubscribeT?.call();
+  });
+}
