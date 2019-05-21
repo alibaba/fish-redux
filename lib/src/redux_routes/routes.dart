@@ -33,6 +33,7 @@ class _RouteActionCreator {
 }
 
 /// Multi-page(a route component is a page) sharing a store.
+@deprecated
 @immutable
 class AppRoutes<T> implements AbstractRoutes {
   final Map<String, Dependent<T>> slots;
@@ -51,7 +52,7 @@ class AppRoutes<T> implements AbstractRoutes {
         store = createMixedStore<T>(
           preloadedState,
           _createReducer<T>(slots, reducer),
-          enhancer: applyMiddleware<T>(mergeMiddleware$(middleware)),
+          storeEnhancer: applyMiddleware<T>(middleware),
           slots: slots,
           bus: bus,
         );
@@ -101,6 +102,7 @@ class AppRoutes<T> implements AbstractRoutes {
 class PageRoutes implements AbstractRoutes {
   final Map<String, Page<Object, dynamic>> pages;
   final DispatchBus bus;
+
   PageRoutes({
     @required this.pages,
     DispatchBus bus,

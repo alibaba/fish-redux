@@ -19,7 +19,7 @@ enum Lifecycle {
 class LifecycleCreator {
   static Action initState() => const Action(Lifecycle.initState);
 
-  static Action build() => const Action(Lifecycle.build);
+  static Action build(String name) => Action(Lifecycle.build, payload: name);
 
   static Action reassemble() => const Action(Lifecycle.reassemble);
 

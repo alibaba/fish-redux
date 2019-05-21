@@ -45,7 +45,6 @@ class TestPage<T extends Cloneable<T>, P> extends Page<T, P> {
           filter: filter,
           effect: effect,
           higherEffect: higherEffect,
-          onError: onError,
           dependencies: dependencies,
           shouldUpdate: shouldUpdate,
           wrapper: wrapper,
@@ -71,7 +70,6 @@ class TestComponent<T extends Cloneable<T>> extends Component<T> {
             filter: filter,
             effect: effect,
             higherEffect: higherEffect,
-            onError: onError,
             dependencies: dependencies,
             shouldUpdate: shouldUpdate,
             wrapper: wrapper,
@@ -92,7 +90,6 @@ class TestAdapter<T extends Cloneable<T>> extends Adapter<T> {
             reducer: reducer,
             effect: effect,
             higherEffect: higherEffect,
-            onError: onError,
             filter: filter,
             dependencies: dependencies);
 }
@@ -111,7 +108,6 @@ class TestStaticFlowAdapter<T extends Cloneable<T>>
             reducer: reducer,
             effect: effect,
             higherEffect: higherEffect,
-            onError: onError,
             filter: filter);
 }
 
@@ -131,6 +127,5 @@ class TestDynamicFlowAdapter<T extends Cloneable<T>>
             reducer: reducer,
             effect: effect,
             higherEffect: higherEffect,
-            onError: onError,
             filter: filter);
 }

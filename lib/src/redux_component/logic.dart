@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/widgets.dart';
 
 import '../../fish_redux.dart';
@@ -17,27 +15,37 @@ import 'helper.dart';
 /// 4. Key
 class Logic<T> implements AbstractLogic<T> {
   final Reducer<T> _reducer;
-  final ReducerFilter<T> filter;
-  final HigherEffect<T> higherEffect;
-  final OnError<T> onError;
-  final Dependencies<T> dependencies;
+  final ReducerFilter<T> _filter;
+  final Effect<T> _effect;
+  final HigherEffect<T> _higherEffect;
+  final Dependencies<T> _dependencies;
   final Object Function(T state) _key;
+
+  /// for extends
+  Reducer<T> get protectedReducer => _reducer;
+  ReducerFilter<T> get protectedFilter => _filter;
+  Effect<T> get protectedEffect => _effect;
+  HigherEffect<T> get protectedHigherEffect => _higherEffect;
+  Dependencies<T> get protectedDependencies => _dependencies;
+  Object Function(T state) get protectedKey => _key;
 
   /// Used as function cache to improve operational efficiency
   final Map<String, Object> _resultCache = <String, Object>{};
 
   Logic({
     Reducer<T> reducer,
-    this.dependencies,
-    this.filter,
+    Dependencies<T> dependencies,
+    ReducerFilter<T> filter,
     Effect<T> effect,
     HigherEffect<T> higherEffect,
-    this.onError,
     Object Function(T state) key,
   })  : assert(effect == null || higherEffect == null,
             'Only one style of effect could be applied.'),
         _reducer = reducer,
-        higherEffect = higherEffect ?? asHigherEffect(effect),
+        _filter = filter,
+        _effect = effect,
+        _higherEffect = higherEffect,
+        _dependencies = dependencies,
         _key = key;
 
   /// if
@@ -51,12 +59,11 @@ class Logic<T> implements AbstractLogic<T> {
     return result;
   }
 
-  Reducer<T> get privateReducer => _reducer;
-
   @override
   Reducer<T> get reducer => filterReducer(
-      combineReducers<T>(<Reducer<T>>[privateReducer, dependencies?.reducer]),
-      filter);
+      combineReducers<T>(
+          <Reducer<T>>[protectedReducer, protectedDependencies?.reducer]),
+      protectedFilter);
 
   @override
   Object onReducer(Object state, Action action) =>
@@ -64,41 +71,19 @@ class Logic<T> implements AbstractLogic<T> {
       state;
 
   @override
-  OnAction createHandlerOnAction(Context<T> ctx) {
-    final OnAction onEffect = higherEffect?.call(ctx);
-    return onEffect != null
-        ? (Action action) {
-            assert(action != null, 'Do not dispatch an action of null.');
-            try {
-              final Object result = onEffect(action);
-              if (result is Future) {
-                return result.catchError((Object e) {
-                  if (!_onError(onError, e, ctx)) {
-                    throw e;
-                  }
-                });
-              } else {
-                return result;
-              }
-            } catch (e) {
-              if (!_onError(onError, e, ctx)) {
-                rethrow;
-              } else {
-                return true;
-              }
-            }
-          }
-        : null;
-  }
+  OnAction createHandlerOnAction(ContextSys<T> ctx) => ctx.store
+      .effectEnhance(
+          protectedHigherEffect ?? asHigherEffect<T>(protectedEffect), this)
+      ?.call(ctx);
 
   @override
   OnAction createHandlerOnBroadcast(
-          OnAction onAction, Context<T> ctx, Dispatch parentDispatch) =>
+          OnAction onAction, ContextSys<T> ctx, Dispatch parentDispatch) =>
       onAction;
 
   @override
   Dispatch createDispatch(
-      OnAction onAction, Context<T> ctx, Dispatch parentDispatch) {
+      OnAction onAction, ContextSys<T> ctx, Dispatch parentDispatch) {
     Dispatch dispatch = (Action action) {
       throw Exception(
           'Dispatching while appending your effect & onError to dispatch is not allowed.');
@@ -113,7 +98,7 @@ class Logic<T> implements AbstractLogic<T> {
   }
 
   @override
-  Dependent<T> slot(String type) => dependencies?.slot(type);
+  Dependent<T> slot(String type) => protectedDependencies?.slot(type);
 
   @override
   Dependent<K> asDependent<K>(AbstractConnector<K, T> connector) =>
@@ -124,22 +109,16 @@ class Logic<T> implements AbstractLogic<T> {
     MixedStore<Object> store,
     BuildContext buildContext,
     Get<T> getState,
-  }) {
-    return DefaultContext<T>(
-      logic: this,
-      store: store,
-      buildContext: buildContext,
-      getState: getState,
-    );
-  }
+  }) =>
+      DefaultContext<T>(
+        logic: this,
+        store: store,
+        buildContext: buildContext,
+        getState: getState,
+      );
 
   @override
   Object key(T state) => _key?.call(state) ?? ValueKey<Type>(runtimeType);
-
-  static bool _onError<T>(OnError<T> onError, Object e, Context<T> ctx) {
-    return (e is SelfHealingError ? e.heal(ctx) : onError?.call(e, ctx)) ??
-        false;
-  }
 
   static Middleware<T> _applyOnAction<T>(OnAction onAction, ContextSys<T> ctx) {
     return ({Dispatch dispatch, Get<T> getState}) {
@@ -155,9 +134,7 @@ class Logic<T> implements AbstractLogic<T> {
             return null;
           }
 
-          if (!shouldBeInterruptedBeforeReducer(action)) {
-            ctx.broadcastEffect(action);
-          }
+          ctx.broadcastEffect(action);
 
           next(action);
           return null;

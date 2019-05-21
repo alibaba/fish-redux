@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 
 import '../redux/redux.dart';
 import '../redux_component/basic.dart';
+import 'basic.dart';
 import 'dispatch_bus.dart';
 
 /// inter-component broadcast
@@ -45,12 +48,13 @@ mixin _SlotBuilder<T> on MixedStore<T> {
 /// batch notify to subscribers.
 mixin _BatchNotify<T> on Store<T> {
   final List<void Function()> _listeners = <void Function()>[];
-  bool isBatching = false;
-  bool isSetupBatch = false;
+  bool _isBatching = false;
+  bool _isSetupBatch = false;
+  T _prevState;
 
   void setupBatch() {
-    if (isSetupBatch) {
-      isSetupBatch = true;
+    if (_isSetupBatch) {
+      _isSetupBatch = true;
       super.subscribe(_batch);
 
       subscribe = (void Function() callback) {
@@ -66,33 +70,85 @@ mixin _BatchNotify<T> on Store<T> {
   void _batch() {
     if (SchedulerBinding.instance?.schedulerPhase ==
         SchedulerPhase.persistentCallbacks) {
-      if (!isBatching) {
-        isBatching = true;
+      if (!_isBatching) {
+        _isBatching = true;
         SchedulerBinding.instance.addPostFrameCallback((Duration duration) {
-          if (isBatching) {
+          if (_isBatching) {
             _batch();
           }
         });
       }
     } else {
-      final List<void Function()> notifyListeners = _listeners.toList(
-        growable: false,
-      );
-      for (void Function() listener in notifyListeners) {
-        listener();
+      final T curState = getState();
+      if (_prevState != curState) {
+        _prevState = curState;
+
+        final List<void Function()> notifyListeners = _listeners.toList(
+          growable: false,
+        );
+        for (void Function() listener in notifyListeners) {
+          listener();
+        }
+        _isBatching = false;
       }
-      isBatching = false;
     }
   }
 }
 
+mixin _EffectEnhance<T> on MixedStore<T> implements EffectEnhancer<T> {
+  EffectMiddleware<T> get effectMiddleware;
+
+  @override
+  HigherEffect<K> effectEnhance<K>(
+          HigherEffect<K> higherEffect, AbstractLogic<K> logic) =>
+      effectMiddleware?.call(logic, this)?.call(higherEffect) ?? higherEffect;
+}
+
+mixin _ViewEnhance<T> on MixedStore<T> implements ViewEnhancer<T> {
+  ViewMiddleware<T> get viewMiddleware;
+
+  @override
+  ViewBuilder<K> viewEnhance<K>(
+          ViewBuilder<K> view, AbstractComponent<K> component) =>
+      viewMiddleware?.call(component, this)?.call(view) ?? view;
+}
+
+mixin _AdapterEnhance<T> on MixedStore<T> implements AdapterEnhancer<T> {
+  AdapterMiddleware<T> get adapterMiddleware;
+
+  @override
+  AdapterBuilder<K> adapterEnhance<K>(
+          AdapterBuilder<K> adapterBuilder, AbstractAdapter<K> adapter) =>
+      adapterMiddleware?.call(adapter, this)?.call(adapterBuilder) ??
+      adapterBuilder;
+}
+
 class _MixedStore<T> extends MixedStore<T>
-    with _InterComponent<T>, _InterStore<T>, _SlotBuilder<T>, _BatchNotify<T> {
+    with
+        _InterComponent<T>,
+        _InterStore<T>,
+        _SlotBuilder<T>,
+        _BatchNotify<T>,
+        _EffectEnhance<T>,
+        _ViewEnhance<T>,
+        _AdapterEnhance<T> {
   @override
   final Map<String, Dependent<T>> slots;
+  @override
+  final ViewMiddleware<T> viewMiddleware;
+  @override
+  final AdapterMiddleware<T> adapterMiddleware;
+  @override
+  final EffectMiddleware<T> effectMiddleware;
 
-  _MixedStore(Store<T> store, {this.slots, DispatchBus bus})
-      : assert(store != null) {
+  _MixedStore(
+    Store<T> store, {
+    this.slots,
+    this.viewMiddleware,
+    this.adapterMiddleware,
+    this.effectMiddleware,
+    DispatchBus bus,
+  }) : assert(store != null) {
     getState = store.getState;
     subscribe = store.subscribe;
     replaceReducer = store.replaceReducer;
@@ -105,15 +161,57 @@ class _MixedStore<T> extends MixedStore<T>
   }
 }
 
+enum _UpdateState { Assign }
+
+// replace current state
+Reducer<T> _appendUpdateStateReducer<T>(Reducer<T> reducer) => reducer == null
+    ? null
+    : (T state, Action action) => action.type == _UpdateState.Assign
+        ? action.payload
+        : reducer(state, action);
+
 MixedStore<T> createMixedStore<T>(
   T preloadedState,
   Reducer<T> reducer, {
-  StoreEnhancer<T> enhancer,
   Map<String, Dependent<T>> slots,
+  StoreEnhancer<T> storeEnhancer,
+  ViewMiddleware<T> viewEnhancer,
+  AdapterMiddleware<T> adapterMiddleware,
+  EffectMiddleware<T> effectEnhancer,
   DispatchBus bus,
 }) =>
     _MixedStore<T>(
-      createStore(preloadedState, reducer, enhancer),
+      createStore(
+        preloadedState,
+        _appendUpdateStateReducer<T>(reducer),
+        storeEnhancer,
+      ),
       slots: slots,
       bus: bus,
+      viewMiddleware: viewEnhancer,
+      adapterMiddleware: adapterMiddleware,
+      effectMiddleware: effectEnhancer,
     );
+
+/// TODO
+MixedStore<T> connectStores<T, K>(
+  MixedStore<T> mainStore,
+  Store<K> extraStore,
+  T Function(T, K) update,
+) {
+  final void Function() unsubscribe = extraStore.subscribe(() {
+    final T prevT = mainStore.getState();
+    final T nextT = update(prevT, extraStore.getState());
+    if (prevT != nextT && nextT != null) {
+      mainStore.dispatch(Action(_UpdateState.Assign, payload: nextT));
+    }
+  });
+
+  final Future<dynamic> Function() superMainTD = mainStore.teardown;
+  mainStore.teardown = () {
+    unsubscribe?.call();
+    return superMainTD();
+  };
+
+  return mainStore;
+}

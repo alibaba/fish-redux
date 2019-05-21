@@ -1,1 +1,1 @@
-export 'common_middleware/common_middleware.dart';
+export 'middleware/middleware.dart';

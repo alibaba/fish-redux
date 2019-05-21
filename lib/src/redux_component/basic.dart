@@ -35,8 +35,9 @@ typedef AdapterBuilder<T> = ListAdapter Function(
 /// 1. How to render
 /// 2. When to update
 abstract class ViewUpdater<T> {
-  Widget buildView(T state, Dispatch dispatch, ViewService viewService);
-  void onNotify(T now, void Function() markNeedsBuild, Dispatch dispatch);
+  Widget buildView();
+  void didUpdateWidget();
+  void onNotify();
   void reassemble();
 }
 
@@ -60,7 +61,7 @@ typedef HigherEffect<T> = OnAction Function(Context<T> ctx);
 typedef OnError<T> = bool Function(Exception exception, Context<T> ctx);
 
 /// todo
-abstract class InterComponent {
+abstract class EffectBroadcast {
   /// Broadcast in all component receivers;
   void broadcastEffect(Action action, {Dispatch excluded});
 
@@ -69,7 +70,7 @@ abstract class InterComponent {
 }
 
 /// todo
-abstract class InterStore {
+abstract class InterStoreBroadcast {
   /// Broadcast in all store receivers;
   void broadcast(Action action, {Dispatch excluded});
 
@@ -83,9 +84,50 @@ abstract class SlotBuilder {
   Widget buildComponent(String name);
 }
 
+/// todo
+typedef EffectMiddleware<T> = Composable<HigherEffect<dynamic>> Function(
+    AbstractLogic<dynamic>, MixedStore<T>);
+
+// todo
+typedef ViewMiddleware<T> = Composable<ViewBuilder<dynamic>> Function(
+    AbstractComponent<dynamic>, MixedStore<T>);
+
+typedef AdapterMiddleware<T> = Composable<AdapterBuilder<dynamic>> Function(
+    AbstractAdapter<dynamic>, MixedStore<T>);
+
+/// todo
+abstract class ViewEnhancer<T> {
+  ViewBuilder<K> viewEnhance<K>(
+    ViewBuilder<K> view,
+    AbstractComponent<K> component,
+  );
+}
+
+/// todo
+abstract class AdapterEnhancer<T> {
+  AdapterBuilder<K> adapterEnhance<K>(
+    AdapterBuilder<K> adapterBuilder,
+    AbstractAdapter<K> logic,
+  );
+}
+
+/// todo
+abstract class EffectEnhancer<T> {
+  HigherEffect<K> effectEnhance<K>(
+    HigherEffect<K> higherEffect,
+    AbstractLogic<K> logic,
+  );
+}
+
 /// A mixed store with inter-component, inter-store communication & slot-build
 abstract class MixedStore<T> extends Store<T>
-    implements InterComponent, InterStore, SlotBuilder {}
+    implements
+        EffectBroadcast,
+        InterStoreBroadcast,
+        SlotBuilder,
+        ViewEnhancer<T>,
+        AdapterEnhancer<T>,
+        EffectEnhancer<T> {}
 
 /// Seen in view-part or adapter-part
 abstract class ViewService {
@@ -147,12 +189,19 @@ abstract class Context<T> extends AutoDispose {
 
   /// Broadcast in all component receivers;
   void broadcastEffect(Action action, {bool excluded});
+
+  /// add observable
+  void Function() addObservable(Subscribe observable);
 }
 
 /// Seen in framework-component
 abstract class ContextSys<T> extends Context<T> implements ViewService {
   /// Response to lifecycle calls
   void onLifecycle(Action action);
+
+  void bindObserver(void Function(Subscribe) observer);
+
+  MixedStore<dynamic> get store;
 }
 
 /// Representation of each dependency
@@ -191,17 +240,17 @@ abstract class AbstractLogic<T> {
   Object onReducer(Object state, Action action);
 
   /// To create each instance's side-effect-action-handler
-  OnAction createHandlerOnAction(Context<T> ctx);
+  OnAction createHandlerOnAction(ContextSys<T> ctx);
 
   /// To create each instance's broadcast-handler
   /// It is same as side-effect-action-handler by defalut.
   OnAction createHandlerOnBroadcast(
-      OnAction onAction, Context<T> ctx, Dispatch parentDispatch);
+      OnAction onAction, ContextSys<T> ctx, Dispatch parentDispatch);
 
   /// To create each instance's dispatch
   /// Dispatch is the most important api for users which is provided by framework
   Dispatch createDispatch(
-      OnAction onAction, Context<T> ctx, Dispatch parentDispatch);
+      OnAction onAction, ContextSys<T> ctx, Dispatch parentDispatch);
 
   /// To create each instance's context
   ContextSys<T> createContext({
@@ -214,6 +263,7 @@ abstract class AbstractLogic<T> {
   Object key(T state);
 
   /// It's a convenient way to create a dependency
+  @deprecated
   Dependent<K> asDependent<K>(AbstractConnector<K, T> connector);
 
   /// Find a dependent by name
@@ -222,7 +272,10 @@ abstract class AbstractLogic<T> {
 
 abstract class AbstractComponent<T> implements AbstractLogic<T> {
   /// How to render & How to update
-  ViewUpdater<T> createViewUpdater(T init);
+  ViewUpdater<T> createViewUpdater(
+    ContextSys<T> ctx,
+    void Function() markNeedsBuild,
+  );
 
   /// How to build component instance
   Widget buildComponent(MixedStore<Object> store, Get<T> getter);
