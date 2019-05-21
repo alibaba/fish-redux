@@ -50,3 +50,12 @@
 -   enhance dispatch-api
 -   add some docs
 -   move test to dev_dependencies
+
+## [0.1.8]
+-   add api to subscribe app-store for page-store
+-   add api to subscribe app-store for component
+-   add viewMiddleware
+-   add adapterMiddleware
+-   add effectMiddleware
+-   add protected attribute method, more friendly to OOP
+-   remove debug_report
