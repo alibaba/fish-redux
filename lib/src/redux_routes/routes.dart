@@ -33,6 +33,7 @@ class _RouteActionCreator {
 }
 
 /// Multi-page(a route component is a page) sharing a store.
+@deprecated
 @immutable
 class AppRoutes<T> implements AbstractRoutes {
   final Map<String, Dependent<T>> slots;
