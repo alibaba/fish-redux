@@ -5,7 +5,7 @@ import 'state.dart';
 
 Reducer<TodoEditState> buildReducer() {
   return asReducer<TodoEditState>(<Object, Reducer<TodoEditState>>{
-    ToDoEditAction.update: _update,
+    ToDoEditAction.update: _update
   });
 }
 
@@ -14,5 +14,7 @@ TodoEditState _update(TodoEditState state, Action action) {
   final TodoEditState newState = state.clone();
   newState.toDo.title = update['name'] ?? newState.toDo.title;
   newState.toDo.desc = update['desc'] ?? newState.toDo.desc;
+  String strThemeIdx = update['themeidx'] ?? newState.themeIdx.toString();
+  newState.themeIdx = int.tryParse(strThemeIdx);
   return newState;
 }

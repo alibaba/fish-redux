@@ -1,5 +1,6 @@
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
+import 'package:sample/global_store/global_store.dart';
 
 import 'action.dart';
 import 'state.dart';
@@ -8,6 +9,7 @@ Widget buildView(
     TodoEditState state, Dispatch dispatch, ViewService viewService) {
   return Scaffold(
     appBar: AppBar(
+      backgroundColor:GlobalStore.state.themeColor,
       title: const Text('Todo'),
     ),
     body: Container(
@@ -40,6 +42,13 @@ Widget buildView(
               ],
             ),
           ),
+          new RaisedButton(
+              padding: new EdgeInsets.only(left: 20.0, top: 10.0, right: 20.0, bottom: 10.0),
+              color: Colors.blue,
+              child: new Text("Change theme", style: new TextStyle(fontSize: 18), overflow:TextOverflow.ellipsis),
+              onPressed: () {
+                dispatch(ToDoEditActionCreator.changeTheme());
+              }),
           Expanded(
               child: Container(
             margin: const EdgeInsets.only(top: 32.0),

@@ -11,6 +11,9 @@ class TodoEditState implements Cloneable<TodoEditState> {
   FocusNode focusNodeName;
   FocusNode focusNodeDesc;
 
+  int themeIdx;
+  List<Color> themeColorSlots;
+
   @override
   TodoEditState clone() {
     return TodoEditState()
@@ -18,7 +21,9 @@ class TodoEditState implements Cloneable<TodoEditState> {
       ..descEditController = descEditController
       .. focusNodeName = focusNodeName
       .. focusNodeDesc = focusNodeDesc
-      ..toDo = toDo;
+      ..toDo = toDo
+      ..themeIdx = themeIdx
+      ..themeColorSlots = themeColorSlots;
   }
 }
 
@@ -29,5 +34,7 @@ TodoEditState initState(ToDoState arg) {
   state.descEditController = TextEditingController(text: arg?.desc);
   state.focusNodeName = FocusNode();
   state.focusNodeDesc = FocusNode();
+  state.themeIdx = 0;
+  state.themeColorSlots = [Colors.green, Colors.red, Colors.black, Colors.blue];
   return state;
 }
