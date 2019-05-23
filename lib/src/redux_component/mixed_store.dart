@@ -53,7 +53,7 @@ mixin _BatchNotify<T> on Store<T> {
   T _prevState;
 
   void setupBatch() {
-    if (_isSetupBatch) {
+    if (!_isSetupBatch) {
       _isSetupBatch = true;
       super.subscribe(_batch);
 
@@ -67,9 +67,16 @@ mixin _BatchNotify<T> on Store<T> {
     }
   }
 
+  bool isInSuitablePhase() {
+    return SchedulerBinding.instance != null &&
+        SchedulerBinding.instance.schedulerPhase !=
+            SchedulerPhase.persistentCallbacks &&
+        !(SchedulerBinding.instance.schedulerPhase == SchedulerPhase.idle &&
+            WidgetsBinding.instance.renderViewElement == null);
+  }
+
   void _batch() {
-    if (SchedulerBinding.instance?.schedulerPhase ==
-        SchedulerPhase.persistentCallbacks) {
+    if (!isInSuitablePhase()) {
       if (!_isBatching) {
         _isBatching = true;
         SchedulerBinding.instance.addPostFrameCallback((Duration duration) {
