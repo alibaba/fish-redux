@@ -10,6 +10,6 @@ class GlobalState implements Cloneable<GlobalState> {
   }
 }
 
-GlobalState initState(Map<String, dynamic> args) {
+GlobalState initGlobalState(Map<String, dynamic> args) {
   return GlobalState();
 }

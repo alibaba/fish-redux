@@ -8,7 +8,7 @@ class GlobalStore{
 
   static Store<GlobalState> get store{
     if(null == _globalStore){
-      _globalStore = createStore<GlobalState>(initState(null), buildReducer());
+      _globalStore = createStore<GlobalState>(initGlobalState(null), buildReducer());
     }
     return _globalStore;
   }

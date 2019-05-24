@@ -1,13 +1,24 @@
+import 'dart:ui';
+
 import 'package:fish_redux/fish_redux.dart';
+import 'package:sample/global_store/global_base_state.dart';
+import 'package:sample/global_store/state.dart';
 import 'report_component/component.dart';
 import 'todo_component/component.dart';
 
-class PageState implements Cloneable<PageState> {
+class PageState with GlobalBaseState<PageState>{
   List<ToDoState> toDos;
+  Color themeColor;
 
   @override
   PageState clone() {
     return PageState()..toDos = toDos;
+  }
+
+  @override
+  PageState lessClone(GlobalState state)
+  {
+    return (state.themeColor == themeColor) ? this : clone()..themeColor = state.themeColor;
   }
 }
 

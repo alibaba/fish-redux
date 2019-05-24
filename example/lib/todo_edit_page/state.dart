@@ -1,8 +1,10 @@
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
+import 'package:sample/global_store/global_base_state.dart';
+import 'package:sample/global_store/state.dart';
 import '../todo_list_page/todo_component/component.dart';
 
-class TodoEditState implements Cloneable<TodoEditState> {
+class TodoEditState with GlobalBaseState<TodoEditState> {
   ToDoState toDo;
 
   TextEditingController nameEditController;
@@ -10,6 +12,8 @@ class TodoEditState implements Cloneable<TodoEditState> {
 
   FocusNode focusNodeName;
   FocusNode focusNodeDesc;
+
+  Color themeColor;
 
   int themeIdx;
   List<Color> themeColorSlots;
@@ -24,6 +28,11 @@ class TodoEditState implements Cloneable<TodoEditState> {
       ..toDo = toDo
       ..themeIdx = themeIdx
       ..themeColorSlots = themeColorSlots;
+  }
+  @override
+  TodoEditState lessClone(GlobalState state)
+  {
+    return (state.themeColor == themeColor) ? this : clone()..themeColor = state.themeColor;
   }
 }
 

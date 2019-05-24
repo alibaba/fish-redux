@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 
 import 'package:fish_redux/fish_redux.dart';
+import 'package:sample/global_store/global_base_state.dart';
 import 'package:sample/global_store/state.dart';
 import 'global_store/global_store.dart';
 import 'todo_edit_page/page.dart';
 import 'todo_list_page/page.dart';
 
 //create global page helper
-Page<T, dynamic> createGlobalPage<T extends Cloneable<T>>(
+Page<T, dynamic> createGlobalPage<T extends GlobalBaseState<T> >(
     Page<T, dynamic> page) {
   return page
     ..connectExtraStore(GlobalStore.store, (T pagestate, GlobalState appState) {
-      return pagestate.clone();
+      return pagestate.lessClone(appState);
     });
 }
 

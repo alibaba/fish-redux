@@ -1,6 +1,5 @@
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
-import 'package:sample/global_store/global_store.dart';
 
 import 'action.dart';
 import 'state.dart';
@@ -9,7 +8,7 @@ Widget buildView(
     TodoEditState state, Dispatch dispatch, ViewService viewService) {
   return Scaffold(
     appBar: AppBar(
-      backgroundColor:GlobalStore.state.themeColor,
+      backgroundColor:state.themeColor,
       title: const Text('Todo'),
     ),
     body: Container(
