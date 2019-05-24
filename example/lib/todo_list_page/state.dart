@@ -27,16 +27,26 @@ PageState initState(Map<String, dynamic> args) {
   return PageState();
 }
 
-class ReportConnector extends ConnOp<PageState, ReportState> {
+class ReportConnector extends Reselect2<PageState, ReportState, int, int> {
   @override
-  ReportState get(PageState state) {
-    final ReportState reportState = ReportState();
-    reportState.total = state.toDos.length;
-    reportState.done =
-        state.toDos.where((ToDoState tds) => tds.isDone).toList().length;
-    return reportState;
+  ReportState computed(int sub0, int sub1) {
+    return ReportState()
+      ..done = sub0
+      ..total = sub1;
   }
 
   @override
-  void set(PageState state, ReportState subState) {}
+  int getSub0(PageState state) {
+    return state.toDos.where((ToDoState tds) => tds.isDone).toList().length;
+  }
+
+  @override
+  int getSub1(PageState state) {
+    return state.toDos.length;
+  }
+
+  @override
+  void set(PageState state, ReportState subState) {
+    throw Exception('Unexcepted to set PageState from ReportState');
+  }
 }
