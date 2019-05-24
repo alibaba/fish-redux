@@ -1,4 +1,5 @@
 import '../redux/redux.dart';
+import 'op_mixin.dart';
 
 bool _listEquals(List<dynamic> list1, List<dynamic> list2) {
   if (identical(list1, list2)) {
@@ -24,7 +25,8 @@ bool _listEquals(List<dynamic> list1, List<dynamic> list2) {
   return true;
 }
 
-abstract class _BasicReselect<T, P> extends MutableConn<T, P> {
+abstract class _BasicReselect<T, P> extends MutableConn<T, P>
+    with ConnOpMixin<T, P> {
   List<dynamic> _subsCache;
   P _pCache;
   bool _hasBeenCalled = false;
