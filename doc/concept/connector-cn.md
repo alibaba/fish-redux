@@ -14,8 +14,8 @@ class DetialState {
     String message;
 }
 
-Connector<DetialState, String> messageConnector() {
-    return Connector<DetialState, String>(
+ConnOp<DetialState, String> messageConnector() {
+    return ConnOp<DetialState, String>(
         get: (DetialState state) => state.message,
         set: (DetialState state, String message) => state.message = message,
     );
