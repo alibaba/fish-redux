@@ -8,6 +8,7 @@ Widget buildView(PageState state, Dispatch dispatch, ViewService viewService) {
   final ListAdapter adapter = viewService.buildAdapter();
   return Scaffold(
     appBar: AppBar(
+      backgroundColor:state.themeColor,
       title: const Text('ToDoList'),
     ),
     body: Container(
