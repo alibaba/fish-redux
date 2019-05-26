@@ -1,24 +1,19 @@
 import 'dart:ui';
 
 import 'package:fish_redux/fish_redux.dart';
-import '../global_store/base_state.dart';
 import '../global_store/state.dart';
 import 'report_component/component.dart';
 import 'todo_component/component.dart';
 
-class PageState with GlobalBaseState<PageState> {
+class PageState implements GlobalBaseState<PageState> {
   List<ToDoState> toDos;
+
+  @override
   Color themeColor;
 
   @override
   PageState clone() {
     return PageState()..toDos = toDos;
-  }
-
-  @override
-  PageState lessClone(GlobalState state) {
-    return (state.themeColor == themeColor) ? this : clone()
-      ..themeColor = state.themeColor;
   }
 }
 

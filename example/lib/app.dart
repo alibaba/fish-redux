@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:fish_redux/fish_redux.dart';
-import 'global_store/base_state.dart';
 import 'global_store/state.dart';
 import 'global_store/store.dart';
 import 'todo_edit_page/page.dart';
@@ -12,7 +11,9 @@ Page<T, dynamic> connectExtraStore<T extends GlobalBaseState<T>>(
     Page<T, dynamic> page) {
   return page
     ..connectExtraStore(GlobalStore.store, (T pagestate, GlobalState appState) {
-      return pagestate.lessClone(appState);
+      return pagestate.themeColor == appState.themeColor
+          ? pagestate
+          : (pagestate.clone()..themeColor = appState.themeColor);
     });
 }
 
