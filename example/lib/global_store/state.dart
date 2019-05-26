@@ -9,7 +9,3 @@ class GlobalState implements Cloneable<GlobalState> {
     return GlobalState();
   }
 }
-
-GlobalState initGlobalState(Map<String, dynamic> args) {
-  return GlobalState();
-}

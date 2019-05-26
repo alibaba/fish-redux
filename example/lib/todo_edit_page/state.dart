@@ -1,7 +1,7 @@
-import 'package:fish_redux/fish_redux.dart';
+// import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
-import 'package:sample/global_store/global_base_state.dart';
-import 'package:sample/global_store/state.dart';
+import '../global_store/base_state.dart';
+import '../global_store/state.dart';
 import '../todo_list_page/todo_component/component.dart';
 
 class TodoEditState with GlobalBaseState<TodoEditState> {
@@ -23,16 +23,17 @@ class TodoEditState with GlobalBaseState<TodoEditState> {
     return TodoEditState()
       ..nameEditController = nameEditController
       ..descEditController = descEditController
-      .. focusNodeName = focusNodeName
-      .. focusNodeDesc = focusNodeDesc
+      ..focusNodeName = focusNodeName
+      ..focusNodeDesc = focusNodeDesc
       ..toDo = toDo
       ..themeIdx = themeIdx
       ..themeColorSlots = themeColorSlots;
   }
+
   @override
-  TodoEditState lessClone(GlobalState state)
-  {
-    return (state.themeColor == themeColor) ? this : clone()..themeColor = state.themeColor;
+  TodoEditState lessClone(GlobalState state) {
+    return (state.themeColor == themeColor) ? this : clone()
+      ..themeColor = state.themeColor;
   }
 }
 

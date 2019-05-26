@@ -59,3 +59,6 @@
 -   add effectMiddleware
 -   add protected attribute method, more friendly to OOP
 -   remove debug_report
+
+## [0.1.9]
+- add mixed-store's batch notification feature

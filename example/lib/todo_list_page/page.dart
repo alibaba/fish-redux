@@ -1,6 +1,4 @@
 import 'package:fish_redux/fish_redux.dart';
-import 'package:sample/global_store/global_store.dart';
-import 'package:sample/global_store/state.dart';
 
 import 'effect.dart';
 import 'list_adapter/adapter.dart';
