@@ -87,7 +87,7 @@ mixin _BatchNotify<T> on Store<T> {
       }
     } else {
       final T curState = getState();
-      if (_prevState != curState) {
+      if (!identical(_prevState, curState)) {
         _prevState = curState;
 
         final List<void Function()> notifyListeners = _listeners.toList(
@@ -96,6 +96,7 @@ mixin _BatchNotify<T> on Store<T> {
         for (void Function() listener in notifyListeners) {
           listener();
         }
+
         _isBatching = false;
       }
     }
