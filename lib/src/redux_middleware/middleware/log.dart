@@ -1,5 +1,4 @@
 import '../../redux/redux.dart';
-import '../../redux_component/redux_component.dart';
 import '../../utils/utils.dart';
 
 /// Middleware for print action dispatch.

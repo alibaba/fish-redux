@@ -8,7 +8,7 @@ Widget buildView(
     TodoEditState state, Dispatch dispatch, ViewService viewService) {
   return Scaffold(
     appBar: AppBar(
-      backgroundColor:state.themeColor,
+      backgroundColor: state.themeColor,
       title: const Text('Todo'),
     ),
     body: Container(
@@ -41,12 +41,15 @@ Widget buildView(
               ],
             ),
           ),
-          new RaisedButton(
-              padding: new EdgeInsets.only(left: 20.0, top: 10.0, right: 20.0, bottom: 10.0),
+          RaisedButton(
+              padding: const EdgeInsets.only(
+                  left: 20.0, top: 10.0, right: 20.0, bottom: 10.0),
               color: Colors.blue,
-              child: new Text("Change theme", style: new TextStyle(fontSize: 18), overflow:TextOverflow.ellipsis),
+              child: const Text('Change theme',
+                  style: TextStyle(fontSize: 18),
+                  overflow: TextOverflow.ellipsis),
               onPressed: () {
-                dispatch(ToDoEditActionCreator.changeTheme());
+                dispatch(ToDoEditActionCreator.onChangeTheme());
               }),
           Expanded(
               child: Container(
@@ -82,7 +85,7 @@ Widget buildView(
       ),
     ),
     floatingActionButton: FloatingActionButton(
-      onPressed: () => dispatch(ToDoEditActionCreator.done()),
+      onPressed: () => dispatch(ToDoEditActionCreator.onDone()),
       tooltip: 'Done',
       child: const Icon(Icons.done),
     ),
