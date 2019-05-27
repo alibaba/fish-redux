@@ -14,9 +14,6 @@ class TodoEditState implements GlobalBaseState<TodoEditState> {
   @override
   Color themeColor;
 
-  int themeIdx;
-  List<Color> themeColorSlots;
-
   @override
   TodoEditState clone() {
     return TodoEditState()
@@ -24,9 +21,7 @@ class TodoEditState implements GlobalBaseState<TodoEditState> {
       ..descEditController = descEditController
       ..focusNodeName = focusNodeName
       ..focusNodeDesc = focusNodeDesc
-      ..toDo = toDo
-      ..themeIdx = themeIdx
-      ..themeColorSlots = themeColorSlots;
+      ..toDo = toDo;
   }
 }
 
@@ -37,7 +32,6 @@ TodoEditState initState(ToDoState arg) {
   state.descEditController = TextEditingController(text: arg?.desc);
   state.focusNodeName = FocusNode();
   state.focusNodeDesc = FocusNode();
-  state.themeIdx = 0;
-  state.themeColorSlots = [Colors.green, Colors.red, Colors.black, Colors.blue];
+
   return state;
 }

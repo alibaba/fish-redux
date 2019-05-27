@@ -13,7 +13,5 @@ TodoEditState _update(TodoEditState state, Action action) {
   final TodoEditState newState = state.clone();
   newState.toDo.title = update['name'] ?? newState.toDo.title;
   newState.toDo.desc = update['desc'] ?? newState.toDo.desc;
-  final String strThemeIdx = update['themeidx'] ?? newState.themeIdx.toString();
-  newState.themeIdx = int.tryParse(strThemeIdx);
   return newState;
 }

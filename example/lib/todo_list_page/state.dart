@@ -13,7 +13,9 @@ class PageState implements GlobalBaseState<PageState> {
 
   @override
   PageState clone() {
-    return PageState()..toDos = toDos;
+    return PageState()
+      ..toDos = toDos
+      ..themeColor = themeColor;
   }
 }
 

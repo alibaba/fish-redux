@@ -31,13 +31,6 @@ void _onDone(Action action, Context<TodoEditState> ctx) {
 }
 
 void _onChangeTheme(Action action, Context<TodoEditState> ctx) {
-  ctx.state.themeIdx++;
-  if (ctx.state.themeIdx >= ctx.state.themeColorSlots.length) {
-    ctx.state.themeIdx = 0;
-  }
   //change global data
-  GlobalStore.store.dispatch(GlobalActionCreator.onchangeThemeColor(
-      ctx.state.themeColorSlots[ctx.state.themeIdx]));
-  //notify todo edit page update data
-  ToDoEditActionCreator.update(null, null, ctx.state.themeIdx.toString());
+  GlobalStore.store.dispatch(GlobalActionCreator.onchangeThemeColor());
 }
