@@ -103,25 +103,40 @@ mixin _BatchNotify<T> on Store<T> {
   }
 }
 
+HigherEffect<dynamic> _inverterHigherEffect<K>(HigherEffect<K> higherEffect) {
+  return higherEffect == null
+      ? null
+      : (Context<dynamic> ctx) {
+          return higherEffect(ctx);
+        };
+}
+
 mixin _EffectEnhance<T> on MixedStore<T> implements EffectEnhancer<T> {
   EffectMiddleware<T> get effectMiddleware;
 
   @override
   HigherEffect<K> effectEnhance<K>(
           HigherEffect<K> higherEffect, AbstractLogic<K> logic) =>
-      effectMiddleware?.call(logic, this)?.call(higherEffect) ?? higherEffect;
+      effectMiddleware
+          ?.call(logic, this)
+          ?.call(_inverterHigherEffect(higherEffect)) ??
+      higherEffect;
 }
 
 ViewBuilder<dynamic> _inverterView<K>(ViewBuilder<K> view) {
-  return (dynamic state, Dispatch dispatch, ViewService viewService) {
-    return view(state, dispatch, viewService);
-  };
+  return view == null
+      ? null
+      : (dynamic state, Dispatch dispatch, ViewService viewService) {
+          return view(state, dispatch, viewService);
+        };
 }
 
 AdapterBuilder<dynamic> _inverterAdapter<K>(AdapterBuilder<K> adapter) {
-  return (dynamic state, Dispatch dispatch, ViewService viewService) {
-    return adapter(state, dispatch, viewService);
-  };
+  return adapter == null
+      ? null
+      : (dynamic state, Dispatch dispatch, ViewService viewService) {
+          return adapter(state, dispatch, viewService);
+        };
 }
 
 mixin _ViewEnhance<T> on MixedStore<T> implements ViewEnhancer<T> {
