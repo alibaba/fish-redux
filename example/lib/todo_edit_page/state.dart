@@ -21,7 +21,8 @@ class TodoEditState implements GlobalBaseState<TodoEditState> {
       ..descEditController = descEditController
       ..focusNodeName = focusNodeName
       ..focusNodeDesc = focusNodeDesc
-      ..toDo = toDo;
+      ..toDo = toDo
+      ..themeColor = themeColor;
   }
 }
 

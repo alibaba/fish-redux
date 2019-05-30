@@ -3,13 +3,12 @@ import 'package:fish_redux/fish_redux.dart';
 enum ToDoEditAction { update, onDone, onChangeTheme }
 
 class ToDoEditActionCreator {
-  static Action update(String name, String desc, String themeidx) {
+  static Action update(String name, String desc) {
     return Action(
       ToDoEditAction.update,
       payload: <String, String>{
         'name': name,
         'desc': desc,
-        'themeidx': themeidx
       },
     );
   }

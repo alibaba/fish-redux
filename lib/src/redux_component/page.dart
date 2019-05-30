@@ -92,16 +92,16 @@ abstract class Page<T, P> extends Component<T> {
           connectStores<T, K>(store, extraStore, update));
 
   /// inject app-middleware
-  void updateProperties({
-    List<Middleware<T>> dispatchMiddleware,
-    List<ViewMiddleware<T>> viewMiddleware,
-    List<EffectMiddleware<T>> effectMiddleware,
-    List<AdapterMiddleware<T>> adapterMiddleware,
+  void updateMiddleware({
+    void Function(List<Middleware<T>>) dispatch,
+    void Function(List<ViewMiddleware<T>>) view,
+    void Function(List<EffectMiddleware<T>>) effect,
+    void Function(List<AdapterMiddleware<T>>) adapter,
   }) {
-    _dispatchMiddleware.addAll(dispatchMiddleware ?? <Middleware<T>>[]);
-    _viewMiddleware.addAll(viewMiddleware ?? <ViewMiddleware<T>>[]);
-    _effectMiddleware.addAll(effectMiddleware ?? <EffectMiddleware<T>>[]);
-    _adapterMiddleware.addAll(adapterMiddleware ?? <AdapterMiddleware<T>>[]);
+    dispatch?.call(_dispatchMiddleware);
+    view?.call(_viewMiddleware);
+    effect?.call(_effectMiddleware);
+    adapter?.call(_adapterMiddleware);
   }
 }
 
