@@ -11,13 +11,12 @@ AdapterMiddleware<T> safetyAdapter<T>({
       onError,
 }) {
   return (AbstractAdapter<dynamic> adapter, MixedStore<T> store) {
-    return (AdapterBuilder<dynamic> viewBuilder) {
+    return (AdapterBuilder<dynamic> next) {
       return isDebug()
-          ? viewBuilder
+          ? next
           : (dynamic state, Dispatch dispatch, ViewService viewService) {
               try {
-                final ListAdapter result =
-                    viewBuilder(state, dispatch, viewService);
+                final ListAdapter result = next(state, dispatch, viewService);
                 return ListAdapter((BuildContext buildContext, int index) {
                   try {
                     return result.itemBuilder(buildContext, index);
