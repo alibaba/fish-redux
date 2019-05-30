@@ -14,7 +14,13 @@ Page<T, dynamic> connectExtraStore<T extends GlobalBaseState<T>>(
       return pagestate.themeColor == appState.themeColor
           ? pagestate
           : (pagestate.clone()..themeColor = appState.themeColor);
-    });
+    })
+    ..updateMiddleware(
+      view: (List<ViewMiddleware<T>> viewMiddleware) {
+        viewMiddleware.add(safetyView());
+      },
+      // adapter:
+    );
 }
 
 Widget createApp() {

@@ -16,13 +16,13 @@ Effect<TodoEditState> buildEffect() {
 
 void _init(Action action, Context<TodoEditState> ctx) {
   ctx.state.nameEditController.addListener(() {
-    ctx.dispatch(ToDoEditActionCreator.update(
-        ctx.state.nameEditController.text, null, null));
+    ctx.dispatch(
+        ToDoEditActionCreator.update(ctx.state.nameEditController.text, null));
   });
 
   ctx.state.descEditController.addListener(() {
-    ctx.dispatch(ToDoEditActionCreator.update(
-        null, ctx.state.descEditController.text, null));
+    ctx.dispatch(
+        ToDoEditActionCreator.update(null, ctx.state.descEditController.text));
   });
 }
 

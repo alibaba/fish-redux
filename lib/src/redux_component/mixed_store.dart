@@ -112,13 +112,25 @@ mixin _EffectEnhance<T> on MixedStore<T> implements EffectEnhancer<T> {
       effectMiddleware?.call(logic, this)?.call(higherEffect) ?? higherEffect;
 }
 
+ViewBuilder<dynamic> _inverterView<K>(ViewBuilder<K> view) {
+  return (dynamic state, Dispatch dispatch, ViewService viewService) {
+    return view(state, dispatch, viewService);
+  };
+}
+
+AdapterBuilder<dynamic> _inverterAdapter<K>(AdapterBuilder<K> adapter) {
+  return (dynamic state, Dispatch dispatch, ViewService viewService) {
+    return adapter(state, dispatch, viewService);
+  };
+}
+
 mixin _ViewEnhance<T> on MixedStore<T> implements ViewEnhancer<T> {
   ViewMiddleware<T> get viewMiddleware;
 
   @override
   ViewBuilder<K> viewEnhance<K>(
           ViewBuilder<K> view, AbstractComponent<K> component) =>
-      viewMiddleware?.call(component, this)?.call(view) ?? view;
+      viewMiddleware?.call(component, this)?.call(_inverterView(view)) ?? view;
 }
 
 mixin _AdapterEnhance<T> on MixedStore<T> implements AdapterEnhancer<T> {
@@ -127,7 +139,9 @@ mixin _AdapterEnhance<T> on MixedStore<T> implements AdapterEnhancer<T> {
   @override
   AdapterBuilder<K> adapterEnhance<K>(
           AdapterBuilder<K> adapterBuilder, AbstractAdapter<K> adapter) =>
-      adapterMiddleware?.call(adapter, this)?.call(adapterBuilder) ??
+      adapterMiddleware
+          ?.call(adapter, this)
+          ?.call(_inverterAdapter(adapterBuilder)) ??
       adapterBuilder;
 }
 
@@ -207,13 +221,18 @@ MixedStore<T> connectStores<T, K>(
   Store<K> extraStore,
   T Function(T, K) update,
 ) {
-  final void Function() unsubscribe = extraStore.subscribe(() {
+  final void Function() subscriber = () {
     final T prevT = mainStore.getState();
     final T nextT = update(prevT, extraStore.getState());
-    if (prevT != nextT && nextT != null) {
+    if (nextT != null && !identical(prevT, nextT)) {
       mainStore.dispatch(Action(_UpdateState.Assign, payload: nextT));
     }
-  });
+  };
+
+  final void Function() unsubscribe = extraStore.subscribe(subscriber);
+
+  /// should triggle once
+  subscriber();
 
   final Future<dynamic> Function() superMainTD = mainStore.teardown;
   mainStore.teardown = () {
