@@ -163,9 +163,9 @@ class _ViewUpdater<T> implements ViewUpdater<T> {
   }
 
   @override
-  void onNotify() {
+  void onNotify({bool force}) {
     final T now = ctx.state;
-    if (shouldUpdate(_latestState, now)) {
+    if (force == true || shouldUpdate(_latestState, now)) {
       _widgetCache = null;
 
       markNeedsBuild();
@@ -232,16 +232,18 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
       }
     });
 
+    //// force update if driven by outside observable
     _mainCtx.bindObserver((Subscribe observer) {
-      final AutoDispose autoDispose =
-          _mainCtx.registerOnDisposed(observer(_viewUpdater.onNotify));
+      final AutoDispose autoDispose = _mainCtx.registerOnDisposed(
+          observer(() => _viewUpdater.onNotify(force: true)));
       return () {
         autoDispose.dispose();
       };
     });
 
     /// register store.subscribe
-    _mainCtx.addObservable(widget.store.subscribe);
+    _mainCtx.registerOnDisposed(
+        widget.store.subscribe(() => _viewUpdater.onNotify(force: false)));
 
     _mainCtx.onLifecycle(LifecycleCreator.initState());
   }

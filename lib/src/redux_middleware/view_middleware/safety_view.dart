@@ -9,12 +9,12 @@ ViewMiddleware<T> safetyView<T>(
             {AbstractComponent<dynamic> component, MixedStore<T> store})
         onError}) {
   return (AbstractComponent<dynamic> component, MixedStore<T> store) {
-    return (ViewBuilder<dynamic> viewBuilder) {
+    return (ViewBuilder<dynamic> next) {
       return isDebug()
-          ? viewBuilder
+          ? next
           : (dynamic state, Dispatch dispatch, ViewService viewService) {
               try {
-                return viewBuilder(state, dispatch, viewService);
+                return next(state, dispatch, viewService);
               } catch (e, stackTrace) {
                 return onError?.call(
                       e,
