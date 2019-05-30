@@ -27,7 +27,6 @@ Page<T, dynamic> pageConfiguration<T extends GlobalBaseState<T>>(
         adapterMiddleware.add(safetyAdapter<T>());
       },
     );
-  ;
 }
 
 Widget createApp() {
