@@ -166,7 +166,7 @@ abstract class Context<T> extends AutoDispose {
   /// For example, we want to use SingleTickerProviderStateMixin
   /// We should
   /// 1. Define a new ComponentState
-  ///    class CustomStfState extends ComponentState<T> with SingleTickerProviderStateMixin {}
+  ///    class CustomStfState<T> extends ComponentState<T> with SingleTickerProviderStateMixin {}
   /// 2. Override the createState method of the Component with the newly defined CustomStfState.
   ///    @override
   ///    CustomStfState createState() => CustomStfState();
