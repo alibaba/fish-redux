@@ -1,61 +1,71 @@
-<p align="center"><img src="https://img.alicdn.com/tfs/TB1r74NJyLaK1RjSZFxXXamPFXa-1024-1024.png" align="center" width="175"></p>
-<h1 align="center">Fish Redux</h1>
+# Plan
 
-[![Build Status](https://travis-ci.org/alibaba/fish-redux.svg?branch=master)](https://travis-ci.org/alibaba/fish-redux) [![pub package](https://img.shields.io/pub/v/fish_redux.svg)](https://pub.dartlang.org/packages/fish_redux) [![codecov](https://codecov.io/gh/alibaba/fish-redux/branch/master/graph/badge.svg)](https://codecov.io/gh/alibaba/fish-redux)
 
-## What is Fish Redux ?
 
-Fish Redux is an assembled flutter application framework based on Redux state management.
-It is suitable for building medium and large applications.
+- [ ] 整理每个库向外暴露的类，及其方法。
+- [ ] 整理一些浅而易懂的例子
+- [ ] 其它
 
-It has four characteristics:
+长期目标： 补全下方目录，欢迎讨论。
 
-> 1. Functional Programming
+----
 
-> 2. Predictable state container
 
-> 3. Pluggable componentization
+# 教程
 
-> 4. Non-destructive performance
+介绍
+  - Fish-redux 是什么
+  - 兼容性
+  - 更新日志
+  - 开发体验
+    - 调试工具
+    - 模板生成
 
-## Architecture diagram
+概念
+  - 通讯机制
+  - 连接器（Connectors）
+  - 组件（Components）
+  - 适配器（Adapters）
+  - 路由（Routes）
+  - 中间件（middlewares）
+  - 切面（AOP）
 
-<img src="https://img.alicdn.com/tfs/TB1pkhoJr2pK1RjSZFsXXaNlXXa-1004-1370.png" width="500px" height="680px">
+起步
+  - 引入
+  - 生命周期 （Lifecycle）
+  - 写一个 Page
+  - 写一个 Component
+    - State
+    - Reducer
+    - Effect
+    - Action
+    - View
+  - 写一个 Adapter
+    - StaticFlowAdapter
+    - DynamicFlowAdapter
+    - CustomAdapter
+  - 使用 Connector
+  - 使用 Slot
+    - Dependencies
+    - Dependent
+  - 使用 Middleware
+  - 使用 WidgetWrapper
+  - 使用 Filter
+  - 使用 OnError
+  - 使用 ShouldUpdate
+  - 使用 HigherEffect
 
-## Installation
+其它
+  - 和 Redux 的区别
 
-[Go](https://pub.dartlang.org/packages/fish_redux#-installing-tab-)
+# 库
+redux
+redux_connector
+redux_component
+redux_adapter
+redux_routes
+redux_middleware
+redux_aop
 
-## Documentation
-
-Language: [English](doc/README.md) | [中文简体](doc/README-cn.md)
-
-## Examples
-
--   [todo list](example) - a simple todo list demo.
--   run it:
-
-```
-cd ./example
-flutter create .
-flutter run
-```
-
-## What's the difference between 'Fish Redux' and 'Redux' ?
-
--   [answers](doc/concept/what's-the-diiference.md)
-
-## Plugins
-
-### Code Template
-
--   [Fish Redux Template For Android Studio](https://github.com/BakerJQ/FishReduxTemplateForAS), by BakerJQ.
--   [Fish Redux Template For VSCode](https://github.com/huangjianke/fish-redux-template), by huangjianke.
-
-### Dev-Tools
-
--   Redux Inspector (using [Flutter Debugger](https://github.com/blankapp/flutter-debugger) and [flipperkit_fish_redux_middleware](https://pub.dartlang.org/packages/flipperkit_fish_redux_middleware)) for Fish Redux apps, by [JianyingLi](https://github.com/lijy91)
-
-## License
-
--   Fish Redux is released under the Apache 2.0 license. See [LICENSE](LICENSE) for details.
+# 最佳实践
+direcotry
