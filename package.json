@@ -1,0 +1,15 @@
+{
+  "name": "fish-redux",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:hzgotb/fish-redux.git",
+  "author": "hzGotB <hzgotb@outlook.com>",
+  "license": "MIT",
+  "scripts": {
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
+  },
+  "devDependencies": {
+    "vuepress": "^1.0.0-alpha.48"
+  }
+}
