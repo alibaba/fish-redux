@@ -62,3 +62,8 @@
 
 ## [0.1.9]
 - add mixed-store's batch notification feature
+
+## [0.2.0]
+- force update if driven by outside observable 
+- fix inverter bugs & optimization connectStores api 
+- modify the use of global state in example 
