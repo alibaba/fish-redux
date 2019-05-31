@@ -203,8 +203,11 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
   ContextSys<T> _mainCtx;
   ViewUpdater<T> _viewUpdater;
 
+  Widget buildWidget(BuildContext context) => _viewUpdater.buildView();
+
+  @mustCallSuper
   @override
-  Widget build(BuildContext context) => _viewUpdater.buildView();
+  Widget build(BuildContext context) => buildWidget(context);
 
   @override
   @protected
@@ -215,6 +218,7 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
     _mainCtx.onLifecycle(LifecycleCreator.reassemble());
   }
 
+  @mustCallSuper
   @override
   void initState() {
     super.initState();
@@ -248,18 +252,21 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
     _mainCtx.onLifecycle(LifecycleCreator.initState());
   }
 
+  @mustCallSuper
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _mainCtx.onLifecycle(LifecycleCreator.didChangeDependencies());
   }
 
+  @mustCallSuper
   @override
   void deactivate() {
     super.deactivate();
     _mainCtx.onLifecycle(LifecycleCreator.deactivate());
   }
 
+  @mustCallSuper
   @override
   void didUpdateWidget(ComponentWidget<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -267,6 +274,7 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
     _mainCtx.onLifecycle(LifecycleCreator.didUpdateWidget());
   }
 
+  @mustCallSuper
   @override
   void dispose() {
     _mainCtx
