@@ -18,3 +18,6 @@ local.properties
 redux.iml
 pubspec.lock
 android/local.properties
+
+# docs
+node_modules/
