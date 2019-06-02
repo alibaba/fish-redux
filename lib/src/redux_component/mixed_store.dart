@@ -201,11 +201,10 @@ class _MixedStore<T> extends MixedStore<T>
 enum _UpdateState { Assign }
 
 // replace current state
-Reducer<T> _appendUpdateStateReducer<T>(Reducer<T> reducer) => reducer == null
-    ? null
-    : (T state, Action action) => action.type == _UpdateState.Assign
+Reducer<T> _appendUpdateStateReducer<T>(Reducer<T> reducer) =>
+    (T state, Action action) => action.type == _UpdateState.Assign
         ? action.payload
-        : reducer(state, action);
+        : reducer == null ? state : reducer(state, action);
 
 MixedStore<T> createMixedStore<T>(
   T preloadedState,
