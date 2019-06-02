@@ -18,3 +18,8 @@ local.properties
 redux.iml
 pubspec.lock
 android/local.properties
+
+node_modules/
+docs/.vuepress/dist
+test/
+example/
