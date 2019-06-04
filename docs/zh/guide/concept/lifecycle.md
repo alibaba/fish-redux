@@ -1,4 +1,6 @@
-# Lifecycle
+---
+title: 生命周期（Lifecycle）
+---
 
 -   默认的所有生命周期，本质上都来自于 flutter `State<StatefulWidget>` 中的生命周期。
     -   initState

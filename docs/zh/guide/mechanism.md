@@ -1,4 +1,6 @@
-# Communication Mechanism
+---
+title: 通信机制
+---
 
 ## 页面内通信
 

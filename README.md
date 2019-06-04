@@ -11,28 +11,32 @@
 ----
 
 
-# 教程
+# Guide  
 
 介绍
   - Fish-redux 是什么
-  - 兼容性
-  - 更新日志
-  - 开发体验
-    - 调试工具
-    - 模板生成
+  - 特性
+  - 演变史
+  - 通信机制
+  - 其它 
+    - 兼容性
+    - 更新日志
+    - 开发体验
+      - 调试工具
+      - 模板生成
 
 概念
-  - 通讯机制
   - 连接器（Connectors）
   - 组件（Components）
   - 适配器（Adapters）
   - 路由（Routes）
   - 中间件（middlewares）
-  - 切面（AOP）
+  - 切面（AOP)
+  - 页面 (Page)
+  - 生命周期（Lifecycle）
 
-起步
+入门
   - 引入
-  - 生命周期 （Lifecycle）
   - 写一个 Page
   - 写一个 Component
     - State

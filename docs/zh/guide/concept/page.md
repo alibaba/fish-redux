@@ -1,4 +1,6 @@
-# Page
+---
+title: 页面（Page）
+---
 
 -   一个页面内都有且仅有一个 Store
 -   Page 继承于 Component，所以它能配置所有 Component 的要素

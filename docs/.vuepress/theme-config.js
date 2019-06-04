@@ -25,19 +25,19 @@ module.exports = {
       ...nav('zh'),
       ...sidebar('zh'),
     },
-    '/en/': {
-      selectText: 'Languages',
-      label: 'English',
-      editLinkText: 'Edit this page on GitHub',
-      serviceWorker: {
-        updatePopup: {
-          message: "New content is available.",
-          buttonText: "Refresh"
-        }
-      },
-      algolia: {},
-      ...nav('en'),
-      ...sidebar('en'),
-    },
+    // '/en/': {
+    //   selectText: 'Languages',
+    //   label: 'English',
+    //   editLinkText: 'Edit this page on GitHub',
+    //   serviceWorker: {
+    //     updatePopup: {
+    //       message: "New content is available.",
+    //       buttonText: "Refresh"
+    //     }
+    //   },
+    //   algolia: {},
+    //   ...nav('en'),
+    //   ...sidebar('en'),
+    // },
   },
 };
