@@ -163,9 +163,9 @@ class _ViewUpdater<T> implements ViewUpdater<T> {
   }
 
   @override
-  void onNotify({bool force}) {
+  void onNotify() {
     final T now = ctx.state;
-    if (force == true || shouldUpdate(_latestState, now)) {
+    if (shouldUpdate(_latestState, now)) {
       _widgetCache = null;
 
       markNeedsBuild();
@@ -177,6 +177,18 @@ class _ViewUpdater<T> implements ViewUpdater<T> {
   @override
   void reassemble() {
     _widgetCache = null;
+  }
+
+  @override
+  void forceUpdate() {
+    _widgetCache = null;
+
+    try {
+      markNeedsBuild();
+    } catch (e) {
+      /// TODO
+      /// should try-catch in force mode which is called from outside
+    }
   }
 }
 
@@ -236,18 +248,14 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
       }
     });
 
-    //// force update if driven by outside observable
-    _mainCtx.bindObserver((Subscribe observer) {
-      final AutoDispose autoDispose = _mainCtx.registerOnDisposed(
-          observer(() => _viewUpdater.onNotify(force: true)));
-      return () {
-        autoDispose.dispose();
-      };
+    //// force update if driven from outside
+    _mainCtx.bindForceUpdate(() {
+      _viewUpdater.forceUpdate();
     });
 
     /// register store.subscribe
     _mainCtx.registerOnDisposed(
-        widget.store.subscribe(() => _viewUpdater.onNotify(force: false)));
+        widget.store.subscribe(() => _viewUpdater.onNotify()));
 
     _mainCtx.onLifecycle(LifecycleCreator.initState());
   }

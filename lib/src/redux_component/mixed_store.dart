@@ -229,7 +229,6 @@ MixedStore<T> createMixedStore<T>(
       effectMiddleware: effectEnhancer,
     );
 
-/// TODO
 MixedStore<T> connectStores<T, K>(
   MixedStore<T> mainStore,
   Store<K> extraStore,

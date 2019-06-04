@@ -16,7 +16,7 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   final MixedStore<Object> store;
   final Get<T> getState;
 
-  void Function() Function(Subscribe) _observer;
+  void Function() _forceUpdate;
 
   BuildContext _buildContext;
   Dispatch _dispatch;
@@ -44,9 +44,9 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   }
 
   @override
-  void bindObserver(void Function(Subscribe) observer) {
-    assert(_observer == null);
-    _observer = observer;
+  void bindForceUpdate(void Function() forceUpdate) {
+    assert(_forceUpdate == null);
+    _forceUpdate = forceUpdate;
   }
 
   @override
@@ -94,6 +94,7 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   void dispose() {
     super.dispose();
     _buildContext = null;
+    _forceUpdate = null;
   }
 
   bool _throwIfDisposed() {
@@ -120,7 +121,16 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
           excluded: excluded == true ? _onBroadcast : null);
 
   @override
-  void Function() addObservable(Subscribe observable) => _observer(observable);
+  void Function() addObservable(Subscribe observable) {
+    final void Function() unsubscribe = observable(() {
+      _forceUpdate?.call();
+    });
+    registerOnDisposed(unsubscribe);
+    return unsubscribe;
+  }
+
+  @override
+  void forceUpdate() => _forceUpdate?.call();
 }
 
 class _TwinContext<T> extends ContextSys<T> with _ExtraMixin {
@@ -168,11 +178,14 @@ class _TwinContext<T> extends ContextSys<T> with _ExtraMixin {
   void Function() addObservable(Subscribe s) => mainCtx.addObservable(s);
 
   @override
-  void bindObserver(void Function(Subscribe) observer) =>
-      mainCtx.bindObserver(observer);
+  MixedStore<dynamic> get store => mainCtx.store;
 
   @override
-  MixedStore<dynamic> get store => mainCtx.store;
+  void forceUpdate() => mainCtx.forceUpdate();
+
+  @override
+  void bindForceUpdate(void Function() forceUpdate) =>
+      mainCtx.bindForceUpdate(forceUpdate);
 }
 
 ContextSys<T> mergeContext<T>(
