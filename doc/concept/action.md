@@ -8,7 +8,7 @@
         -   An enumeration class for the type field
         -   An ActionCreator class is created for the creator of the Action, which helps to constrain the type of payload.
     -   Effect Accepted Action which's type is named after `on{verb}`
-    -   Reducer ccepted Action which's type is named after `{verb}`
+    -   Reducer Accepted Action which's type is named after `{verb}`
     -   Sample code
 
 ```dart
