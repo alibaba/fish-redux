@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import '../redux/redux.dart';
 import '../redux_component/context.dart';
 import '../redux_component/redux_component.dart';
+import '../utils/utils.dart';
 
 mixin VisibleChangeMixin<T> on AbstractAdapter<T> {
   @override
@@ -63,6 +64,8 @@ ListAdapter _wrapVisibleChange<T>(
                 itemBuilder: listAdapter.itemBuilder,
                 index: index,
                 dispatch: onChange.onAction,
+                key: ValueKey<Tuple2<Object, int>>(
+                    Tuple2<Object, int>(ctx, index)),
               ),
           listAdapter.itemCount,
         );
