@@ -67,3 +67,9 @@
 - force update if driven by outside observable 
 - fix inverter bugs & optimization connectStores api 
 - modify the use of global state in example 
+- 
+## [0.2.1]
+- add forceUpdate api on context
+- fix bug in adapter’s appear & disappear if items are recycled
+- fix bug in connectStores api if page has no reducer
+  
