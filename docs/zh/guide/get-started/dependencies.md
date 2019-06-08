@@ -1,50 +1,55 @@
+---
+title: 复合组件
+---
+
 # Dependencies
 
--   Dependencies 是一个表达组件之间依赖关系的结构。它接收两个字段
-    -   slots
-        -   \<String, [Dependent](dependent-cn.md)>{}
-    -   [adapter](adapter-cn.md)
--   它主要包含三方面的信息
-    -   slots，组件依赖的插槽。
-    -   adapter，组件依赖的具体适配器（用来构建高性能的 ListView）。
-    -   [Dependent](dependent-cn.md) 是 subComponent | subAdapter + [connector](connector-cn.md) 的组合。
-    -   一个 组件的 [Reducer](reducer-cn.md) 由 Component 自身配置的 Reducer 和它的 Dependencies 下的所有子 Reducers 自动复合而成。
--   示例代码
+有些时候，一个组件可能是由多个组件组成的，我们称之为复合组件。在 `Fish-Redux` 中，我们使用 `Dependencies` 来表达了复合组件内，组件之间依赖关系的结构。它接收两个具名参数：
+  - slots
+  - [adapter](../concept/adapter.html)
+
+**复合组件也是一个组件，和普通组件不同的是， `Reducer` 是复合组件自身所定义的和内部其他组件所定义的复合而成。**
+
+## Dependent
+
+在介绍 `Dependencies` 的参数之前，我们先了解一些什么是 `Dependent` 。
+
+`Dependent` 由组件(Component)或者适配器(Adapter)，再附加上组件的 `Connector` 而组成的，它定义了组件如何与复合组件连接的。
+
+## slots
+
+用于表达复合组件内有哪些组件，是一个以 `String` 为键，`Dependent` 为值的 `Map` 结构。
+
+## adapter
+
+适配器
+
+## 示例
 
 ```dart
-///register in component
-class ItemComponent extends ItemComponent<ItemState> {
-  ItemComponent()
-      : super(
-          view: buildItemView,
-          reducer: buildItemReducer(),
-          dependencies: Dependencies<ItemState>(
-            slots: <String, Dependent<ItemState>>{
-              'appBar': AppBarComponent().asDependent(AppBarConnector()),
-              'body': ItemBodyComponent().asDependent(ItemBodyConnector()),
-              'ad_ball': ADBallComponent().asDependent(ADBallConnector()),
-              'bottomBar': BottomBarComponent().asDependent(BottomBarConnector()),
-            },
-          ),
-        );
+// register in component
+class HomePage extends Page<HomeState, Map<String, dynamic>> {
+  HomePage() : super(
+    view: buildView,
+    reducer: buildReducer(),
+    dependencies: Dependencies<HomeState>(
+      slots: <String, Dependent<HomeState>>{
+        'appBar': AppBarComponent().asDependent(AppBarConnector()),
+      },
+      adapter: ListAdapter(),
+    ),
+  );
 }
 
-///call in view
-Widget buildItemView(ItemState state, Dispatch dispatch, ViewService service) {
+// call in view
+Widget buildView(HomeState state, Dispatch dispatch, ViewService viewService) {
+  final adapter = viewService.buildAdapter();
   return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          service.buildComponent('body'),
-          service.buildComponent('ad_ball'),
-          Positioned(
-            child: service.buildComponent('bottomBar'),
-            left: 0.0,
-            bottom: 0.0,
-            right: 0.0,
-            height: 100.0,
-          ),
-        ],
-      ),
-      appBar: AppbarPreferSize(child: service.buildComponent('appBar')));
+    body: ListView.builder(
+      itemBuilder: adapter.itemBuilder,
+      itemCount: adapter.itemCount,
+    );
+    appBar: service.buildComponent('appBar'),
+  );
 }
 ```
