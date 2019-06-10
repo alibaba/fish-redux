@@ -1,4 +1,6 @@
-# Middleware
+---
+title: 中间件（Middleware）
+---
 
 关于 Middleware 的定义、签名和 ReduxJS 社区是一致的。
 

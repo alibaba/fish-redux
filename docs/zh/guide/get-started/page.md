@@ -1,4 +1,12 @@
-# Action
+---
+title: 写一个页面
+---
+
+## View
+
+## State
+
+## Action
 
 构造一个`Action`类，需要两个参数：
 1. type
@@ -16,18 +24,24 @@ enum MessageAction {
 }
 
 class MessageActionCreator {
-    static Action onShare(Map<String, Object> payload) {
-        return Action(MessageAction.onShare, payload: payload);
-    }
+  static Action onShare(Map<String, Object> payload) {
+    return Action(MessageAction.onShare, payload: payload);
+  }
 
-    static Action shared() {
-        return const Action(MessageAction.shared);
-    }
+  static Action shared() {
+    return const Action(MessageAction.shared);
+  }
 }
 ```
-2. Effect 接受处理的 Action，以 on{Verb} 命名
+
+## Reducer
+
+Reducer 接受处理的 Action，以{verb} 命名
 ```dart
 ```
-3. Reducer 接受处理的 Action，以{verb} 命名
+
+## Effect
+
+Effect 接受处理的 Action，以 on{Verb} 命名
 ```dart
 ```
