@@ -35,7 +35,7 @@ typedef AdapterBuilder<T> = ListAdapter Function(
 /// 1. How to render
 /// 2. When to update
 abstract class ViewUpdater<T> {
-  Widget buildView();
+  Widget buildWidget();
   void didUpdateWidget();
   void onNotify();
   void forceUpdate();

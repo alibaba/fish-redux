@@ -143,7 +143,7 @@ class _ViewUpdater<T> implements ViewUpdater<T> {
         _latestState = ctx.state;
 
   @override
-  Widget buildView() {
+  Widget buildWidget() {
     Widget result = _widgetCache;
     if (result == null) {
       result = _widgetCache = view(ctx.state, ctx.dispatch, ctx);
@@ -212,22 +212,20 @@ class ComponentWidget<T> extends StatefulWidget {
 }
 
 class ComponentState<T> extends State<ComponentWidget<T>> {
-  ContextSys<T> _mainCtx;
-  ViewUpdater<T> _viewUpdater;
-
-  Widget buildWidget(BuildContext context) => _viewUpdater.buildView();
+  ContextSys<T> mainCtx;
+  ViewUpdater<T> viewUpdater;
 
   @mustCallSuper
   @override
-  Widget build(BuildContext context) => buildWidget(context);
+  Widget build(BuildContext context) => viewUpdater.buildWidget();
 
   @override
   @protected
   @mustCallSuper
   void reassemble() {
     super.reassemble();
-    _viewUpdater.reassemble();
-    _mainCtx.onLifecycle(LifecycleCreator.reassemble());
+    viewUpdater.reassemble();
+    mainCtx.onLifecycle(LifecycleCreator.reassemble());
   }
 
   @mustCallSuper
@@ -236,56 +234,56 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
     super.initState();
 
     /// init context
-    _mainCtx = widget.component.createContext(
+    mainCtx = widget.component.createContext(
       store: widget.store,
       buildContext: context,
       getState: () => widget.getter(),
     );
 
-    _viewUpdater = widget.component.createViewUpdater(_mainCtx, () {
+    viewUpdater = widget.component.createViewUpdater(mainCtx, () {
       if (mounted) {
         setState(() {});
       }
     });
 
     //// force update if driven from outside
-    _mainCtx.bindForceUpdate(() {
-      _viewUpdater.forceUpdate();
+    mainCtx.bindForceUpdate(() {
+      viewUpdater.forceUpdate();
     });
 
     /// register store.subscribe
-    _mainCtx.registerOnDisposed(
-        widget.store.subscribe(() => _viewUpdater.onNotify()));
+    mainCtx.registerOnDisposed(
+        widget.store.subscribe(() => viewUpdater.onNotify()));
 
-    _mainCtx.onLifecycle(LifecycleCreator.initState());
+    mainCtx.onLifecycle(LifecycleCreator.initState());
   }
 
   @mustCallSuper
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _mainCtx.onLifecycle(LifecycleCreator.didChangeDependencies());
+    mainCtx.onLifecycle(LifecycleCreator.didChangeDependencies());
   }
 
   @mustCallSuper
   @override
   void deactivate() {
     super.deactivate();
-    _mainCtx.onLifecycle(LifecycleCreator.deactivate());
+    mainCtx.onLifecycle(LifecycleCreator.deactivate());
   }
 
   @mustCallSuper
   @override
   void didUpdateWidget(ComponentWidget<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _viewUpdater.didUpdateWidget();
-    _mainCtx.onLifecycle(LifecycleCreator.didUpdateWidget());
+    viewUpdater.didUpdateWidget();
+    mainCtx.onLifecycle(LifecycleCreator.didUpdateWidget());
   }
 
   @mustCallSuper
   @override
   void dispose() {
-    _mainCtx
+    mainCtx
       ..onLifecycle(LifecycleCreator.dispose())
       ..dispose();
     super.dispose();
