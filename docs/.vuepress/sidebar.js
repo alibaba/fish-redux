@@ -21,7 +21,7 @@ module.exports = (locale) => ({
   sidebar: {
     [`/${locale}/guide/`]: [
       {
-        title: groupTitle[locale].essentials,
+        title: groupTitle[locale].usage,
         collapsable: false,
         sidebarDepth: 1,
         children: [

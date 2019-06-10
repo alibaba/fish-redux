@@ -53,7 +53,6 @@ class RecommendAdapter extends DynamicFlowAdapter<RecommendState> {
 
 ### StaticFlowAdapter
 
-静态流适配器，
 模版是一个 Array，接受 Object|Map 的数据驱动。
 模版接收一个 Dependent 的数组，每一个 Dependent 可以是 Component 或者 Adapter + Connector<T,P> 的组合。
 抽象地看，它非常的像是一个 flatMap + compact 的操作。
