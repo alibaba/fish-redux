@@ -72,4 +72,8 @@
 - add forceUpdate api on context
 - fix bug in adapter’s appear & disappear if items are recycled
 - fix bug in connectStores api if page has no reducer
-  
+
+## [0.2.2]
+- add congruent conn 
+- fields mainCtx & viewUpdater in ComponentState become public 
+- fix bug when a store recived action after teardown
