@@ -25,6 +25,7 @@ Store<T> _createStore<T>(final T preloadedState, final Reducer<T> reducer) {
   T _state = preloadedState;
   Reducer<T> _reducer = reducer ?? _noop<T>();
   bool _isDispatching = false;
+  bool _isDisposed = false;
 
   return Store<T>()
     ..getState = (() => _state)
@@ -33,6 +34,10 @@ Store<T> _createStore<T>(final T preloadedState, final Reducer<T> reducer) {
       _throwIfNot(action.type != null,
           'Expected the action.type to be non-null value.');
       _throwIfNot(!_isDispatching, 'Reducers may not dispatch actions.');
+
+      if (_isDisposed) {
+        return;
+      }
 
       try {
         _isDispatching = true;
@@ -75,6 +80,7 @@ Store<T> _createStore<T>(final T preloadedState, final Reducer<T> reducer) {
     }
     ..observable = (() => _notifyController.stream)
     ..teardown = () {
+      _isDisposed = true;
       _listeners.clear();
       return _notifyController.close();
     };
