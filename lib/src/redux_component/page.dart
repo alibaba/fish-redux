@@ -66,7 +66,7 @@ abstract class Page<T, P> extends Component<T> {
   Widget buildPage(P param, {DispatchBus bus}) =>
       protectedWrapper(_PageWidget<T>(
         component: this,
-        storeBuilder: createStoreBuilder(param, bus: bus),
+        storeBuilder: createStoreBuilder(param, bus: bus ?? DispatchBus.shared),
       ));
 
   Get<MixedStore<T>> createStoreBuilder(P param, {DispatchBus bus}) =>

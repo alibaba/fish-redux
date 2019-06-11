@@ -1,6 +1,8 @@
 import '../redux/redux.dart';
 
 class DispatchBus {
+  static final DispatchBus shared = DispatchBus();
+
   final List<Dispatch> _dispatchList = <Dispatch>[];
 
   void broadcast(Action action, {Dispatch excluded}) {
