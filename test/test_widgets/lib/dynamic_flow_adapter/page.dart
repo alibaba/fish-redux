@@ -1,9 +1,10 @@
 import 'package:fish_redux/fish_redux.dart';
-import 'package:flutter/material.dart';
-import 'state.dart';
+import 'package:flutter/material.dart' hide Action;
+
+import '../test_base.dart';
 import 'action.dart';
 import 'dynamic_flow_adapter.dart';
-import '../test_base.dart';
+import 'state.dart';
 
 Widget pageView(
   ToDoList state,

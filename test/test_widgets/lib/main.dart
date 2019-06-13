@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Action;
 import 'package:test_widgets/adapter/page.dart';
 import 'package:test_widgets/component/page.dart';
 import 'package:test_widgets/dynamic_flow_adapter/page.dart';
@@ -12,7 +12,7 @@ final Map<String, WidgetBuilder> cases = <String, WidgetBuilder>{
   'buildComponent': createComponentWidget,
   'buildAdapter': createAdapterWidget,
   'buildStaticAdapter': createStaticAdapterWidget,
-  'buildDynamicAdapter':createDynamicAdapterWidget
+  'buildDynamicAdapter': createDynamicAdapterWidget
 };
 
 void main() {

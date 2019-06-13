@@ -4,7 +4,7 @@
 -   Sample Code
 
 ```dart
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Action;
 
 Widget repaintBoundaryWrapper(Widget widget) {
   return RepaintBoundary(child: widget);

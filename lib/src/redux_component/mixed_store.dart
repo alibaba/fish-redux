@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart' hide Action;
 
 import '../redux/redux.dart';
 import '../redux_component/basic.dart';
