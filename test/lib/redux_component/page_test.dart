@@ -1,11 +1,11 @@
 import 'package:fish_redux/fish_redux.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Action;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:test_widgets/page/action.dart';
-import 'package:test_widgets/page/exception.dart';
 import 'package:test_widgets/page/page.dart';
 import 'package:test_widgets/page/state.dart';
 import 'package:test_widgets/test_base.dart';
+
 import '../instrument.dart';
 import '../track.dart';
 

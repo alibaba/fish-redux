@@ -1,7 +1,8 @@
 import 'package:fish_redux/fish_redux.dart';
-import 'package:flutter/material.dart';
-import 'state.dart';
+import 'package:flutter/material.dart' hide Action;
+
 import 'action.dart';
+import 'state.dart';
 
 Widget toDoView(Todo toDo, Dispatch dispatch, ViewService viewService) {
   return Container(

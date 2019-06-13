@@ -1,9 +1,9 @@
 import 'package:fish_redux/fish_redux.dart';
-import 'package:flutter/material.dart';
-import 'state.dart';
+
+import '../test_base.dart';
 import 'action.dart';
 import 'component.dart';
-import '../test_base.dart';
+import 'state.dart';
 
 bool toDoListEffect(Action action, Context<ToDoList> ctx) {
   if (action.type == ToDoListAction.onAdd) {

@@ -1,5 +1,5 @@
 import 'package:fish_redux/fish_redux.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Action;
 
 import 'action.dart';
 import 'state.dart';
@@ -8,7 +8,7 @@ Widget buildView(PageState state, Dispatch dispatch, ViewService viewService) {
   final ListAdapter adapter = viewService.buildAdapter();
   return Scaffold(
     appBar: AppBar(
-      backgroundColor:state.themeColor,
+      backgroundColor: state.themeColor,
       title: const Text('ToDoList'),
     ),
     body: Container(
