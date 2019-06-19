@@ -57,40 +57,37 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
   }
 
   @override
-  ViewUpdater<T> createViewUpdater(
-    ContextSys<T> ctx,
-    void Function() markNeedsBuild,
-  ) =>
-      _ViewUpdater<T>(
-        view: ctx.store.viewEnhance(protectedView, this),
-        ctx: ctx,
-        markNeedsBuild: markNeedsBuild,
-        shouldUpdate: protectedShouldUpdate,
-        name: name,
-      );
-
-  @override
-  ContextSys<T> createContext({
-    MixedStore<Object> store,
-    BuildContext buildContext,
-    Get<T> getState,
+  ComponentContext<T> createContext({
+    @required MixedStore<Object> store,
+    @required BuildContext buildContext,
+    @required Get<T> getState,
+    @required void Function() markNeedsBuild,
+    @required ContextSys<Object> sidecarCtx,
   }) {
-    /// init context
-    final ContextSys<T> mainCtx = super.createContext(
+    return ComponentContext<T>(
+      logic: this,
+      store: store,
+      buildContext: buildContext,
+      getState: getState,
+      view: store.viewEnhance(protectedView, this),
+      shouldUpdate: protectedShouldUpdate,
+      name: name,
+      markNeedsBuild: markNeedsBuild,
+      sidecarCtx: sidecarCtx,
+    );
+  }
+
+  ContextSys<Object> createSidecarContext({
+    @required MixedStore<Object> store,
+    @required BuildContext buildContext,
+    @required Get<T> getState,
+  }) {
+    ///TODO
+    return protectedDependencies?.adapter?.createContext(
       store: store,
       buildContext: buildContext,
       getState: getState,
     );
-
-    final ContextSys<T> sidecarCtx =
-        protectedDependencies?.adapter?.createContext(
-      store: store,
-      buildContext: buildContext,
-      getState: getState,
-    );
-
-    /// adapter-effect-promote
-    return mergeContext(mainCtx, sidecarCtx);
   }
 
   ComponentState<T> createState() => ComponentState<T>();
@@ -120,78 +117,6 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
   }
 }
 
-class _ViewUpdater<T> implements ViewUpdater<T> {
-  final ViewBuilder<T> view;
-  final void Function() markNeedsBuild;
-  final ShouldUpdate<T> shouldUpdate;
-  final String name;
-  final ContextSys<T> ctx;
-
-  Widget _widgetCache;
-  T _latestState;
-
-  _ViewUpdater({
-    @required this.view,
-    @required this.ctx,
-    @required this.markNeedsBuild,
-    @required this.shouldUpdate,
-    this.name,
-  })  : assert(view != null),
-        assert(shouldUpdate != null),
-        assert(ctx != null),
-        assert(markNeedsBuild != null),
-        _latestState = ctx.state;
-
-  @override
-  Widget buildWidget() {
-    Widget result = _widgetCache;
-    if (result == null) {
-      result = _widgetCache = view(ctx.state, ctx.dispatch, ctx);
-
-      ctx.dispatch(LifecycleCreator.build(name));
-    }
-    return result;
-  }
-
-  @override
-  void didUpdateWidget() {
-    final T now = ctx.state;
-    if (shouldUpdate(_latestState, now)) {
-      _widgetCache = null;
-      _latestState = now;
-    }
-  }
-
-  @override
-  void onNotify() {
-    final T now = ctx.state;
-    if (shouldUpdate(_latestState, now)) {
-      _widgetCache = null;
-
-      markNeedsBuild();
-
-      _latestState = now;
-    }
-  }
-
-  @override
-  void reassemble() {
-    _widgetCache = null;
-  }
-
-  @override
-  void forceUpdate() {
-    _widgetCache = null;
-
-    try {
-      markNeedsBuild();
-    } catch (e) {
-      /// TODO
-      /// should try-catch in force mode which is called from outside
-    }
-  }
-}
-
 class ComponentWidget<T> extends StatefulWidget {
   final Component<T> component;
   final MixedStore<Object> store;
@@ -212,20 +137,24 @@ class ComponentWidget<T> extends StatefulWidget {
 }
 
 class ComponentState<T> extends State<ComponentWidget<T>> {
-  ContextSys<T> mainCtx;
-  ViewUpdater<T> viewUpdater;
+  ComponentContext<T> mainCtx;
 
+  ///todo
+  ContextSys<Object> sidecarCtx;
+
+  /// buildAdapter
   @mustCallSuper
   @override
-  Widget build(BuildContext context) => viewUpdater.buildWidget();
+  Widget build(BuildContext context) => mainCtx.buildWidget();
 
   @override
   @protected
   @mustCallSuper
   void reassemble() {
     super.reassemble();
-    viewUpdater.reassemble();
+    mainCtx.reassemble();
     mainCtx.onLifecycle(LifecycleCreator.reassemble());
+    sidecarCtx?.onLifecycle(LifecycleCreator.reassemble());
   }
 
   @mustCallSuper
@@ -233,27 +162,28 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
   void initState() {
     super.initState();
 
-    /// init context
-    mainCtx = widget.component.createContext(
+    sidecarCtx = widget.component.createSidecarContext(
       store: widget.store,
       buildContext: context,
       getState: () => widget.getter(),
     );
 
-    viewUpdater = widget.component.createViewUpdater(mainCtx, () {
-      if (mounted) {
-        setState(() {});
-      }
-    });
-
-    //// force update if driven from outside
-    mainCtx.bindForceUpdate(() {
-      viewUpdater.forceUpdate();
-    });
+    /// init context
+    mainCtx = widget.component.createContext(
+      store: widget.store,
+      buildContext: context,
+      getState: () => widget.getter(),
+      markNeedsBuild: () {
+        if (mounted) {
+          setState(() {});
+        }
+      },
+      sidecarCtx: sidecarCtx,
+    );
 
     /// register store.subscribe
-    mainCtx.registerOnDisposed(
-        widget.store.subscribe(() => viewUpdater.onNotify()));
+    mainCtx
+        .registerOnDisposed(widget.store.subscribe(() => mainCtx.onNotify()));
 
     mainCtx.onLifecycle(LifecycleCreator.initState());
   }
@@ -263,6 +193,7 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     mainCtx.onLifecycle(LifecycleCreator.didChangeDependencies());
+    sidecarCtx?.onLifecycle(LifecycleCreator.didChangeDependencies());
   }
 
   @mustCallSuper
@@ -270,14 +201,16 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
   void deactivate() {
     super.deactivate();
     mainCtx.onLifecycle(LifecycleCreator.deactivate());
+    sidecarCtx?.onLifecycle(LifecycleCreator.deactivate());
   }
 
   @mustCallSuper
   @override
   void didUpdateWidget(ComponentWidget<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    viewUpdater.didUpdateWidget();
+    mainCtx.didUpdateWidget();
     mainCtx.onLifecycle(LifecycleCreator.didUpdateWidget());
+    sidecarCtx?.onLifecycle(LifecycleCreator.didUpdateWidget());
   }
 
   @mustCallSuper
@@ -286,6 +219,13 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
     mainCtx
       ..onLifecycle(LifecycleCreator.dispose())
       ..dispose();
+
+    if (sidecarCtx != null) {
+      sidecarCtx
+        ..onLifecycle(LifecycleCreator.dispose())
+        ..dispose();
+    }
+
     super.dispose();
   }
 }

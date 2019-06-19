@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart' hide Action;
 import '../../fish_redux.dart';
 import '../redux/redux.dart';
 import 'basic.dart';
-import 'context.dart';
 import 'dependencies.dart';
 import 'dependent.dart';
 import 'helper.dart';
@@ -13,7 +12,7 @@ import 'helper.dart';
 /// 2. Effect | HigherEffect & OnError   =>   OnAction
 /// 3. Dependencies
 /// 4. Key
-class Logic<T> implements AbstractLogic<T> {
+abstract class Logic<T> implements AbstractLogic<T> {
   final Reducer<T> _reducer;
   final ReducerFilter<T> _filter;
   final Effect<T> _effect;
@@ -103,19 +102,6 @@ class Logic<T> implements AbstractLogic<T> {
   @override
   Dependent<K> asDependent<K>(AbstractConnector<K, T> connector) =>
       createDependent<K, T>(connector, this);
-
-  @override
-  ContextSys<T> createContext({
-    MixedStore<Object> store,
-    BuildContext buildContext,
-    Get<T> getState,
-  }) =>
-      DefaultContext<T>(
-        logic: this,
-        store: store,
-        buildContext: buildContext,
-        getState: getState,
-      );
 
   @override
   Object key(T state) => _key?.call(state) ?? ValueKey<Type>(runtimeType);

@@ -1,3 +1,4 @@
+import 'package:fish_redux/src/redux_component/basic.dart';
 import 'package:flutter/widgets.dart' hide Action;
 
 import '../redux/redux.dart';
@@ -40,18 +41,14 @@ class DynamicFlowAdapter<T> extends Logic<T>
         );
 
   @override
-  ListAdapter buildAdapter(
-    T state,
-    Dispatch dispatch,
-    ViewService viewService,
-  ) {
-    final List<ItemBean> list = connector.get(state);
+  ListAdapter buildAdapter(ContextSys<T> ctx) {
+    final List<ItemBean> list = connector.get(ctx.state);
     assert(list != null);
 
-    final RecycleContext<T> ctx = viewService;
+    final RecycleContext<T> recycleCtx = ctx;
     final List<ListAdapter> adapters = <ListAdapter>[];
 
-    ctx.markAllUnused();
+    recycleCtx.markAllUnused();
 
     for (int index = 0; index < list.length; index++) {
       final ItemBean itemBean = list[index];
@@ -61,35 +58,32 @@ class DynamicFlowAdapter<T> extends Logic<T>
           result != null, 'Type of $type has not benn registered in the pool.');
       if (result != null) {
         if (result is AbstractAdapter<Object>) {
-          final ContextSys<Object> subCtx = ctx.reuseOrCreate(
+          final ContextSys<Object> subCtx = recycleCtx.reuseOrCreate(
             Tuple2<Type, Object>(
               result.runtimeType,
               result.key(itemBean.data),
             ),
             () {
               return result.createContext(
-                store: ctx.store,
-                buildContext: ctx.context,
-                getState: _subGetter(() => connector.get(ctx.state), index),
+                store: recycleCtx.store,
+                buildContext: recycleCtx.context,
+                getState:
+                    _subGetter(() => connector.get(recycleCtx.state), index),
               );
             },
           );
-          adapters.add(result.buildAdapter(
-            subCtx.state,
-            subCtx.dispatch,
-            subCtx,
-          ));
+          adapters.add(result.buildAdapter(subCtx));
         } else if (result is AbstractComponent<Object>) {
           adapters.add(ListAdapter((BuildContext buildContext, int _) {
             return result.buildComponent(
-              ctx.store,
-              _subGetter(() => connector.get(ctx.state), index),
+              recycleCtx.store,
+              _subGetter(() => connector.get(recycleCtx.state), index),
             );
           }, 1));
         }
       }
     }
-    ctx.cleanUnused();
+    recycleCtx.cleanUnused();
 
     return combineListAdapters(adapters);
   }

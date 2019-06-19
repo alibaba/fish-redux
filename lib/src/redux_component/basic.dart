@@ -216,11 +216,7 @@ abstract class Dependent<T> {
   Widget buildComponent(MixedStore<Object> store, Get<T> getter);
 
   /// P state
-  ListAdapter buildAdapter(
-    Object state,
-    Dispatch dispatch,
-    ViewService viewService,
-  );
+  ListAdapter buildAdapter(ContextSys<Object> ctx);
 
   ContextSys<Object> createContext({
     MixedStore<Object> store,
@@ -274,18 +270,12 @@ abstract class AbstractLogic<T> {
 }
 
 abstract class AbstractComponent<T> implements AbstractLogic<T> {
-  /// How to render & How to update
-  ViewUpdater<T> createViewUpdater(
-    ContextSys<T> ctx,
-    void Function() markNeedsBuild,
-  );
-
   /// How to build component instance
   Widget buildComponent(MixedStore<Object> store, Get<T> getter);
 }
 
 abstract class AbstractAdapter<T> implements AbstractLogic<T> {
-  ListAdapter buildAdapter(T state, Dispatch dispatch, ViewService viewService);
+  ListAdapter buildAdapter(ContextSys<T> ctx);
 }
 
 /// Because a main reducer will be very complicated with multiple level's state.

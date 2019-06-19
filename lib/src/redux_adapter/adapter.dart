@@ -1,3 +1,4 @@
+import 'package:fish_redux/src/redux_component/context.dart';
 import 'package:flutter/widgets.dart' hide Action;
 
 import '../../fish_redux.dart';
@@ -34,11 +35,20 @@ abstract class Adapter<T> extends Logic<T> implements AbstractAdapter<T> {
         );
 
   @override
-  ListAdapter buildAdapter(
-      T state, Dispatch dispatch, ViewService viewService) {
-    final ContextSys<T> ctx = viewService;
+  ListAdapter buildAdapter(ContextSys<T> ctx) {
     return ctx.store
         .adapterEnhance(protectedAdapter, this)
-        .call(state, dispatch, viewService);
+        .call(ctx.state, ctx.dispatch, ctx);
+  }
+
+  @override
+  ContextSys<T> createContext(
+      {MixedStore<Object> store, BuildContext buildContext, Get<T> getState}) {
+    return DefaultContext<T>(
+      logic: this,
+      store: store,
+      buildContext: buildContext,
+      getState: getState,
+    );
   }
 }

@@ -71,11 +71,8 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   @override
   ListAdapter buildAdapter() {
     assert(logic is AbstractAdapter<T>);
-    ListAdapter result;
-    if (logic is AbstractAdapter<T>) {
-      final AbstractAdapter<T> abstractAdapter = logic;
-      result = abstractAdapter.buildAdapter(state, dispatch, this);
-    }
+    final AbstractAdapter<T> abstractAdapter = logic;
+    final ListAdapter result = abstractAdapter.buildAdapter(this);
     return result ?? const ListAdapter(null, 0);
   }
 
@@ -133,61 +130,87 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
   void forceUpdate() => _forceUpdate?.call();
 }
 
-class _TwinContext<T> extends ContextSys<T> with _ExtraMixin {
-  final ContextSys<T> mainCtx;
-  final ContextSys<T> sidecarCtx;
+class ComponentContext<T> extends DefaultContext<T> implements ViewUpdater<T> {
+  final ViewBuilder<T> view;
+  final ShouldUpdate<T> shouldUpdate;
+  final String name;
+  final Function() markNeedsBuild;
+  final ContextSys<Object> sidecarCtx;
 
-  _TwinContext(this.mainCtx, this.sidecarCtx)
-      : assert(mainCtx != null && sidecarCtx != null) {
-    mainCtx.setParent(this);
-    sidecarCtx.setParent(this);
+  Widget _widgetCache;
+  T _latestState;
+
+  ComponentContext({
+    @required AbstractComponent<T> logic,
+    @required MixedStore<Object> store,
+    @required BuildContext buildContext,
+    @required Get<T> getState,
+    @required this.view,
+    @required this.shouldUpdate,
+    @required this.name,
+    @required this.markNeedsBuild,
+    @required this.sidecarCtx,
+  }) : super(
+          logic: logic,
+          store: store,
+          buildContext: buildContext,
+          getState: getState,
+        ) {
+    _latestState = state;
   }
 
   @override
-  void broadcast(Action action) => mainCtx.broadcast(action);
-
-  @override
-  ListAdapter buildAdapter() => sidecarCtx.buildAdapter();
-
-  @override
-  Widget buildComponent(String name) => mainCtx.buildComponent(name);
-
-  @override
-  BuildContext get context => mainCtx.context;
-
-  @override
-  dynamic dispatch(Action action) => mainCtx.dispatch(action);
-
-  @override
-  void onLifecycle(Action action) {
-    mainCtx.onLifecycle(action);
-    sidecarCtx.onLifecycle(action);
+  ListAdapter buildAdapter() {
+    assert(sidecarCtx != null);
+    return sidecarCtx?.buildAdapter() ?? const ListAdapter(null, 0);
   }
 
   @override
-  T get state => mainCtx.state;
+  Widget buildWidget() {
+    Widget result = _widgetCache;
+    if (result == null) {
+      result = _widgetCache = view(state, dispatch, this);
+
+      dispatch(LifecycleCreator.build(name));
+    }
+    return result;
+  }
 
   @override
-  State<StatefulWidget> get stfState => mainCtx.stfState;
+  void didUpdateWidget() {
+    final T now = state;
+    if (shouldUpdate(_latestState, now)) {
+      _widgetCache = null;
+      _latestState = now;
+    }
+  }
 
   @override
-  void broadcastEffect(Action action, {bool excluded}) =>
-      mainCtx.broadcastEffect(action, excluded: excluded);
+  void onNotify() {
+    final T now = state;
+    if (shouldUpdate(_latestState, now)) {
+      _widgetCache = null;
+
+      markNeedsBuild();
+
+      _latestState = now;
+    }
+  }
 
   @override
-  void Function() addObservable(Subscribe s) => mainCtx.addObservable(s);
+  void reassemble() {
+    _widgetCache = null;
+  }
 
   @override
-  MixedStore<dynamic> get store => mainCtx.store;
+  void forceUpdate() {
+    _widgetCache = null;
 
-  @override
-  void forceUpdate() => mainCtx.forceUpdate();
-
-  @override
-  void bindForceUpdate(void Function() forceUpdate) =>
-      mainCtx.bindForceUpdate(forceUpdate);
+    try {
+      markNeedsBuild();
+    } catch (e) {
+      /// TODO
+      /// should try-catch in force mode which is called from outside
+    }
+  }
 }
-
-ContextSys<T> mergeContext<T>(
-        ContextSys<T> mainCtx, ContextSys<T> sidecarCtx) =>
-    sidecarCtx != null ? _TwinContext<T>(mainCtx, sidecarCtx) : mainCtx;

@@ -37,48 +37,39 @@ class StaticFlowAdapter<T> extends Logic<T>
           key: key,
         );
 
-  ListAdapter buildAdapter2(MixedStore<Object> store, Get<T> getter) {
-    return null;
-  }
-
   @override
-  ListAdapter buildAdapter(
-      T state, Dispatch dispatch, ViewService viewService) {
-    final RecycleContext<T> ctx = viewService;
+  ListAdapter buildAdapter(ContextSys<T> ctx) {
+    final RecycleContext<T> recycleCtx = ctx;
     final List<ListAdapter> adapters = <ListAdapter>[];
 
-    ctx.markAllUnused();
+    recycleCtx.markAllUnused();
     for (int i = 0; i < _slots.length; i++) {
       final Dependent<T> dependent = _slots[i];
-      final Object subObject = dependent.subGetter(ctx.getState)();
+      final Object subObject = dependent.subGetter(recycleCtx.getState)();
       if (!dependent.isComponent()) {
         /// precondition is subObject != null
         if (subObject != null) {
           /// use index of key
-          final ContextSys<Object> subCtx = ctx.reuseOrCreate(i, () {
+          final ContextSys<Object> subCtx = recycleCtx.reuseOrCreate(i, () {
             return dependent.createContext(
-              store: ctx.store,
-              buildContext: ctx.context,
-              getState: ctx.getState,
+              store: recycleCtx.store,
+              buildContext: recycleCtx.context,
+              getState: recycleCtx.getState,
             );
           });
-          final ListAdapter subAdapter = dependent.buildAdapter(
-            subCtx.state,
-            subCtx.dispatch,
-            subCtx,
-          );
+          final ListAdapter subAdapter = dependent.buildAdapter(subCtx);
           adapters.add(subAdapter);
         }
       } else if (subObject != null) {
         adapters.add(ListAdapter((BuildContext buildContext, int index) {
           return dependent.buildComponent(
-            ctx.store,
-            ctx.getState,
+            recycleCtx.store,
+            recycleCtx.getState,
           );
         }, 1));
       }
     }
-    ctx.cleanUnused();
+    recycleCtx.cleanUnused();
 
     return combineListAdapters(adapters);
   }

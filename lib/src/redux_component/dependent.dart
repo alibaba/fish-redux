@@ -28,11 +28,10 @@ class _Dependent<T, P> implements Dependent<T> {
   }
 
   @override
-  ListAdapter buildAdapter(
-      Object state, Dispatch dispatch, ViewService viewService) {
+  ListAdapter buildAdapter(covariant ContextSys<P> ctx) {
     assert(isAdapter(), 'Unexpected type of ${logic.runtimeType}.');
     final AbstractAdapter<P> adapter = logic;
-    return adapter.buildAdapter(state, dispatch, viewService);
+    return adapter.buildAdapter(ctx);
   }
 
   @override

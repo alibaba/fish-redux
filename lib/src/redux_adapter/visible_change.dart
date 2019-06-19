@@ -7,12 +7,8 @@ import '../utils/utils.dart';
 
 mixin VisibleChangeMixin<T> on AbstractAdapter<T> {
   @override
-  ListAdapter buildAdapter(
-      T state, Dispatch dispatch, ViewService viewService) {
-    return _wrapVisibleChange<T>(
-      super.buildAdapter(state, dispatch, viewService),
-      viewService,
-    );
+  ListAdapter buildAdapter(ContextSys<T> ctx) {
+    return _wrapVisibleChange<T>(super.buildAdapter(ctx), ctx);
   }
 }
 
