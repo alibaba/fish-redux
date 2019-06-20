@@ -62,33 +62,22 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
     @required BuildContext buildContext,
     @required Get<T> getState,
     @required void Function() markNeedsBuild,
-    @required ContextSys<Object> sidecarCtx,
-  }) {
-    return ComponentContext<T>(
-      logic: this,
-      store: store,
-      buildContext: buildContext,
-      getState: getState,
-      view: store.viewEnhance(protectedView, this),
-      shouldUpdate: protectedShouldUpdate,
-      name: name,
-      markNeedsBuild: markNeedsBuild,
-      sidecarCtx: sidecarCtx,
-    );
-  }
-
-  ContextSys<Object> createSidecarContext({
-    @required MixedStore<Object> store,
-    @required BuildContext buildContext,
-    @required Get<T> getState,
-  }) {
-    ///TODO
-    return protectedDependencies?.adapter?.createContext(
-      store: store,
-      buildContext: buildContext,
-      getState: getState,
-    );
-  }
+  }) =>
+      ComponentContext<T>(
+        logic: this,
+        store: store,
+        buildContext: buildContext,
+        getState: getState,
+        view: store.viewEnhance(protectedView, this),
+        shouldUpdate: protectedShouldUpdate,
+        name: name,
+        markNeedsBuild: markNeedsBuild,
+        sidecarCtx: protectedDependencies?.adapter?.createContext(
+          store: store,
+          buildContext: buildContext,
+          getState: getState,
+        ),
+      );
 
   ComponentState<T> createState() => ComponentState<T>();
 
@@ -139,10 +128,6 @@ class ComponentWidget<T> extends StatefulWidget {
 class ComponentState<T> extends State<ComponentWidget<T>> {
   ComponentContext<T> mainCtx;
 
-  ///todo
-  ContextSys<Object> sidecarCtx;
-
-  /// buildAdapter
   @mustCallSuper
   @override
   Widget build(BuildContext context) => mainCtx.buildWidget();
@@ -154,7 +139,6 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
     super.reassemble();
     mainCtx.reassemble();
     mainCtx.onLifecycle(LifecycleCreator.reassemble());
-    sidecarCtx?.onLifecycle(LifecycleCreator.reassemble());
   }
 
   @mustCallSuper
@@ -162,24 +146,16 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
   void initState() {
     super.initState();
 
-    sidecarCtx = widget.component.createSidecarContext(
-      store: widget.store,
-      buildContext: context,
-      getState: () => widget.getter(),
-    );
-
     /// init context
     mainCtx = widget.component.createContext(
-      store: widget.store,
-      buildContext: context,
-      getState: () => widget.getter(),
-      markNeedsBuild: () {
-        if (mounted) {
-          setState(() {});
-        }
-      },
-      sidecarCtx: sidecarCtx,
-    );
+        store: widget.store,
+        buildContext: context,
+        getState: () => widget.getter(),
+        markNeedsBuild: () {
+          if (mounted) {
+            setState(() {});
+          }
+        });
 
     /// register store.subscribe
     mainCtx
@@ -193,7 +169,6 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     mainCtx.onLifecycle(LifecycleCreator.didChangeDependencies());
-    sidecarCtx?.onLifecycle(LifecycleCreator.didChangeDependencies());
   }
 
   @mustCallSuper
@@ -201,7 +176,6 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
   void deactivate() {
     super.deactivate();
     mainCtx.onLifecycle(LifecycleCreator.deactivate());
-    sidecarCtx?.onLifecycle(LifecycleCreator.deactivate());
   }
 
   @mustCallSuper
@@ -210,7 +184,6 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
     super.didUpdateWidget(oldWidget);
     mainCtx.didUpdateWidget();
     mainCtx.onLifecycle(LifecycleCreator.didUpdateWidget());
-    sidecarCtx?.onLifecycle(LifecycleCreator.didUpdateWidget());
   }
 
   @mustCallSuper
@@ -219,13 +192,6 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
     mainCtx
       ..onLifecycle(LifecycleCreator.dispose())
       ..dispose();
-
-    if (sidecarCtx != null) {
-      sidecarCtx
-        ..onLifecycle(LifecycleCreator.dispose())
-        ..dispose();
-    }
-
     super.dispose();
   }
 }

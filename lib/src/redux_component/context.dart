@@ -157,6 +157,14 @@ class ComponentContext<T> extends DefaultContext<T> implements ViewUpdater<T> {
           getState: getState,
         ) {
     _latestState = state;
+
+    sidecarCtx?.setParent(this);
+  }
+
+  @override
+  void onLifecycle(Action action) {
+    super.onLifecycle(action);
+    sidecarCtx?.onLifecycle(LifecycleCreator.reassemble());
   }
 
   @override
