@@ -12,8 +12,10 @@ class Dependencies<T> {
     this.slots,
     @deprecated AbstractAdapter<T> adapter,
     Dependent<T> list,
-  })  : assert(list == null || list.isAdapter(), ''),
-        assert(list == null || adapter == null, ''),
+  })  : assert(list == null || list.isAdapter(),
+            'The dependent must contains adapter.'),
+        assert(list == null || adapter == null,
+            'Only one style of adapter could be applied.'),
         list = list ?? (NoneConn<T>() + adapter);
 
   Reducer<T> get reducer {
