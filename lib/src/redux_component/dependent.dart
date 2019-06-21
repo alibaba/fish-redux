@@ -58,5 +58,5 @@ class _Dependent<T, P> implements Dependent<T> {
 }
 
 Dependent<K> createDependent<K, T>(
-        AbstractConnector<K, T> connector, Logic<T> logic) =>
-    _Dependent<K, T>(connector: connector, logic: logic);
+        AbstractConnector<K, T> connector, AbstractLogic<T> logic) =>
+    logic != null ? _Dependent<K, T>(connector: connector, logic: logic) : null;

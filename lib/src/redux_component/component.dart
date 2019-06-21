@@ -72,7 +72,7 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
         shouldUpdate: protectedShouldUpdate,
         name: name,
         markNeedsBuild: markNeedsBuild,
-        sidecarCtx: protectedDependencies?.adapter?.createContext(
+        sidecarCtx: protectedDependencies?.list?.createContext(
           store: store,
           buildContext: buildContext,
           getState: getState,

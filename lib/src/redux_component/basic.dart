@@ -132,7 +132,7 @@ abstract class MixedStore<T> extends Store<T>
 
 /// Seen in view-part or adapter-part
 abstract class ViewService {
-  /// The way to build adapter which is configured in Dependencies.adapter
+  /// The way to build adapter which is configured in Dependencies.list
   ListAdapter buildAdapter();
 
   /// The way to build slot component which is configured in Dependencies.slots
