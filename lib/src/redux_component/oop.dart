@@ -5,6 +5,7 @@ import '../utils/utils.dart';
 import 'auto_dispose.dart';
 import 'basic.dart';
 
+/// The OOP style for parts of component is deprecated!
 /// A OOP style of coding the View-Part, Adapter-Part and Effect-Part.
 /// It's just the expansion of the context.
 
@@ -30,6 +31,7 @@ class _BasePart<T> {
   }
 }
 
+@deprecated
 @immutable
 abstract class ViewPart<T> extends _BasePart<T> {
   Widget build();
@@ -42,6 +44,7 @@ abstract class ViewPart<T> extends _BasePart<T> {
   }
 }
 
+@deprecated
 @immutable
 abstract class AdapterPart<T> extends _BasePart<T> {
   ListAdapter buildAdapter();
@@ -54,6 +57,7 @@ abstract class AdapterPart<T> extends _BasePart<T> {
   }
 }
 
+@deprecated
 abstract class EffectPart<T> extends AutoDispose {
   final Tuple2<Context<T>, Map<Object, OnAction>> _tuple =
       Tuple2<Context<T>, Map<Object, OnAction>>();
@@ -81,8 +85,7 @@ abstract class EffectPart<T> extends AutoDispose {
   }
 }
 
-abstract class ComponentOOP<T> {}
-
+@deprecated
 HigherEffect<T> higherEffect<T>(EffectPart<T> Function() builder) {
   return (Context<T> ctx) {
     final EffectPart<T> instance = builder();
