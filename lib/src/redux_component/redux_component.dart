@@ -11,4 +11,3 @@ export 'mixed_store.dart';
 export 'oop.dart';
 export 'page.dart';
 export 'private_reducer_mixin.dart';
-export 'provider.dart';

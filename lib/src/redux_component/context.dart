@@ -96,7 +96,7 @@ class DefaultContext<T> extends ContextSys<T> with _ExtraMixin {
 
   bool _throwIfDisposed() {
     if (isDisposed) {
-      throw const DisposeException(
+      throw Exception(
           'Ctx has been disposed which could not been used any more.');
     }
     return true;

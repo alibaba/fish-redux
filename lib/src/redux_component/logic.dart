@@ -51,12 +51,9 @@ abstract class Logic<T> implements AbstractLogic<T> {
   /// _resultCache['key'] = null;
   /// then
   /// _resultCache.containsKey('key') will be true;
-  R cache<R>(String key, Get<R> getter) {
-    final R result = _resultCache.containsKey(key)
-        ? _resultCache[key]
-        : (_resultCache[key] = getter());
-    return result;
-  }
+  R cache<R>(String key, Get<R> getter) => _resultCache.containsKey(key)
+      ? _resultCache[key]
+      : (_resultCache[key] = getter());
 
   @override
   Reducer<T> get reducer => filterReducer(
@@ -128,18 +125,4 @@ abstract class Logic<T> implements AbstractLogic<T> {
       };
     };
   }
-}
-
-/// if an exception is of SelfHealingError type, it will be healed automatically.
-abstract class SelfHealingError {
-  bool heal(Context<Object> ctx);
-}
-
-class DisposeException implements Exception, SelfHealingError {
-  final String message;
-
-  const DisposeException([this.message]);
-
-  @override
-  bool heal(Context<Object> ctx) => true;
 }
