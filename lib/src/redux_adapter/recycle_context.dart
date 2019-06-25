@@ -2,10 +2,10 @@ import 'package:flutter/widgets.dart' hide Action;
 
 import '../redux/redux.dart';
 import '../redux_component/basic.dart';
-import '../redux_component/context.dart';
 import '../redux_component/lifecycle.dart';
+import 'adapter.dart';
 
-class RecycleContext<T> extends LogicContext<T> {
+class RecycleContext<T> extends AdapterContext<T> {
   final Map<Object, List<ContextSys<Object>>> _cachedMap =
       <Object, List<ContextSys<Object>>>{};
   final Map<Object, int> _usedIndexMap = <Object, int>{};
@@ -17,8 +17,7 @@ class RecycleContext<T> extends LogicContext<T> {
     @required Get<T> getState,
     @required DispatchBus bus,
     @required Enhancer<Object> enhancer,
-  })  : assert(bus != null && enhancer != null),
-        super(
+  }) : super(
           logic: logic,
           store: store,
           buildContext: buildContext,
@@ -70,12 +69,6 @@ class RecycleContext<T> extends LogicContext<T> {
 
       return usedCount == 0;
     });
-  }
-
-  @override
-  ListAdapter buildAdapter() {
-    final AbstractAdapter<T> curLogic = logic;
-    return curLogic.buildAdapter(this);
   }
 }
 

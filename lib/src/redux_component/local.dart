@@ -3,36 +3,23 @@ import 'package:flutter/widgets.dart';
 
 import 'basic.dart';
 
-class Local {
-  static T of<T>(Context<Object> ctx, {T Function() init}) =>
-      (ctx.extra['${T.toString()}'] ??= init());
+@immutable
+class LocalProps<T, P> {
+  final T Function(Context<P>) construct;
+  final void Function(T, Context<P>) destruct;
 
-  static void onDispose<T>(
-    Context<Object> ctx, {
-    @required void Function(T) visitor,
-  }) {
-    if (ctx.extra['onDispose ${T.toString()}'] == null) {
-      ctx.extra['onDispose ${T.toString()}'] = true;
-      ctx.registerOnDisposed(() => visitor(Local.of<T>(ctx)));
-    }
-  }
-}
+  const LocalProps({@required this.construct, this.destruct})
+      : assert(construct != null,
+            'Please provide a constructor to create <T> instance.');
 
-class LocalVars<T, P> {
-  final T Function(P, BuildContext) construct;
-  final void Function(T, BuildContext) destruct;
-
-  const LocalVars({@required this.construct, this.destruct})
-      : assert(construct != null);
-
-  T of(ExtraData extraData) {
-    assert(extraData is Context<P>);
-    final Context<P> ctx = extraData;
+  T of(ExtraData context) {
+    assert(context is Context<P>);
+    final Context<P> ctx = context;
     if (ctx.extra[_key] == null) {
-      final T result = construct(ctx.state, ctx.context);
+      final T result = construct(ctx);
       ctx.extra[_key] = result;
       if (destruct != null) {
-        ctx.registerOnDisposed(() => destruct(result, ctx.context));
+        ctx.registerOnDisposed(() => destruct(result, ctx));
       }
     }
     return ctx.extra[_key];
@@ -41,16 +28,36 @@ class LocalVars<T, P> {
   String get _key => '\$ ${T.toString()}';
 }
 
-abstract class L<T, P> {
-  T construct(P state, BuildContext context);
-  void destruct(T local);
-}
-
-// class T {
-//   int a;
-//   int b;
-//   static final LocalVars<T, Object> local = LocalVars<T, Object>(
-//     construct: (P state, BuildContext context) => T(),
-//     destruct: (T _) => null,
-//   );
-// }
+///
+///           @immutable
+///                   class T {
+///          final int a;
+///          final int b;
+///          final FocusNode focusNode;
+///
+///          const T(this.a, this.b, this.focusNode);
+///
+///          static final LocalProps<T, Object> local = LocalProps<T, Object>(
+///            construct: (Context<Object> ctx) {
+///              const T result = T(0, 0, FocusNode());
+///              result.focusNode.addListener(() {});
+///              return result;
+///            },
+///            destruct: (T result, Context<Object> ctx) {
+///              // result.a = 0;
+///              // result.b = 0;
+///            },
+///          );
+///        }
+///
+///        Widget build(Object state, Dispatch dispatch, ViewService vs) {
+///          final T result = T.local.of(vs);
+///          // result.
+///          return Container();
+///        }
+///
+///        void init(Context<Object> ctx, Action a) {
+///          final T result = T.local.of(ctx);
+///        }
+///
+///
