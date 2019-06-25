@@ -62,36 +62,38 @@ class ToDoComponentNoReducer extends TestComponent<Todo> {
 Dependencies<ToDoList> toDoListDependencies(final Track track,
         {bool noReducer = false}) =>
     Dependencies<ToDoList>(
-        adapter: TestDynamicFlowAdapter<ToDoList>(
-            pool: <String, AbstractLogic<Todo>>{
-          'toDo': ToDoComponentInstrument(track),
-          'toDoNoReducer': ToDoComponentNoReducer(track),
-        },
-            connector: Connector<ToDoList, List<ItemBean>>(
-                get: (ToDoList toDoList) => toDoList.list
-                    .map<ItemBean>((Todo toDo) => noReducer
-                        ? ItemBean('toDoNoReducer', toDo)
-                        : ItemBean('toDo', toDo))
-                    .toList(),
-                set: (ToDoList toDoList, List<ItemBean> beans) {
-                  toDoList.list.clear();
-                  toDoList.list.addAll(
-                      beans.map<Todo>((ItemBean bean) => bean.data).toList());
+        list: NoneConn<ToDoList>() +
+            TestDynamicFlowAdapter<ToDoList>(
+                pool: <String, AbstractLogic<Todo>>{
+                  'toDo': ToDoComponentInstrument(track),
+                  'toDoNoReducer': ToDoComponentNoReducer(track),
+                },
+                connector: Connector<ToDoList, List<ItemBean>>(
+                    get: (ToDoList toDoList) => toDoList.list
+                        .map<ItemBean>((Todo toDo) => noReducer
+                            ? ItemBean('toDoNoReducer', toDo)
+                            : ItemBean('toDo', toDo))
+                        .toList(),
+                    set: (ToDoList toDoList, List<ItemBean> beans) {
+                      toDoList.list.clear();
+                      toDoList.list.addAll(beans
+                          .map<Todo>((ItemBean bean) => bean.data)
+                          .toList());
+                    }),
+                reducer: instrumentReducer<ToDoList>(toDoListReducer,
+                    change: (ToDoList state, Action action) {
+                  track.append('adapter-onReduce', state.clone());
                 }),
-            reducer: instrumentReducer<ToDoList>(toDoListReducer,
-                change: (ToDoList state, Action action) {
-              track.append('adapter-onReduce', state.clone());
-            }),
-            effect: instrumentEffect<ToDoList>(toDoListEffect,
-                (Action action, Get<ToDoList> getState) {
-              if (action.type == ToDoListAction.onAdd) {
-                track.append('adapter-onAdd', getState().clone());
-              } else if (action.type == ToDoAction.broadcast) {
-                track.append('adapter-onToDoBroadcast', getState().clone());
-              } else if (action.type == ToDoListAction.broadcast) {
-                track.append('adapter-onPageBroadcast', getState().clone());
-              }
-            })));
+                effect: instrumentEffect<ToDoList>(toDoListEffect,
+                    (Action action, Get<ToDoList> getState) {
+                  if (action.type == ToDoListAction.onAdd) {
+                    track.append('adapter-onAdd', getState().clone());
+                  } else if (action.type == ToDoAction.broadcast) {
+                    track.append('adapter-onToDoBroadcast', getState().clone());
+                  } else if (action.type == ToDoListAction.broadcast) {
+                    track.append('adapter-onPageBroadcast', getState().clone());
+                  }
+                })));
 
 void main() {
   group('dynamic_flow_adapter', () {

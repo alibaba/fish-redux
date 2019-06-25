@@ -17,10 +17,11 @@ void main() {
           initState: initState,
           view: pageView,
           dependencies: Dependencies<ToDoList>(
-              adapter: TestAdapter<ToDoList>(
-                  adapter: toDoListAdapter,
-                  reducer: toDoListReducer,
-                  effect: toDoListEffect)));
+              list: NoneConn<ToDoList>() +
+                  TestAdapter<ToDoList>(
+                      adapter: toDoListAdapter,
+                      reducer: toDoListReducer,
+                      effect: toDoListEffect)));
       expect(page, isNotNull);
 
       final Widget pageWidget = page.buildPage(pageInitParams);
@@ -32,10 +33,11 @@ void main() {
               initState: initState,
               view: pageView,
               dependencies: Dependencies<ToDoList>(
-                  adapter: TestAdapter<ToDoList>(
-                      adapter: toDoListAdapter,
-                      reducer: toDoListReducer,
-                      effect: toDoListEffect)))
+                  list: NoneConn<ToDoList>() +
+                      TestAdapter<ToDoList>(
+                          adapter: toDoListAdapter,
+                          reducer: toDoListReducer,
+                          effect: toDoListEffect)))
           .buildPage(pageInitParams)));
 
       expect(find.byKey(const ValueKey<String>('mark-0')), findsOneWidget);
@@ -75,13 +77,14 @@ void main() {
                 track.append('build', state.clone());
               }),
               dependencies: Dependencies<ToDoList>(
-                  adapter: TestAdapter<ToDoList>(
-                      adapter: toDoListAdapter,
-                      reducer: instrumentReducer<ToDoList>(toDoListReducer,
-                          suf: (ToDoList state, Action action) {
-                        track.append('onReduce', state.clone());
-                      }),
-                      effect: toDoListEffect)))
+                  list: NoneConn<ToDoList>() +
+                      TestAdapter<ToDoList>(
+                          adapter: toDoListAdapter,
+                          reducer: instrumentReducer<ToDoList>(toDoListReducer,
+                              suf: (ToDoList state, Action action) {
+                            track.append('onReduce', state.clone());
+                          }),
+                          effect: toDoListEffect)))
           .buildPage(pageInitParams)));
 
       await tester.tap(find.byKey(const ValueKey<String>('mark-0')));
@@ -154,26 +157,28 @@ void main() {
       Track track = Track();
 
       await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
-          initState: initState,
-          view: instrumentView<ToDoList>(pageView,
-              (ToDoList state, Dispatch dispatch, ViewService viewService) {
-            track.append('build', state.clone());
-          }),
-          dependencies: Dependencies<ToDoList>(
-              adapter: TestAdapter<ToDoList>(
-                  adapter: toDoListAdapter,
-                  reducer: instrumentReducer<ToDoList>(toDoListReducer,
-                      change: (ToDoList state, Action action) {
-                    track.append('onReduce', state.clone());
-                  }),
-                  effect: instrumentEffect(toDoListEffect,
-                      (Action action, Get<ToDoList> getState) {
-                    if (action.type == ToDoListAction.onAdd) {
-                      track.append('onAdd', getState().clone());
-                    } else if (action.type == ToDoListAction.onEdit) {
-                      track.append('onEdit', getState().clone());
-                    }
-                  })))).buildPage(pageInitParams)));
+              initState: initState,
+              view: instrumentView<ToDoList>(pageView,
+                  (ToDoList state, Dispatch dispatch, ViewService viewService) {
+                track.append('build', state.clone());
+              }),
+              dependencies: Dependencies<ToDoList>(
+                  list: NoneConn<ToDoList>() +
+                      TestAdapter<ToDoList>(
+                          adapter: toDoListAdapter,
+                          reducer: instrumentReducer<ToDoList>(toDoListReducer,
+                              change: (ToDoList state, Action action) {
+                            track.append('onReduce', state.clone());
+                          }),
+                          effect: instrumentEffect(toDoListEffect,
+                              (Action action, Get<ToDoList> getState) {
+                            if (action.type == ToDoListAction.onAdd) {
+                              track.append('onAdd', getState().clone());
+                            } else if (action.type == ToDoListAction.onEdit) {
+                              track.append('onEdit', getState().clone());
+                            }
+                          }))))
+          .buildPage(pageInitParams)));
 
       await tester.longPress(find.byKey(const ValueKey<String>('mark-0')));
       await tester.pump();
@@ -229,26 +234,28 @@ void main() {
       Track track = Track();
 
       await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
-          initState: initState,
-          view: instrumentView<ToDoList>(pageView,
-              (ToDoList state, Dispatch dispatch, ViewService viewService) {
-            track.append('build', state.clone());
-          }),
-          dependencies: Dependencies<ToDoList>(
-              adapter: TestAdapter<ToDoList>(
-                  adapter: toDoListAdapter,
-                  reducer: instrumentReducer<ToDoList>(toDoListReducer,
-                      change: (ToDoList state, Action action) {
-                    track.append('onReduce', state.clone());
-                  }),
-                  effect: instrumentEffect(toDoListEffectAsync,
-                      (Action action, Get<ToDoList> getState) {
-                    if (action.type == ToDoListAction.onAdd) {
-                      track.append('onAdd', getState().clone());
-                    } else if (action.type == ToDoListAction.onEdit) {
-                      track.append('onEdit', getState().clone());
-                    }
-                  })))).buildPage(pageInitParams)));
+              initState: initState,
+              view: instrumentView<ToDoList>(pageView,
+                  (ToDoList state, Dispatch dispatch, ViewService viewService) {
+                track.append('build', state.clone());
+              }),
+              dependencies: Dependencies<ToDoList>(
+                  list: NoneConn<ToDoList>() +
+                      TestAdapter<ToDoList>(
+                          adapter: toDoListAdapter,
+                          reducer: instrumentReducer<ToDoList>(toDoListReducer,
+                              change: (ToDoList state, Action action) {
+                            track.append('onReduce', state.clone());
+                          }),
+                          effect: instrumentEffect(toDoListEffectAsync,
+                              (Action action, Get<ToDoList> getState) {
+                            if (action.type == ToDoListAction.onAdd) {
+                              track.append('onAdd', getState().clone());
+                            } else if (action.type == ToDoListAction.onEdit) {
+                              track.append('onEdit', getState().clone());
+                            }
+                          }))))
+          .buildPage(pageInitParams)));
 
       await tester.longPress(find.byKey(const ValueKey<String>('mark-0')));
       await tester.pump(Duration(seconds: 3));
@@ -304,27 +311,32 @@ void main() {
       Track track = Track();
 
       await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
-          initState: initState,
-          view: instrumentView<ToDoList>(pageView,
-              (ToDoList state, Dispatch dispatch, ViewService viewService) {
-            track.append('build', state.clone());
-          }),
-          dependencies: Dependencies<ToDoList>(
-              adapter: TestAdapter<ToDoList>(
-                  adapter: toDoListAdapter,
-                  reducer: instrumentReducer<ToDoList>(toDoListReducer,
-                      change: (ToDoList state, Action action) {
-                    track.append('onReduce', state.clone());
-                  }),
-                  higherEffect: (Context<ToDoList> ctx) => (Action action) =>
-                      instrumentEffect(toDoListEffectAsync,
-                          (Action action, Get<ToDoList> getState) {
-                        if (action.type == ToDoListAction.onAdd) {
-                          track.append('onAdd', getState().clone());
-                        } else if (action.type == ToDoListAction.onEdit) {
-                          track.append('onEdit', getState().clone());
-                        }
-                      })(action, ctx)))).buildPage(pageInitParams)));
+              initState: initState,
+              view: instrumentView<ToDoList>(pageView,
+                  (ToDoList state, Dispatch dispatch, ViewService viewService) {
+                track.append('build', state.clone());
+              }),
+              dependencies: Dependencies<ToDoList>(
+                  list: NoneConn<ToDoList>() +
+                      TestAdapter<ToDoList>(
+                          adapter: toDoListAdapter,
+                          reducer: instrumentReducer<ToDoList>(toDoListReducer,
+                              change: (ToDoList state, Action action) {
+                            track.append('onReduce', state.clone());
+                          }),
+                          higherEffect: (Context<ToDoList> ctx) =>
+                              (Action action) =>
+                                  instrumentEffect(toDoListEffectAsync,
+                                      (Action action, Get<ToDoList> getState) {
+                                    if (action.type == ToDoListAction.onAdd) {
+                                      track.append('onAdd', getState().clone());
+                                    } else if (action.type ==
+                                        ToDoListAction.onEdit) {
+                                      track.append(
+                                          'onEdit', getState().clone());
+                                    }
+                                  })(action, ctx))))
+          .buildPage(pageInitParams)));
 
       await tester.longPress(find.byKey(const ValueKey<String>('mark-0')));
       await tester.pump(Duration(seconds: 3));
