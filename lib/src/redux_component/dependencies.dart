@@ -1,6 +1,6 @@
 import '../redux/redux.dart';
-import '../redux_connector/redux_connector.dart';
 import 'basic.dart';
+import 'dependent.dart';
 
 class Dependencies<T> {
   final Map<String, Dependent<T>> slots;
@@ -16,7 +16,7 @@ class Dependencies<T> {
             'The dependent must contains adapter.'),
         assert(list == null || adapter == null,
             'Only one style of adapter could be applied.'),
-        list = list ?? (NoneConn<T>() + adapter);
+        list = list ?? (_NoneConn<T>() + adapter);
 
   Reducer<T> get reducer {
     final List<SubReducer<T>> subs = <SubReducer<T>>[];
@@ -35,4 +35,15 @@ class Dependencies<T> {
   }
 
   Dependent<T> slot(String type) => slots[type];
+}
+
+class _NoneConn<T> extends ImmutableConn<T, T> {
+  @override
+  T get(T state) => state;
+
+  @override
+  T set(T state, T subState) => subState;
+
+  Dependent<T> operator +(AbstractLogic<T> logic) =>
+      createDependent<T, T>(this, logic);
 }
