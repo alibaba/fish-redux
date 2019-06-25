@@ -52,9 +52,11 @@ class StaticFlowAdapter<T> extends Logic<T>
           /// use index of key
           final ContextSys<Object> subCtx = recycleCtx.reuseOrCreate(i, () {
             return dependent.createContext(
-              store: recycleCtx.store,
-              buildContext: recycleCtx.context,
-              getState: recycleCtx.getState,
+              recycleCtx.store,
+              recycleCtx.context,
+              recycleCtx.getState,
+              bus: recycleCtx.bus,
+              enhancer: recycleCtx.enhancer,
             );
           });
           final ListAdapter subAdapter = dependent.buildAdapter(subCtx);
@@ -65,6 +67,8 @@ class StaticFlowAdapter<T> extends Logic<T>
           return dependent.buildComponent(
             recycleCtx.store,
             recycleCtx.getState,
+            bus: recycleCtx.bus,
+            enhancer: recycleCtx.enhancer,
           );
         }, 1));
       }

@@ -104,7 +104,7 @@ dynamic toDoEffectAsync(Action action, Context<Todo> ctx) {
   return null;
 }
 
-OnAction toDoHigherEffect(Context<Todo> ctx) =>
+Dispatch toDoHigherEffect(Context<Todo> ctx) =>
     (Action action) => toDoEffect(action, ctx);
 
 Todo toDoReducer(Todo state, Action action) {

@@ -21,10 +21,21 @@ class _Dependent<T, P> implements Dependent<T> {
   }
 
   @override
-  Widget buildComponent(MixedStore<Object> store, Get<T> getter) {
+  Widget buildComponent(
+    Store<Object> store,
+    Get<T> getter, {
+    @required DispatchBus bus,
+    @required Enhancer<Object> enhancer,
+  }) {
+    assert(bus != null && enhancer != null);
     assert(isComponent(), 'Unexpected type of ${logic.runtimeType}.');
     final AbstractComponent<P> component = logic;
-    return component.buildComponent(store, () => connector.get(getter()));
+    return component.buildComponent(
+      store,
+      () => connector.get(getter()),
+      bus: bus,
+      enhancer: enhancer,
+    );
   }
 
   @override
@@ -38,15 +49,20 @@ class _Dependent<T, P> implements Dependent<T> {
   Get<P> subGetter(Get<T> getter) => () => connector.get(getter());
 
   @override
-  ContextSys<P> createContext({
-    MixedStore<Object> store,
+  ContextSys<P> createContext(
+    Store<Object> store,
     BuildContext buildContext,
-    Get<T> getState,
+    Get<T> getState, {
+    @required DispatchBus bus,
+    @required Enhancer<Object> enhancer,
   }) {
+    assert(bus != null && enhancer != null);
     return logic.createContext(
-      store: store,
-      buildContext: buildContext,
-      getState: subGetter(getState),
+      store,
+      buildContext,
+      subGetter(getState),
+      bus: bus,
+      enhancer: enhancer,
     );
   }
 

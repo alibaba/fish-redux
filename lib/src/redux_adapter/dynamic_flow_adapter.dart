@@ -17,9 +17,7 @@ class ItemBean {
 }
 
 /// template is a map, driven by array
-class DynamicFlowAdapter<T> extends Logic<T>
-    with RecycleContextMixin<T>
-    implements AbstractAdapter<T> {
+class DynamicFlowAdapter<T> extends Logic<T> with RecycleContextMixin<T> {
   final Map<String, AbstractLogic<Object>> pool;
   final AbstractConnector<T, List<ItemBean>> connector;
 
@@ -63,14 +61,13 @@ class DynamicFlowAdapter<T> extends Logic<T>
               result.runtimeType,
               result.key(itemBean.data),
             ),
-            () {
-              return result.createContext(
-                store: recycleCtx.store,
-                buildContext: recycleCtx.context,
-                getState:
-                    _subGetter(() => connector.get(recycleCtx.state), index),
-              );
-            },
+            () => result.createContext(
+                  recycleCtx.store,
+                  recycleCtx.context,
+                  _subGetter(() => connector.get(recycleCtx.state), index),
+                  bus: recycleCtx.bus,
+                  enhancer: recycleCtx.enhancer,
+                ),
           );
           adapters.add(result.buildAdapter(subCtx));
         } else if (result is AbstractComponent<Object>) {
@@ -78,6 +75,8 @@ class DynamicFlowAdapter<T> extends Logic<T>
             return result.buildComponent(
               recycleCtx.store,
               _subGetter(() => connector.get(recycleCtx.state), index),
+              bus: recycleCtx.bus,
+              enhancer: recycleCtx.enhancer,
             );
           }, 1));
         }

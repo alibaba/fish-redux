@@ -82,7 +82,7 @@ dynamic toDoListEffectAsync(Action action, Context<ToDoList> ctx) {
   return null;
 }
 
-OnAction toDoListHigherEffect(Context<ToDoList> ctx) =>
+Dispatch toDoListHigherEffect(Context<ToDoList> ctx) =>
     (Action action) => toDoListEffect(action, ctx);
 
 ToDoList toDoListReducer(ToDoList state, Action action) {
@@ -141,18 +141,22 @@ class ToDoComponent2 extends ToDoComponent {}
 class ToDoComponent3 extends ToDoComponent {}
 
 final toDoListDependencies = Dependencies<ToDoList>(slots: {
-  'toDo0': ToDoComponent0().asDependent(Connector<ToDoList, Todo>(
-      get: (toDoList) => toDoList.list[0],
-      set: (toDoList, toDo) => toDoList.list[0] = toDo)),
-  'toDo1': ToDoComponent1().asDependent(Connector<ToDoList, Todo>(
-      get: (toDoList) => toDoList.list[1],
-      set: (toDoList, toDo) => toDoList.list[1] = toDo)),
-  'toDo2': ToDoComponent2().asDependent(Connector<ToDoList, Todo>(
-      get: (toDoList) => toDoList.list[2],
-      set: (toDoList, toDo) => toDoList.list[2] = toDo)),
-  'toDo3': ToDoComponent3().asDependent(Connector<ToDoList, Todo>(
-      get: (toDoList) => toDoList.list[3],
-      set: (toDoList, toDo) => toDoList.list[3] = toDo)),
+  'toDo0': ConnOp<ToDoList, Todo>(
+          get: (toDoList) => toDoList.list[0],
+          set: (toDoList, toDo) => toDoList.list[0] = toDo) +
+      ToDoComponent0(),
+  'toDo1': ConnOp<ToDoList, Todo>(
+          get: (toDoList) => toDoList.list[1],
+          set: (toDoList, toDo) => toDoList.list[1] = toDo) +
+      ToDoComponent1(),
+  'toDo2': ConnOp<ToDoList, Todo>(
+          get: (toDoList) => toDoList.list[2],
+          set: (toDoList, toDo) => toDoList.list[2] = toDo) +
+      ToDoComponent2(),
+  'toDo3': ConnOp<ToDoList, Todo>(
+          get: (toDoList) => toDoList.list[3],
+          set: (toDoList, toDo) => toDoList.list[3] = toDo) +
+      ToDoComponent3(),
 });
 
 Widget createComponentWidget(BuildContext context) {

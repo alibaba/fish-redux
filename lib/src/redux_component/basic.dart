@@ -45,7 +45,7 @@ abstract class ViewUpdater<T> {
 /// A little different with Dispatch (with if it is interrupted).
 /// bool for sync-functions, interrupted if true
 /// Futur<void> for async-functions, should always be interrupted.
-typedef OnAction = dynamic Function(Action action);
+// typedef OnAction = Dispatch;
 
 /// Predicate if a component should be updated when the store is changed.
 typedef ShouldUpdate<T> = bool Function(T old, T now);
@@ -56,82 +56,46 @@ typedef ShouldUpdate<T> = bool Function(T old, T now);
 typedef Effect<T> = dynamic Function(Action action, Context<T> ctx);
 
 /// Because Effect<T> is an aysnc-function, if it has some self-state, we should use HigherEffect<T>
-typedef HigherEffect<T> = OnAction Function(Context<T> ctx);
+typedef HigherEffect<T> = Dispatch Function(Context<T> ctx);
 
-/// If an exception is thrown out, we may have some need to handle it.
-typedef OnError<T> = bool Function(Exception exception, Context<T> ctx);
-
-/// todo
-abstract class EffectBroadcast {
-  /// Broadcast in all component receivers;
-  void broadcastEffect(Action action, {Dispatch excluded});
-
-  /// Register a receiver and return the unregister function
-  void Function() registerComponentReceiver(Dispatch dispatch);
-}
-
-/// todo
-abstract class InterStoreBroadcast {
-  /// Broadcast in all store receivers;
-  void broadcast(Action action, {Dispatch excluded});
-
-  /// Register a receiver and return the unregister function
-  void Function() registerStoreReceiver(Dispatch dispatch);
-}
-
-/// todo
-abstract class SlotBuilder {
-  /// <String, Dependent<T>> slots
-  Widget buildComponent(String name);
-}
-
-/// todo
-typedef EffectMiddleware<T> = Composable<HigherEffect<dynamic>> Function(
-    AbstractLogic<dynamic>, MixedStore<T>);
-
-// todo
+/// AOP Start
 typedef ViewMiddleware<T> = Composable<ViewBuilder<dynamic>> Function(
-    AbstractComponent<dynamic>, MixedStore<T>);
+    AbstractComponent<dynamic>, Store<T>);
 
 typedef AdapterMiddleware<T> = Composable<AdapterBuilder<dynamic>> Function(
-    AbstractAdapter<dynamic>, MixedStore<T>);
+    AbstractAdapter<dynamic>, Store<T>);
 
-/// todo
-abstract class ViewEnhancer<T> {
+typedef EffectMiddleware<T> = Composable<HigherEffect<dynamic>> Function(
+    AbstractLogic<dynamic>, Store<T>);
+
+abstract class Enhancer<T> {
   ViewBuilder<K> viewEnhance<K>(
     ViewBuilder<K> view,
     AbstractComponent<K> component,
+    Store<T> store,
   );
-}
-
-/// todo
-abstract class AdapterEnhancer<T> {
   AdapterBuilder<K> adapterEnhance<K>(
     AdapterBuilder<K> adapterBuilder,
     AbstractAdapter<K> logic,
+    Store<T> store,
   );
-}
-
-/// todo
-abstract class EffectEnhancer<T> {
   HigherEffect<K> effectEnhance<K>(
     HigherEffect<K> higherEffect,
     AbstractLogic<K> logic,
+    Store<T> store,
   );
+  StoreCreator<T> storeEnhance(StoreCreator<T> creator);
 }
 
-/// A mixed store with inter-component, inter-store communication & slot-build
-abstract class MixedStore<T> extends Store<T>
-    implements
-        EffectBroadcast,
-        InterStoreBroadcast,
-        SlotBuilder,
-        ViewEnhancer<T>,
-        AdapterEnhancer<T>,
-        EffectEnhancer<T> {}
+/// AOP End
+
+abstract class ExtraData {
+  /// Get|Set extra data in context if needed.
+  Map<String, Object> get extra;
+}
 
 /// Seen in view-part or adapter-part
-abstract class ViewService {
+abstract class ViewService implements ExtraData {
   /// The way to build adapter which is configured in Dependencies.list
   ListAdapter buildAdapter();
 
@@ -149,7 +113,7 @@ abstract class ViewService {
 }
 
 ///  Seen in effect-part
-abstract class Context<T> extends AutoDispose {
+abstract class Context<T> extends AutoDispose implements ExtraData {
   /// Get the latest state
   T get state;
 
@@ -178,9 +142,6 @@ abstract class Context<T> extends AutoDispose {
   ///    context.dispatch(ActionCreator.createController(controller));
   State get stfState;
 
-  /// Get|Set extra data in context if needed.
-  Map<String, Object> get extra;
-
   /// The way to build slot component which is configured in Dependencies.slots
   /// such as custom mask or dialog
   Widget buildComponent(String name);
@@ -204,7 +165,11 @@ abstract class ContextSys<T> extends Context<T> implements ViewService {
 
   void bindForceUpdate(void Function() forceUpdate);
 
-  MixedStore<dynamic> get store;
+  Store<dynamic> get store;
+
+  Enhancer<dynamic> get enhancer;
+
+  DispatchBus get bus;
 }
 
 /// Representation of each dependency
@@ -213,15 +178,22 @@ abstract class Dependent<T> {
 
   SubReducer<T> createSubReducer();
 
-  Widget buildComponent(MixedStore<Object> store, Get<T> getter);
+  Widget buildComponent(
+    Store<Object> store,
+    Get<T> getter, {
+    @required DispatchBus bus,
+    @required Enhancer<Object> enhancer,
+  });
 
   /// P state
   ListAdapter buildAdapter(ContextSys<Object> ctx);
 
-  ContextSys<Object> createContext({
-    MixedStore<Object> store,
+  ContextSys<Object> createContext(
+    Store<Object> store,
     BuildContext buildContext,
-    Get<T> getState,
+    Get<T> getState, {
+    @required DispatchBus bus,
+    @required Enhancer<Object> enhancer,
   });
 
   bool isComponent();
@@ -239,39 +211,46 @@ abstract class AbstractLogic<T> {
   Object onReducer(Object state, Action action);
 
   /// To create each instance's side-effect-action-handler
-  OnAction createHandlerOnAction(ContextSys<T> ctx);
+  Dispatch createOnEffect(ContextSys<T> ctx, Enhancer<Object> enhancer);
 
-  /// To create each instance's broadcast-handler
-  /// It is same as side-effect-action-handler by defalut.
-  OnAction createHandlerOnBroadcast(
-      OnAction onAction, ContextSys<T> ctx, Dispatch parentDispatch);
+  /// To create each instance's side-effect-action-handler
+  Dispatch createAfterEffect(ContextSys<T> ctx, Enhancer<Object> enhancer);
 
   /// To create each instance's dispatch
   /// Dispatch is the most important api for users which is provided by framework
   Dispatch createDispatch(
-      OnAction onAction, ContextSys<T> ctx, Dispatch parentDispatch);
+    Dispatch onEffect,
+    Dispatch next, {
+    ContextSys<T> ctx,
+  });
 
   /// To create each instance's context
-  ContextSys<T> createContext({
-    MixedStore<Object> store,
+  ContextSys<T> createContext(
+    Store<Object> store,
     BuildContext buildContext,
-    Get<T> getState,
+    Get<T> getState, {
+    @required DispatchBus bus,
+    @required Enhancer<Object> enhancer,
   });
 
   /// To create each instance's key (for recycle) if needed
   Object key(T state);
 
-  /// It's a convenient way to create a dependency
-  @deprecated
-  Dependent<K> asDependent<K>(AbstractConnector<K, T> connector);
-
   /// Find a dependent by name
   Dependent<T> slot(String name);
+
+  /// Get a adapter-dependent
+  Dependent<T> adapterDep();
 }
 
 abstract class AbstractComponent<T> implements AbstractLogic<T> {
   /// How to build component instance
-  Widget buildComponent(MixedStore<Object> store, Get<T> getter);
+  Widget buildComponent(
+    Store<Object> store,
+    Get<T> getter, {
+    @required DispatchBus bus,
+    @required Enhancer<Object> enhancer,
+  });
 }
 
 abstract class AbstractAdapter<T> implements AbstractLogic<T> {
@@ -281,3 +260,16 @@ abstract class AbstractAdapter<T> implements AbstractLogic<T> {
 /// Because a main reducer will be very complicated with multiple level's state.
 /// When a reducer is slow to handle an action, maybe we should use ReducerFilter to improve the performance.
 typedef ReducerFilter<T> = bool Function(T state, Action action);
+
+///
+abstract class DispatchBus {
+  void attach(DispatchBus parent);
+
+  void detach();
+
+  void dispatch(Action action, {Dispatch excluded});
+
+  void broadcast(Action action, {DispatchBus excluded});
+
+  void Function() registerReceiver(Dispatch dispatch);
+}

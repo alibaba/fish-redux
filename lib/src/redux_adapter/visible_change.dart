@@ -48,7 +48,7 @@ class _VisibleChangeWidget extends StatefulWidget {
 
 ListAdapter _wrapVisibleChange<T>(
   ListAdapter listAdapter,
-  DefaultContext<T> ctx,
+  LogicContext<T> ctx,
 ) {
   final _VisibleChangeDispatch onChange =
       (ctx.extra['\$visible'] ??= _VisibleChangeDispatch(ctx.dispatch));

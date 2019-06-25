@@ -4,21 +4,26 @@ import '../redux/redux.dart';
 import '../redux_component/context.dart';
 import '../redux_component/redux_component.dart';
 
-class RecycleContext<T> extends DefaultContext<T> {
+class RecycleContext<T> extends LogicContext<T> {
   final Map<Object, List<ContextSys<Object>>> _cachedMap =
       <Object, List<ContextSys<Object>>>{};
   final Map<Object, int> _usedIndexMap = <Object, int>{};
 
   RecycleContext({
-    AbstractLogic<T> logic,
-    MixedStore<Object> store,
-    BuildContext buildContext,
-    Get<T> getState,
-  }) : super(
+    @required AbstractAdapter<T> logic,
+    @required @required Store<Object> store,
+    @required BuildContext buildContext,
+    @required Get<T> getState,
+    @required DispatchBus bus,
+    @required Enhancer<Object> enhancer,
+  })  : assert(bus != null && enhancer != null),
+        super(
           logic: logic,
           store: store,
           buildContext: buildContext,
           getState: getState,
+          bus: bus,
+          enhancer: enhancer,
         );
 
   @override
@@ -65,20 +70,31 @@ class RecycleContext<T> extends DefaultContext<T> {
       return usedCount == 0;
     });
   }
+
+  @override
+  ListAdapter buildAdapter() {
+    final AbstractAdapter<T> curLogic = logic;
+    return curLogic.buildAdapter(this);
+  }
 }
 
-mixin RecycleContextMixin<T> on Logic<T> {
+mixin RecycleContextMixin<T> implements AbstractAdapter<T> {
   @override
-  RecycleContext<T> createContext({
-    MixedStore<Object> store,
+  RecycleContext<T> createContext(
+    Store<Object> store,
     BuildContext buildContext,
-    Get<T> getState,
+    Get<T> getState, {
+    @required DispatchBus bus,
+    @required Enhancer<Object> enhancer,
   }) {
+    assert(bus != null && enhancer != null);
     return RecycleContext<T>(
       logic: this,
       store: store,
       buildContext: buildContext,
       getState: getState,
+      bus: bus,
+      enhancer: enhancer,
     );
   }
 }

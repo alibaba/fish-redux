@@ -1,3 +1,4 @@
+import 'package:fish_redux/src/redux_component/basic.dart';
 import 'package:fish_redux/src/redux_component/context.dart';
 import 'package:flutter/widgets.dart' hide Action;
 
@@ -7,7 +8,6 @@ import '../redux_component/logic.dart';
 import '../redux_component/redux_component.dart';
 
 /// abstract for custom extends
-@immutable
 abstract class Adapter<T> extends Logic<T> implements AbstractAdapter<T> {
   final AdapterBuilder<T> _adapter;
 
@@ -35,20 +35,53 @@ abstract class Adapter<T> extends Logic<T> implements AbstractAdapter<T> {
         );
 
   @override
-  ListAdapter buildAdapter(ContextSys<T> ctx) {
-    return ctx.store
-        .adapterEnhance(protectedAdapter, this)
-        .call(ctx.state, ctx.dispatch, ctx);
-  }
+  ListAdapter buildAdapter(ContextSys<T> ctx) =>
+      ctx.enhancer
+          ?.adapterEnhance(protectedAdapter, this, ctx.store)
+          ?.call(ctx.state, ctx.dispatch, ctx) ??
+      protectedAdapter?.call(ctx.state, ctx.dispatch, ctx);
 
   @override
   ContextSys<T> createContext(
-      {MixedStore<Object> store, BuildContext buildContext, Get<T> getState}) {
-    return DefaultContext<T>(
+    Store<Object> store,
+    BuildContext buildContext,
+    Get<T> getState, {
+    @required Enhancer<Object> enhancer,
+    @required DispatchBus bus,
+  }) {
+    assert(bus != null && enhancer != null);
+    return AdapterContext<T>(
       logic: this,
       store: store,
       buildContext: buildContext,
       getState: getState,
+      bus: bus,
+      enhancer: enhancer,
     );
+  }
+}
+
+class AdapterContext<T> extends LogicContext<T> {
+  AdapterContext({
+    @required Adapter<T> logic,
+    @required Store<Object> store,
+    @required BuildContext buildContext,
+    @required Get<T> getState,
+    @required DispatchBus bus,
+    @required Enhancer<Object> enhancer,
+  })  : assert(bus != null && enhancer != null),
+        super(
+          logic: logic,
+          store: store,
+          buildContext: buildContext,
+          getState: getState,
+          bus: bus,
+          enhancer: enhancer,
+        );
+
+  @override
+  ListAdapter buildAdapter() {
+    final Adapter<T> curLogic = logic;
+    return curLogic.buildAdapter(this);
   }
 }

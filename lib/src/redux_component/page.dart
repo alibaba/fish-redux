@@ -1,3 +1,6 @@
+import 'package:fish_redux/src/redux_component/dispatch_bus.dart';
+import 'package:fish_redux/src/redux_component/enhancer.dart';
+import 'package:fish_redux/src/utils/utils.dart';
 import 'package:flutter/widgets.dart' hide Action;
 
 import '../../fish_redux.dart';
@@ -8,24 +11,17 @@ import 'dependencies.dart';
 /// init store's state by route-params
 typedef InitState<T, P> = T Function(P params);
 
-typedef StoreUpdater<T> = MixedStore<T> Function(MixedStore<T> store);
+typedef StoreUpdater<T> = Store<T> Function(Store<T> store);
 
 @immutable
 abstract class Page<T, P> extends Component<T> {
-  final List<Middleware<T>> _dispatchMiddleware;
-  final List<ViewMiddleware<T>> _viewMiddleware;
-  final List<EffectMiddleware<T>> _effectMiddleware;
-  final List<AdapterMiddleware<T>> _adapterMiddleware;
   final InitState<T, P> _initState;
 
-  List<Middleware<T>> get protectedDispatchMiddleware => _dispatchMiddleware;
-  List<ViewMiddleware<T>> get protectedViewMiddleware => _viewMiddleware;
-  List<EffectMiddleware<T>> get protectedEffectMiddleware => _effectMiddleware;
-  List<AdapterMiddleware<T>> get protectedAdapterMiddleware =>
-      _adapterMiddleware;
-  InitState<T, P> get protectedInitState => _initState;
-
+  /// connect with other stores
   final List<StoreUpdater<T>> _storeUpdaters = <StoreUpdater<T>>[];
+
+  final DispatchBus appBus = DispatchBusDefault.shared;
+  final Enhancer<T> _enhancer;
 
   Page({
     @required InitState<T, P> initState,
@@ -43,13 +39,13 @@ abstract class Page<T, P> extends Component<T> {
     List<EffectMiddleware<T>> effectMiddleware,
     List<AdapterMiddleware<T>> adapterMiddleware,
   })  : assert(initState != null),
-        _dispatchMiddleware = Collections.clone<Middleware<T>>(middleware),
-        _viewMiddleware = Collections.clone<ViewMiddleware<T>>(viewMiddleware),
-        _effectMiddleware =
-            Collections.clone<EffectMiddleware<T>>(effectMiddleware),
-        _adapterMiddleware =
-            Collections.clone<AdapterMiddleware<T>>(adapterMiddleware),
         _initState = initState,
+        _enhancer = EnhancerDefault<T>(
+          middleware: middleware,
+          viewMiddleware: viewMiddleware,
+          effectMiddleware: effectMiddleware,
+          adapterMiddleware: adapterMiddleware,
+        ),
         super(
           view: view,
           dependencies: dependencies,
@@ -62,55 +58,51 @@ abstract class Page<T, P> extends Component<T> {
           key: key,
         );
 
-  Widget buildPage(P param, {DispatchBus bus}) =>
-      protectedWrapper(_PageWidget<T>(
-        component: this,
-        storeBuilder: createStoreBuilder(param, bus: bus ?? DispatchBus.shared),
+  /// Middleware
+  /// TODO
+  Widget buildPage(P param) => protectedWrapper(_PageWidget<T>(
+        page: this,
+        storeBuilder: createStoreBuilder(param),
       ));
 
-  Get<MixedStore<T>> createStoreBuilder(P param, {DispatchBus bus}) =>
-      () => updateStore(createMixedStore<T>(
-            protectedInitState(param),
+  Get<Store<T>> createStoreBuilder(P param) =>
+      () => updateStore(createBatchStore<T>(
+            _initState(param),
             reducer,
-            storeEnhancer: applyMiddleware<T>(protectedDispatchMiddleware),
-            viewEnhancer: mergeViewMiddleware<T>(protectedViewMiddleware),
-            effectEnhancer: mergeEffectMiddleware<T>(protectedEffectMiddleware),
-            slots: protectedDependencies?.slots,
-            bus: bus,
+            storeEnhancer: _enhancer.storeEnhance,
           ));
 
-  MixedStore<T> updateStore(MixedStore<T> store) => _storeUpdaters.fold(
+  Store<T> updateStore(Store<T> store) => _storeUpdaters.fold(
         store,
-        (MixedStore<T> previousValue, StoreUpdater<T> element) =>
+        (Store<T> previousValue, StoreUpdater<T> element) =>
             element(previousValue),
       );
 
   /// page-store connect with app-store
-  void connectExtraStore<K>(Store<K> extraStore, T Function(T, K) update) =>
-      _storeUpdaters.add((MixedStore<T> store) =>
-          connectStores<T, K>(store, extraStore, update));
+  void connectExtraStore<K>(
+    Store<K> extraStore,
 
-  /// inject app-middleware
-  void updateMiddleware({
-    void Function(List<Middleware<T>>) dispatch,
-    void Function(List<ViewMiddleware<T>>) view,
-    void Function(List<EffectMiddleware<T>>) effect,
-    void Function(List<AdapterMiddleware<T>>) adapter,
-  }) {
-    dispatch?.call(_dispatchMiddleware);
-    view?.call(_viewMiddleware);
-    effect?.call(_effectMiddleware);
-    adapter?.call(_adapterMiddleware);
-  }
+    /// To solve Reducer<Object> is neither a subtype nor a supertype of Reducer<T> issue.
+    Object Function(Object, K) update,
+  ) =>
+      _storeUpdaters.add((Store<T> store) => connectStores<Object, K>(
+            store,
+            extraStore,
+            update,
+          ));
+
+  bool isSuperTypeof<K>() => Tuple0<K>() is Tuple0<T>;
+
+  bool isTypeof<K>() => Tuple0<T>() is Tuple0<K>;
 }
 
 class _PageWidget<T> extends StatefulWidget {
-  final Component<T> component;
-  final Get<MixedStore<T>> storeBuilder;
+  final Page<T, dynamic> page;
+  final Get<Store<T>> storeBuilder;
 
   const _PageWidget({
     Key key,
-    @required this.component,
+    @required this.page,
     @required this.storeBuilder,
   }) : super(key: key);
 
@@ -119,15 +111,17 @@ class _PageWidget<T> extends StatefulWidget {
 }
 
 class _PageState<T> extends State<_PageWidget<T>> {
-  MixedStore<T> _store;
-  final Map<String, Object> extra = <String, Object>{};
+  Store<T> _store;
+  DispatchBus _pageBus;
+  Enhancer<T> _enhancer;
 
-  void Function() unregister;
+  final Map<String, Object> extra = <String, Object>{};
 
   @override
   void initState() {
     super.initState();
     _store = widget.storeBuilder();
+    _pageBus = DispatchBusDefault();
   }
 
   @override
@@ -135,11 +129,7 @@ class _PageState<T> extends State<_PageWidget<T>> {
     super.didChangeDependencies();
 
     /// Register inter-page broadcast
-    unregister?.call();
-    unregister = _store.registerStoreReceiver((Action action) {
-      _store.broadcastEffect(action);
-      _store.dispatch(action);
-    });
+    _pageBus.attach(widget.page.appBus);
   }
 
   @override
@@ -147,21 +137,25 @@ class _PageState<T> extends State<_PageWidget<T>> {
     return PageProvider(
       store: _store,
       extra: extra,
-      child: widget.component.buildComponent(_store, _store.getState),
+      child: widget.page.buildComponent(
+        _store,
+        _store.getState,
+        bus: _pageBus,
+        enhancer: _enhancer,
+      ),
     );
   }
 
   @override
   void dispose() {
-    unregister?.call();
-    unregister = null;
+    _pageBus.detach();
     _store.teardown();
     super.dispose();
   }
 }
 
 class PageProvider extends InheritedWidget {
-  final MixedStore<Object> store;
+  final Store<Object> store;
 
   /// Used to store page data if needed
   final Map<String, Object> extra;

@@ -45,13 +45,13 @@ class ToDoComponentInstrument extends TestComponent<Todo> {
 
 Dependencies<ToDoList> toDoListDependencies(final Track track) =>
     Dependencies<ToDoList>(slots: {
-      'toDo': ToDoComponentInstrument(track).asDependent(
-          Connector<ToDoList, Todo>(
+      'toDo': ConnOp<ToDoList, Todo>(
               get: (ToDoList toDoList) =>
                   toDoList.list.isNotEmpty ? toDoList.list[0] : Todo.mock(),
               set: (ToDoList toDoList, Todo toDo) => toDoList.list.isNotEmpty
                   ? toDoList.list[0] = toDo
-                  : toDoList))
+                  : toDoList) +
+          ToDoComponentInstrument(track)
     });
 
 Widget pageView(
@@ -99,8 +99,9 @@ void main() {
           view: toDoView, wrapper: (child) => ComponentWrapper(child));
       expect(component, isNotNull);
 
+      /// TODO
       final Widget componentWidget = component.buildComponent(
-          createMixedStore<Todo>(Todo.mock(), null), () => Todo.mock());
+          createBatchStore<Todo>(Todo.mock(), null), () => Todo.mock());
       expect(componentWidget, isNotNull);
 
       expect(

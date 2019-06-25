@@ -4,12 +4,11 @@ import '../../fish_redux.dart';
 import '../redux/redux.dart';
 import 'basic.dart';
 import 'dependencies.dart';
-import 'dependent.dart';
 import 'helper.dart';
 
 /// Four parts
 /// 1. Reducer & ReducerFilter
-/// 2. Effect | HigherEffect & OnError   =>   OnAction
+/// 2. Effect | HigherEffect
 /// 3. Dependencies
 /// 4. Key
 abstract class Logic<T> implements AbstractLogic<T> {
@@ -67,62 +66,52 @@ abstract class Logic<T> implements AbstractLogic<T> {
       state;
 
   @override
-  OnAction createHandlerOnAction(ContextSys<T> ctx) => ctx.store
-      .effectEnhance(
-          protectedHigherEffect ?? asHigherEffect<T>(protectedEffect), this)
-      ?.call(ctx);
+  Dispatch createOnEffect(ContextSys<T> ctx, Enhancer<Object> enhancer) {
+    final Dispatch onEffect = enhancer
+        .effectEnhance(
+          protectedHigherEffect ?? asHigherEffect<T>(protectedEffect),
+          this,
+          ctx.store,
+        )
+        ?.call(ctx);
+    return (Action action) {
+      final Object result = onEffect?.call(action);
+      if (result != null && result != false) {
+        return result;
+      }
 
-  @override
-  OnAction createHandlerOnBroadcast(
-          OnAction onAction, ContextSys<T> ctx, Dispatch parentDispatch) =>
-      onAction;
-
-  @override
-  Dispatch createDispatch(
-      OnAction onAction, ContextSys<T> ctx, Dispatch parentDispatch) {
-    Dispatch dispatch = (Action action) {
-      throw Exception(
-          'Dispatching while appending your effect & onError to dispatch is not allowed.');
+      //skip-lifecycle-actions
+      if (action.type is Lifecycle) {
+        return true;
+      }
     };
-
-    /// attach to store.dispatch
-    dispatch = _applyOnAction<T>(onAction, ctx)(
-      dispatch: (Action action) => dispatch(action),
-      getState: () => ctx.state,
-    )(parentDispatch);
-    return dispatch;
   }
+
+  @override
+  Dispatch createAfterEffect(ContextSys<T> ctx, Enhancer<Object> enhancer) =>
+      (Action action) {
+        ctx.broadcastEffect(action);
+        ctx.store.dispatch(action);
+      };
+
+  @override
+  Dispatch createDispatch(Dispatch onEffect, Dispatch next, {Context<T> ctx}) =>
+      (Action action) {
+        final Object result = onEffect?.call(action);
+        if (result != null && result != false) {
+          return result;
+        }
+
+        next(action);
+        return null;
+      };
+
+  @override
+  Object key(T state) => _key?.call(state) ?? ValueKey<Type>(runtimeType);
 
   @override
   Dependent<T> slot(String type) => protectedDependencies?.slot(type);
 
   @override
-  Dependent<K> asDependent<K>(AbstractConnector<K, T> connector) =>
-      createDependent<K, T>(connector, this);
-
-  @override
-  Object key(T state) => _key?.call(state) ?? ValueKey<Type>(runtimeType);
-
-  static Middleware<T> _applyOnAction<T>(OnAction onAction, ContextSys<T> ctx) {
-    return ({Dispatch dispatch, Get<T> getState}) {
-      return (Dispatch next) {
-        return (Action action) {
-          final Object result = onAction?.call(action);
-          if (result != null && result != false) {
-            return result;
-          }
-
-          //skip-lifecycle-actions
-          if (action.type is Lifecycle) {
-            return null;
-          }
-
-          ctx.broadcastEffect(action);
-
-          next(action);
-          return null;
-        };
-      };
-    };
-  }
+  Dependent<T> adapterDep() => protectedDependencies?.list;
 }

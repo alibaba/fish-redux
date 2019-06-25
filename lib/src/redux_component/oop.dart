@@ -59,17 +59,17 @@ abstract class AdapterPart<T> extends _BasePart<T> {
 
 @deprecated
 abstract class EffectPart<T> extends AutoDispose {
-  final Tuple2<Context<T>, Map<Object, OnAction>> _tuple =
-      Tuple2<Context<T>, Map<Object, OnAction>>();
+  final Tuple2<Context<T>, Map<Object, Dispatch>> _tuple =
+      Tuple2<Context<T>, Map<Object, Dispatch>>();
 
-  Map<Object, OnAction> createMap();
+  Map<Object, Dispatch> createMap();
 
   T get state => _tuple.i0.state;
   BuildContext get context => _tuple.i0.context;
   Dispatch get dispatch => _tuple.i0.dispatch;
 
   Object onAction(Action action) {
-    final OnAction onSubAction = _tuple.i1[action.type];
+    final Dispatch onSubAction = _tuple.i1[action.type];
     if (onSubAction != null) {
       return onSubAction(action) ?? true;
     }

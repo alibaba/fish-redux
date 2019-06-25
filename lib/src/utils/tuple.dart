@@ -1,5 +1,15 @@
 import 'hash.dart';
 
+class Tuple0<T0> {
+  const Tuple0();
+
+  @override
+  bool operator ==(Object other) => other is Tuple0;
+
+  @override
+  int get hashCode => hash(<int>[0]);
+}
+
 /// Represents a 1-tuple
 /// Mutable data types are easier to use.
 class Tuple1<T0> {

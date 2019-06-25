@@ -1,3 +1,4 @@
+import 'package:fish_redux/src/redux_component/enhancer.dart';
 import 'package:flutter/widgets.dart' hide Action;
 
 import '../../fish_redux.dart';
@@ -45,39 +46,57 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
         );
 
   @override
-  Widget buildComponent(MixedStore<Object> store, Get<Object> getter) {
+  Widget buildComponent(
+    Store<Object> store,
+    Get<Object> getter, {
+    @required DispatchBus bus,
+    @required Enhancer<Object> enhancer,
+  }) {
+    // assert(bus != null && enhancer != null);
     return protectedWrapper(
       ComponentWidget<T>(
         component: this,
         getter: _asGetter<T>(getter),
         store: store,
         key: key(getter()),
+
+        ///
+        bus: bus ?? DispatchBusDefault(),
+        enhancer: enhancer ?? EnhancerDefault<Object>(),
       ),
     );
   }
 
   @override
-  ComponentContext<T> createContext({
-    @required MixedStore<Object> store,
-    @required BuildContext buildContext,
-    @required Get<T> getState,
+  ComponentContext<T> createContext(
+    Store<Object> store,
+    BuildContext buildContext,
+    Get<T> getState, {
     @required void Function() markNeedsBuild,
-  }) =>
-      ComponentContext<T>(
-        logic: this,
-        store: store,
-        buildContext: buildContext,
-        getState: getState,
-        view: store.viewEnhance(protectedView, this),
-        shouldUpdate: protectedShouldUpdate,
-        name: name,
-        markNeedsBuild: markNeedsBuild,
-        sidecarCtx: protectedDependencies?.list?.createContext(
-          store: store,
-          buildContext: buildContext,
-          getState: getState,
-        ),
-      );
+    @required DispatchBus bus,
+    @required Enhancer<Object> enhancer,
+  }) {
+    assert(bus != null && enhancer != null);
+    return ComponentContext<T>(
+      logic: this,
+      store: store,
+      buildContext: buildContext,
+      getState: getState,
+      view: enhancer.viewEnhance(protectedView, this, store),
+      shouldUpdate: protectedShouldUpdate,
+      name: name,
+      markNeedsBuild: markNeedsBuild,
+      sidecarCtx: adapterDep()?.createContext(
+        store,
+        buildContext,
+        getState,
+        bus: bus,
+        enhancer: enhancer,
+      ),
+      enhancer: enhancer,
+      bus: bus,
+    );
+  }
 
   ComponentState<T> createState() => ComponentState<T>();
 
@@ -108,13 +127,17 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
 
 class ComponentWidget<T> extends StatefulWidget {
   final Component<T> component;
-  final MixedStore<Object> store;
+  final Store<Object> store;
   final Get<T> getter;
+  final DispatchBus bus;
+  final Enhancer<Object> enhancer;
 
   const ComponentWidget({
     @required this.component,
     @required this.store,
     @required this.getter,
+    this.bus,
+    this.enhancer,
     Key key,
   })  : assert(component != null),
         assert(store != null),
@@ -148,14 +171,17 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
 
     /// init context
     mainCtx = widget.component.createContext(
-        store: widget.store,
-        buildContext: context,
-        getState: () => widget.getter(),
-        markNeedsBuild: () {
-          if (mounted) {
-            setState(() {});
-          }
-        });
+      widget.store,
+      context,
+      () => widget.getter(),
+      markNeedsBuild: () {
+        if (mounted) {
+          setState(() {});
+        }
+      },
+      bus: widget.bus,
+      enhancer: widget.enhancer,
+    );
 
     /// register store.subscribe
     mainCtx

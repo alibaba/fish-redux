@@ -6,9 +6,9 @@ import '../../redux_component/redux_component.dart';
 
 ViewMiddleware<T> safetyView<T>(
     {Widget Function(dynamic, StackTrace,
-            {AbstractComponent<dynamic> component, MixedStore<T> store})
+            {AbstractComponent<dynamic> component, Store<T> store})
         onError}) {
-  return (AbstractComponent<dynamic> component, MixedStore<T> store) {
+  return (AbstractComponent<dynamic> component, Store<T> store) {
     return (ViewBuilder<dynamic> next) {
       return isDebug()
           ? next
