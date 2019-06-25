@@ -43,7 +43,7 @@ abstract class Page<T, P> extends Component<T> {
     List<AdapterMiddleware<T>> adapterMiddleware,
   })  : assert(initState != null),
         _initState = initState,
-        enhancer = AOP<T>(
+        enhancer = EnhancerDefault<T>(
           middleware: middleware,
           viewMiddleware: viewMiddleware,
           effectMiddleware: effectMiddleware,

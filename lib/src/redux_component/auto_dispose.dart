@@ -64,7 +64,7 @@ class AutoDispose {
     }
 
     if (newParent != null) {
-      newParent._fields.children ??= Set<AutoDispose>();
+      newParent._fields.children ??= <AutoDispose>{};
       newParent._fields.children.add(this);
     }
     if (oldParent != null) {
