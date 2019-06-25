@@ -7,6 +7,7 @@ export 'dependent.dart';
 export 'dispatch_bus.dart';
 export 'helper.dart';
 export 'lifecycle.dart';
+export 'local_props.dart';
 export 'logic.dart';
 export 'oop.dart';
 export 'page.dart';

@@ -9,6 +9,7 @@ import 'basic.dart';
 /// A OOP style of coding the View-Part, Adapter-Part and Effect-Part.
 /// It's just the expansion of the context.
 
+@deprecated
 class _BasePart<T> {
   final Tuple3<T, Dispatch, ViewService> _tuple =
       Tuple3<T, Dispatch, ViewService>();
