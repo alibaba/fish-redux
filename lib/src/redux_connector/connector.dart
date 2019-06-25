@@ -1,4 +1,4 @@
-import '../redux/redux.dart';
+import '../redux/connector.dart';
 
 import 'op_mixin.dart';
 

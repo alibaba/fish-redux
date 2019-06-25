@@ -1,12 +1,13 @@
-import 'package:fish_redux/src/redux_component/dispatch_bus.dart';
-import 'package:fish_redux/src/redux_component/enhancer.dart';
-import 'package:fish_redux/src/utils/utils.dart';
 import 'package:flutter/widgets.dart' hide Action;
 
-import '../../fish_redux.dart';
 import '../redux/redux.dart';
+import '../utils/utils.dart';
 import 'basic.dart';
+import 'batch_store.dart';
+import 'component.dart';
 import 'dependencies.dart';
+import 'dispatch_bus.dart';
+import 'enhancer.dart';
 
 /// init store's state by route-params
 typedef InitState<T, P> = T Function(P params);
@@ -15,13 +16,15 @@ typedef StoreUpdater<T> = Store<T> Function(Store<T> store);
 
 @immutable
 abstract class Page<T, P> extends Component<T> {
+  /// AppBus is a event-bus used to communicate between pages.
+  final DispatchBus appBus = DispatchBusDefault.shared;
+
   final InitState<T, P> _initState;
+
+  final Enhancer<T> enhancer;
 
   /// connect with other stores
   final List<StoreUpdater<T>> _storeUpdaters = <StoreUpdater<T>>[];
-
-  final DispatchBus appBus = DispatchBusDefault.shared;
-  final Enhancer<T> _enhancer;
 
   Page({
     @required InitState<T, P> initState,
@@ -40,7 +43,7 @@ abstract class Page<T, P> extends Component<T> {
     List<AdapterMiddleware<T>> adapterMiddleware,
   })  : assert(initState != null),
         _initState = initState,
-        _enhancer = EnhancerDefault<T>(
+        enhancer = AOP<T>(
           middleware: middleware,
           viewMiddleware: viewMiddleware,
           effectMiddleware: effectMiddleware,
@@ -58,19 +61,16 @@ abstract class Page<T, P> extends Component<T> {
           key: key,
         );
 
-  /// Middleware
-  /// TODO
-  Widget buildPage(P param) => protectedWrapper(_PageWidget<T>(
+  Widget buildPage(P param) => protectedWrapper(_PageWidget<T, P>(
         page: this,
-        storeBuilder: createStoreBuilder(param),
+        param: param,
       ));
 
-  Get<Store<T>> createStoreBuilder(P param) =>
-      () => updateStore(createBatchStore<T>(
-            _initState(param),
-            reducer,
-            storeEnhancer: _enhancer.storeEnhance,
-          ));
+  Store<T> createStore(P param) => updateStore(createBatchStore<T>(
+        _initState(param),
+        reducer,
+        storeEnhancer: enhancer.storeEnhance,
+      ));
 
   Store<T> updateStore(Store<T> store) => _storeUpdaters.fold(
         store,
@@ -91,37 +91,40 @@ abstract class Page<T, P> extends Component<T> {
             update,
           ));
 
+  DispatchBus createPageBus() => DispatchBusDefault();
+
+  void updateAOP() {}
+
   bool isSuperTypeof<K>() => Tuple0<K>() is Tuple0<T>;
 
   bool isTypeof<K>() => Tuple0<T>() is Tuple0<K>;
 }
 
-class _PageWidget<T> extends StatefulWidget {
-  final Page<T, dynamic> page;
-  final Get<Store<T>> storeBuilder;
+class _PageWidget<T, P> extends StatefulWidget {
+  final Page<T, P> page;
+  final P param;
 
   const _PageWidget({
     Key key,
     @required this.page,
-    @required this.storeBuilder,
+    @required this.param,
   }) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _PageState<T>();
+  State<StatefulWidget> createState() => _PageState<T, P>();
 }
 
-class _PageState<T> extends State<_PageWidget<T>> {
+class _PageState<T, P> extends State<_PageWidget<T, P>> {
   Store<T> _store;
   DispatchBus _pageBus;
-  Enhancer<T> _enhancer;
 
   final Map<String, Object> extra = <String, Object>{};
 
   @override
   void initState() {
     super.initState();
-    _store = widget.storeBuilder();
-    _pageBus = DispatchBusDefault();
+    _store = widget.page.createStore(widget.param);
+    _pageBus = widget.page.createPageBus();
   }
 
   @override
@@ -141,7 +144,7 @@ class _PageState<T> extends State<_PageWidget<T>> {
         _store,
         _store.getState,
         bus: _pageBus,
-        enhancer: _enhancer,
+        enhancer: widget.page.enhancer,
       ),
     );
   }

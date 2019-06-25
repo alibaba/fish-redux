@@ -1,9 +1,8 @@
-import 'package:fish_redux/src/redux_component/basic.dart';
-import 'package:fish_redux/src/redux_component/context.dart';
 import 'package:flutter/widgets.dart' hide Action;
 
-import '../../fish_redux.dart';
-import '../redux/redux.dart';
+import '../redux/basic.dart';
+import '../redux_component/basic.dart';
+import '../redux_component/context.dart';
 import '../redux_component/logic.dart';
 import '../redux_component/redux_component.dart';
 

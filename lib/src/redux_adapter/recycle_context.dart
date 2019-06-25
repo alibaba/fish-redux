@@ -1,8 +1,9 @@
 import 'package:flutter/widgets.dart' hide Action;
 
 import '../redux/redux.dart';
+import '../redux_component/basic.dart';
 import '../redux_component/context.dart';
-import '../redux_component/redux_component.dart';
+import '../redux_component/lifecycle.dart';
 
 class RecycleContext<T> extends LogicContext<T> {
   final Map<Object, List<ContextSys<Object>>> _cachedMap =

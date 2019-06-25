@@ -1,8 +1,11 @@
 import 'package:flutter/widgets.dart' hide Action;
 
 import '../redux/redux.dart';
+import '../redux_component/auto_dispose.dart';
+import '../redux_component/basic.dart';
 import '../redux_component/context.dart';
-import '../redux_component/redux_component.dart';
+import '../redux_component/lifecycle.dart';
+
 import '../utils/utils.dart';
 
 mixin VisibleChangeMixin<T> on AbstractAdapter<T> {
