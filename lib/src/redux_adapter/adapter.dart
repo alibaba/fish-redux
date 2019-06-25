@@ -62,7 +62,7 @@ abstract class Adapter<T> extends Logic<T> implements AbstractAdapter<T> {
 
 class AdapterContext<T> extends LogicContext<T> {
   AdapterContext({
-    @required Adapter<T> logic,
+    @required AbstractAdapter<T> logic,
     @required Store<Object> store,
     @required BuildContext buildContext,
     @required Get<T> getState,
@@ -80,7 +80,7 @@ class AdapterContext<T> extends LogicContext<T> {
 
   @override
   ListAdapter buildAdapter() {
-    final Adapter<T> curLogic = logic;
+    final AbstractAdapter<T> curLogic = logic;
     return curLogic.buildAdapter(this);
   }
 }
