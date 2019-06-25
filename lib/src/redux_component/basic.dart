@@ -58,16 +58,25 @@ typedef Effect<T> = dynamic Function(Action action, Context<T> ctx);
 /// Because Effect<T> is an aysnc-function, if it has some self-state, we should use HigherEffect<T>
 typedef HigherEffect<T> = Dispatch Function(Context<T> ctx);
 
-/// AOP Start
+/// AOP on view
 typedef ViewMiddleware<T> = Composable<ViewBuilder<dynamic>> Function(
-    AbstractComponent<dynamic>, Store<T>);
+  AbstractComponent<dynamic>,
+  Store<T>,
+);
 
+/// AOP on adapter
 typedef AdapterMiddleware<T> = Composable<AdapterBuilder<dynamic>> Function(
-    AbstractAdapter<dynamic>, Store<T>);
+  AbstractAdapter<dynamic>,
+  Store<T>,
+);
 
+/// AOP on effect
 typedef EffectMiddleware<T> = Composable<HigherEffect<dynamic>> Function(
-    AbstractLogic<dynamic>, Store<T>);
+  AbstractLogic<dynamic>,
+  Store<T>,
+);
 
+/// AOP in page on store, view, adapter, effect...
 abstract class Enhancer<T> {
   ViewBuilder<K> viewEnhance<K>(
     ViewBuilder<K> view,
