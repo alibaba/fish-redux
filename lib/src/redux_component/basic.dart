@@ -56,6 +56,8 @@ typedef ShouldUpdate<T> = bool Function(T old, T now);
 typedef Effect<T> = dynamic Function(Action action, Context<T> ctx);
 
 /// Because Effect<T> is an aysnc-function, if it has some self-state, we should use HigherEffect<T>
+/// Use [Effect<T>] instead of [HigherEffect<T>]
+@deprecated
 typedef HigherEffect<T> = Dispatch Function(Context<T> ctx);
 
 /// AOP on view
