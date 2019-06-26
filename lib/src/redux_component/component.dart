@@ -28,7 +28,6 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
     Reducer<T> reducer,
     ReducerFilter<T> filter,
     Effect<T> effect,
-    HigherEffect<T> higherEffect,
     Dependencies<T> dependencies,
     ShouldUpdate<T> shouldUpdate,
     WidgetWrapper wrapper,
@@ -41,7 +40,6 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
           reducer: reducer,
           filter: filter,
           effect: effect,
-          higherEffect: higherEffect,
           dependencies: dependencies,
           key: key,
         );

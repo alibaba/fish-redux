@@ -100,23 +100,21 @@ class EnhancerDefault<T> implements Enhancer<T> {
       adapterBuilder;
 
   @override
-  HigherEffect<K> effectEnhance<K>(
-    HigherEffect<K> higherEffect,
+  Effect<K> effectEnhance<K>(
+    Effect<K> effect,
     AbstractLogic<K> logic,
     Store<T> store,
   ) =>
-      _effectEnhancer
-          ?.call(logic, store)
-          ?.call(_inverterHigherEffect<K>(higherEffect)) ??
-      higherEffect;
+      _effectEnhancer?.call(logic, store)?.call(_inverterEffect<K>(effect)) ??
+      effect;
 
   @override
   StoreCreator<T> storeEnhance(StoreCreator<T> creator) =>
       _storeEnhancer?.call(creator) ?? creator;
 
-  HigherEffect<dynamic> _inverterHigherEffect<K>(
-          HigherEffect<K> higherEffect) =>
-      higherEffect == null ? null : (Context<dynamic> ctx) => higherEffect(ctx);
+  Effect<dynamic> _inverterEffect<K>(Effect<K> effect) => effect == null
+      ? null
+      : (Action action, Context<dynamic> ctx) => effect(action, ctx);
 
   ViewBuilder<dynamic> _inverterView<K>(ViewBuilder<K> view) => view == null
       ? null

@@ -26,12 +26,10 @@ class DynamicFlowAdapter<T> extends Logic<T> with RecycleContextMixin<T> {
     ReducerFilter<T> filter,
     Reducer<T> reducer,
     Effect<T> effect,
-    HigherEffect<T> higherEffect,
     Object Function(T) key,
   }) : super(
           reducer: _dynamicReducer(reducer, pool, connector),
           effect: effect,
-          higherEffect: higherEffect,
           filter: filter,
           dependencies: null,
           key: key,

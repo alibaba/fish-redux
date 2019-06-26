@@ -69,10 +69,6 @@ Effect<T> combineEffects<T>(Map<Object, SubEffect<T>> map) =>
             return subEffect?.call(action, ctx) ?? subEffect != null;
           };
 
-HigherEffect<T> asHigherEffect<T>(Effect<T> effect) => effect != null
-    ? (Context<T> ctx) => (Action action) => effect(action, ctx)
-    : null;
-
 ViewMiddleware<T> mergeViewMiddleware<T>(List<ViewMiddleware<T>> middleware) {
   return Collections.reduce<ViewMiddleware<T>>(middleware,
       (ViewMiddleware<T> first, ViewMiddleware<T> second) {
@@ -106,10 +102,10 @@ EffectMiddleware<T> mergeEffectMiddleware<T>(
   return Collections.reduce<EffectMiddleware<T>>(middleware,
       (EffectMiddleware<T> first, EffectMiddleware<T> second) {
     return (AbstractLogic<dynamic> logic, Store<T> store) {
-      final Composable<HigherEffect<dynamic>> inner = first(logic, store);
-      final Composable<HigherEffect<dynamic>> outer = second(logic, store);
-      return (HigherEffect<dynamic> higherEffect) {
-        return outer(inner(higherEffect));
+      final Composable<Effect<dynamic>> inner = first(logic, store);
+      final Composable<Effect<dynamic>> outer = second(logic, store);
+      return (Effect<dynamic> effect) {
+        return outer(inner(effect));
       };
     };
   });

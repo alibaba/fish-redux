@@ -309,7 +309,7 @@ void main() {
           ]));
     });
 
-    testWidgets('higherEffect', (WidgetTester tester) async {
+    testWidgets('effect', (WidgetTester tester) async {
       final Track track = Track();
 
       await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
@@ -324,9 +324,8 @@ void main() {
               suf: (ToDoList state, Action action) {
             track.append('onReduce', state.clone());
           }),
-          higherEffect: (Context<ToDoList> ctx) => (Action action) =>
-              instrumentEffect(toDoListEffect,
-                  (Action action, Get<ToDoList> getState) {
+          effect: (Action action, Context<ToDoList> ctx) => instrumentEffect(
+                  toDoListEffect, (Action action, Get<ToDoList> getState) {
                 if (action.type == ToDoListAction.onAdd) {
                   track.append('onAdd', getState().clone());
                 } else if (action.type == ToDoListAction.onEdit) {
@@ -404,7 +403,7 @@ void main() {
                   suf: (ToDoList state, Action action) {
                 track.append('onReduce', state.clone());
               }),
-              higherEffect: (Context<ToDoList> ctx) => (Action action) =>
+              effect: (Action action, Context<ToDoList> ctx) =>
                   instrumentEffect<ToDoList>(toDoListEffect,
                       (Action action, Get<ToDoList> getState) {
                     if (action.type == ToDoListAction.onAdd) {
@@ -478,7 +477,7 @@ void main() {
               suf: (ToDoList state, Action action) {
             track.append('onReduce', state.clone());
           }),
-          higherEffect: toDoListHigherEffect,
+          effect: toDoListEffect,
           middleware: <Middleware<ToDoList>>[
             instrumentMiddleware<ToDoList>(toDoListMiddleware,
                 pre: (action, getState) {

@@ -307,7 +307,7 @@ void main() {
             Pin('build', mockState.clone()),
           ]));
     });
-    testWidgets('higherEffect', (WidgetTester tester) async {
+    testWidgets('effect', (WidgetTester tester) async {
       Track track = Track();
 
       await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
@@ -324,18 +324,16 @@ void main() {
                               change: (ToDoList state, Action action) {
                             track.append('onReduce', state.clone());
                           }),
-                          higherEffect: (Context<ToDoList> ctx) =>
-                              (Action action) =>
-                                  instrumentEffect(toDoListEffectAsync,
-                                      (Action action, Get<ToDoList> getState) {
-                                    if (action.type == ToDoListAction.onAdd) {
-                                      track.append('onAdd', getState().clone());
-                                    } else if (action.type ==
-                                        ToDoListAction.onEdit) {
-                                      track.append(
-                                          'onEdit', getState().clone());
-                                    }
-                                  })(action, ctx))))
+                          effect: (Action action, Context<ToDoList> ctx) =>
+                              instrumentEffect(toDoListEffectAsync,
+                                  (Action action, Get<ToDoList> getState) {
+                                if (action.type == ToDoListAction.onAdd) {
+                                  track.append('onAdd', getState().clone());
+                                } else if (action.type ==
+                                    ToDoListAction.onEdit) {
+                                  track.append('onEdit', getState().clone());
+                                }
+                              })(action, ctx))))
           .buildPage(pageInitParams)));
 
       await tester.longPress(find.byKey(const ValueKey<String>('mark-0')));

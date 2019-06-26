@@ -55,11 +55,6 @@ typedef ShouldUpdate<T> = bool Function(T old, T now);
 /// Futur<void> for async-functions, should always be interrupted.
 typedef Effect<T> = dynamic Function(Action action, Context<T> ctx);
 
-/// Because Effect<T> is an aysnc-function, if it has some self-state, we should use HigherEffect<T>
-/// Use [Effect<T>] instead of [HigherEffect<T>]
-@deprecated
-typedef HigherEffect<T> = Dispatch Function(Context<T> ctx);
-
 /// AOP on view
 typedef ViewMiddleware<T> = Composable<ViewBuilder<dynamic>> Function(
   AbstractComponent<dynamic>,
@@ -73,7 +68,7 @@ typedef AdapterMiddleware<T> = Composable<AdapterBuilder<dynamic>> Function(
 );
 
 /// AOP on effect
-typedef EffectMiddleware<T> = Composable<HigherEffect<dynamic>> Function(
+typedef EffectMiddleware<T> = Composable<Effect<dynamic>> Function(
   AbstractLogic<dynamic>,
   Store<T>,
 );
@@ -92,8 +87,8 @@ abstract class Enhancer<T> {
     Store<T> store,
   );
 
-  HigherEffect<K> effectEnhance<K>(
-    HigherEffect<K> higherEffect,
+  Effect<K> effectEnhance<K>(
+    Effect<K> effect,
     AbstractLogic<K> logic,
     Store<T> store,
   );

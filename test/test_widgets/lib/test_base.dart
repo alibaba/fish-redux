@@ -31,7 +31,6 @@ class TestPage<T extends Cloneable<T>, P> extends Page<T, P> {
     Reducer<T> reducer,
     ReducerFilter<T> filter,
     Effect<T> effect,
-    HigherEffect<T> higherEffect,
     Dependencies<T> dependencies,
     ShouldUpdate<T> shouldUpdate,
     WidgetWrapper wrapper,
@@ -43,7 +42,6 @@ class TestPage<T extends Cloneable<T>, P> extends Page<T, P> {
           reducer: reducer,
           filter: filter,
           effect: effect,
-          higherEffect: higherEffect,
           dependencies: dependencies,
           shouldUpdate: shouldUpdate,
           wrapper: wrapper,
@@ -57,7 +55,6 @@ class TestComponent<T extends Cloneable<T>> extends Component<T> {
     Reducer<T> reducer,
     ReducerFilter<T> filter,
     Effect<T> effect,
-    HigherEffect<T> higherEffect,
     Dependencies<T> dependencies,
     ShouldUpdate<T> shouldUpdate,
     WidgetWrapper wrapper,
@@ -67,7 +64,6 @@ class TestComponent<T extends Cloneable<T>> extends Component<T> {
             reducer: reducer,
             filter: filter,
             effect: effect,
-            higherEffect: higherEffect,
             dependencies: dependencies,
             shouldUpdate: shouldUpdate,
             wrapper: wrapper,
@@ -79,14 +75,12 @@ class TestAdapter<T extends Cloneable<T>> extends Adapter<T> {
     AdapterBuilder<T> adapter,
     Reducer<T> reducer,
     Effect<T> effect,
-    HigherEffect<T> higherEffect,
     ReducerFilter<T> filter,
     Dependencies<T> dependencies,
   }) : super(
             adapter: adapter,
             reducer: reducer,
             effect: effect,
-            higherEffect: higherEffect,
             filter: filter,
             dependencies: dependencies);
 }
@@ -97,14 +91,8 @@ class TestStaticFlowAdapter<T extends Cloneable<T>>
     @required List<Dependent<T>> slots,
     Reducer<T> reducer,
     Effect<T> effect,
-    HigherEffect<T> higherEffect,
     ReducerFilter<T> filter,
-  }) : super(
-            slots: slots,
-            reducer: reducer,
-            effect: effect,
-            higherEffect: higherEffect,
-            filter: filter);
+  }) : super(slots: slots, reducer: reducer, effect: effect, filter: filter);
 }
 
 class TestDynamicFlowAdapter<T extends Cloneable<T>>
@@ -115,12 +103,10 @@ class TestDynamicFlowAdapter<T extends Cloneable<T>>
     ReducerFilter<T> filter,
     Reducer<T> reducer,
     Effect<T> effect,
-    HigherEffect<T> higherEffect,
   }) : super(
             pool: pool,
             connector: connector,
             reducer: reducer,
             effect: effect,
-            higherEffect: higherEffect,
             filter: filter);
 }

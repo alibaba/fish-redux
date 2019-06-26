@@ -8,14 +8,13 @@ import 'helper.dart';
 
 /// Four parts
 /// 1. Reducer & ReducerFilter
-/// 2. Effect | HigherEffect
+/// 2. Effect
 /// 3. Dependencies
 /// 4. Key
 abstract class Logic<T> implements AbstractLogic<T> {
   final Reducer<T> _reducer;
   final ReducerFilter<T> _filter;
   final Effect<T> _effect;
-  final HigherEffect<T> _higherEffect;
   final Dependencies<T> _dependencies;
   final Object Function(T state) _key;
 
@@ -23,7 +22,6 @@ abstract class Logic<T> implements AbstractLogic<T> {
   Reducer<T> get protectedReducer => _reducer;
   ReducerFilter<T> get protectedFilter => _filter;
   Effect<T> get protectedEffect => _effect;
-  HigherEffect<T> get protectedHigherEffect => _higherEffect;
   Dependencies<T> get protectedDependencies => _dependencies;
   Object Function(T state) get protectedKey => _key;
 
@@ -35,14 +33,10 @@ abstract class Logic<T> implements AbstractLogic<T> {
     Dependencies<T> dependencies,
     ReducerFilter<T> filter,
     Effect<T> effect,
-    HigherEffect<T> higherEffect,
     Object Function(T state) key,
-  })  : assert(effect == null || higherEffect == null,
-            'Only one style of effect could be applied.'),
-        _reducer = reducer,
+  })  : _reducer = reducer,
         _filter = filter,
         _effect = effect,
-        _higherEffect = higherEffect,
         _dependencies = dependencies,
         _key = key;
 
@@ -67,15 +61,17 @@ abstract class Logic<T> implements AbstractLogic<T> {
 
   @override
   Dispatch createOnEffect(ContextSys<T> ctx, Enhancer<Object> enhancer) {
-    final Dispatch onEffect = enhancer
-        .effectEnhance(
-          protectedHigherEffect ?? asHigherEffect<T>(protectedEffect),
-          this,
-          ctx.store,
-        )
-        ?.call(ctx);
+    final Effect<T> effect = enhancer.effectEnhance(
+      protectedEffect,
+      this,
+      ctx.store,
+    );
+
+    final Dispatch effectDispatch =
+        effect != null ? (Action action) => effect(action, ctx) : null;
+
     return (Action action) {
-      final Object result = onEffect?.call(action);
+      final Object result = effectDispatch?.call(action);
       if (result != null && result != false) {
         return result;
       }

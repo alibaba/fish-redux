@@ -16,7 +16,6 @@ class StaticFlowAdapter<T> extends Logic<T>
     @required List<Dependent<T>> slots,
     Reducer<T> reducer,
     Effect<T> effect,
-    HigherEffect<T> higherEffect,
     ReducerFilter<T> filter,
     Object Function(T) key,
   })  : assert(slots != null),
@@ -31,7 +30,6 @@ class StaticFlowAdapter<T> extends Logic<T>
             )
           ]),
           effect: effect,
-          higherEffect: higherEffect,
           filter: filter,
           dependencies: null,
           key: key,
