@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart' hide Action;
 
 import '../redux/basic.dart';
+import '../utils/tuple.dart';
 import 'basic.dart';
 import 'context.dart';
 import 'dependencies.dart';
@@ -102,6 +103,11 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
 
   String get name => cache<String>('name', () => runtimeType.toString());
 
+  bool isSuperTypeof<K>() => Tuple0<K>() is Tuple0<T>;
+
+  bool isTypeof<K>() => Tuple0<T>() is Tuple0<K>;
+
+  ///
   static ShouldUpdate<K> neverUpdate<K>() => (K _, K __) => false;
 
   static ShouldUpdate<K> alwaysUpdate<K>() => (K _, K __) => true;

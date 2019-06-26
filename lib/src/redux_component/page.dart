@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart' hide Action;
 
 import '../redux/redux.dart';
-import '../utils/utils.dart';
 import 'basic.dart';
 import 'batch_store.dart';
 import 'component.dart';
@@ -93,11 +92,33 @@ abstract class Page<T, P> extends Component<T> {
 
   DispatchBus createPageBus() => DispatchBusDefault();
 
-  void updateAOP() {}
+  void unshift({
+    List<Middleware<T>> middleware,
+    List<ViewMiddleware<T>> viewMiddleware,
+    List<EffectMiddleware<T>> effectMiddleware,
+    List<AdapterMiddleware<T>> adapterMiddleware,
+  }) {
+    enhancer.unshift(
+      middleware: middleware,
+      viewMiddleware: viewMiddleware,
+      effectMiddleware: effectMiddleware,
+      adapterMiddleware: adapterMiddleware,
+    );
+  }
 
-  bool isSuperTypeof<K>() => Tuple0<K>() is Tuple0<T>;
-
-  bool isTypeof<K>() => Tuple0<T>() is Tuple0<K>;
+  void append({
+    List<Middleware<T>> middleware,
+    List<ViewMiddleware<T>> viewMiddleware,
+    List<EffectMiddleware<T>> effectMiddleware,
+    List<AdapterMiddleware<T>> adapterMiddleware,
+  }) {
+    enhancer.append(
+      middleware: middleware,
+      viewMiddleware: viewMiddleware,
+      effectMiddleware: effectMiddleware,
+      adapterMiddleware: adapterMiddleware,
+    );
+  }
 }
 
 class _PageWidget<T, P> extends StatefulWidget {

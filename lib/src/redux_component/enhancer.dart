@@ -1,25 +1,83 @@
 import 'package:fish_redux/src/redux_component/helper.dart';
-import 'package:flutter/cupertino.dart';
 
 import '../redux/redux.dart';
 import 'basic.dart';
 
-@immutable
 class EnhancerDefault<T> implements Enhancer<T> {
-  final StoreEnhancer<T> _storeEnhancer;
-  final ViewMiddleware<T> _viewEnhancer;
-  final EffectMiddleware<T> _effectEnhancer;
-  final AdapterMiddleware<T> _adapterEnhancer;
+  StoreEnhancer<T> _storeEnhancer;
+  ViewMiddleware<T> _viewEnhancer;
+  EffectMiddleware<T> _effectEnhancer;
+  AdapterMiddleware<T> _adapterEnhancer;
+
+  final List<Middleware<T>> _middleware = <Middleware<T>>[];
+  final List<ViewMiddleware<T>> _viewMiddleware = <ViewMiddleware<T>>[];
+  final List<EffectMiddleware<T>> _effectMiddleware = <EffectMiddleware<T>>[];
+  final List<AdapterMiddleware<T>> _adapterMiddleware =
+      <AdapterMiddleware<T>>[];
 
   EnhancerDefault({
+    List<Middleware<T>> middleware,
     List<ViewMiddleware<T>> viewMiddleware,
     List<EffectMiddleware<T>> effectMiddleware,
     List<AdapterMiddleware<T>> adapterMiddleware,
+  }) {
+    append(
+      middleware: middleware,
+      viewMiddleware: viewMiddleware,
+      effectMiddleware: effectMiddleware,
+      adapterMiddleware: adapterMiddleware,
+    );
+  }
+
+  @override
+  void unshift({
     List<Middleware<T>> middleware,
-  })  : _storeEnhancer = applyMiddleware<T>(middleware),
-        _viewEnhancer = mergeViewMiddleware<T>(viewMiddleware),
-        _effectEnhancer = mergeEffectMiddleware<T>(effectMiddleware),
-        _adapterEnhancer = mergeAdapterMiddleware<T>(adapterMiddleware);
+    List<ViewMiddleware<T>> viewMiddleware,
+    List<EffectMiddleware<T>> effectMiddleware,
+    List<AdapterMiddleware<T>> adapterMiddleware,
+  }) {
+    if (middleware != null) {
+      _middleware.insertAll(0, middleware);
+      _storeEnhancer = applyMiddleware<T>(_middleware);
+    }
+    if (viewMiddleware != null) {
+      _viewMiddleware.insertAll(0, viewMiddleware);
+      _viewEnhancer = mergeViewMiddleware<T>(_viewMiddleware);
+    }
+    if (effectMiddleware != null) {
+      _effectMiddleware.insertAll(0, effectMiddleware);
+      _effectEnhancer = mergeEffectMiddleware<T>(_effectMiddleware);
+    }
+    if (adapterMiddleware != null) {
+      _adapterMiddleware.insertAll(0, adapterMiddleware);
+      _adapterEnhancer = mergeAdapterMiddleware<T>(_adapterMiddleware);
+    }
+  }
+
+  @override
+  void append({
+    List<Middleware<T>> middleware,
+    List<ViewMiddleware<T>> viewMiddleware,
+    List<EffectMiddleware<T>> effectMiddleware,
+    List<AdapterMiddleware<T>> adapterMiddleware,
+  }) {
+    if (middleware != null) {
+      _middleware.addAll(middleware);
+      _storeEnhancer = applyMiddleware<T>(_middleware);
+    }
+    if (viewMiddleware != null) {
+      _viewMiddleware.addAll(viewMiddleware);
+      _viewEnhancer = mergeViewMiddleware<T>(_viewMiddleware);
+    }
+    if (effectMiddleware != null) {
+      _effectMiddleware.addAll(effectMiddleware);
+      _effectEnhancer = mergeEffectMiddleware<T>(_effectMiddleware);
+    }
+    if (adapterMiddleware != null) {
+      _adapterMiddleware.addAll(adapterMiddleware);
+      _adapterEnhancer = mergeAdapterMiddleware<T>(_adapterMiddleware);
+    }
+  }
 
   @override
   ViewBuilder<K> viewEnhance<K>(

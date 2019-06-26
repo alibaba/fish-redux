@@ -33,6 +33,8 @@ abstract class LogicContext<T> extends ContextSys<T> with _ExtraMixin {
     @required this.store,
     @required BuildContext buildContext,
     @required this.getState,
+
+    /// pageBus
     @required this.bus,
     @required this.enhancer,
   })  : assert(logic != null),

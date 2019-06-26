@@ -83,17 +83,34 @@ abstract class Enhancer<T> {
     AbstractComponent<K> component,
     Store<T> store,
   );
+
   AdapterBuilder<K> adapterEnhance<K>(
     AdapterBuilder<K> adapterBuilder,
     AbstractAdapter<K> logic,
     Store<T> store,
   );
+
   HigherEffect<K> effectEnhance<K>(
     HigherEffect<K> higherEffect,
     AbstractLogic<K> logic,
     Store<T> store,
   );
+
   StoreCreator<T> storeEnhance(StoreCreator<T> creator);
+
+  void unshift({
+    List<Middleware<T>> middleware,
+    List<ViewMiddleware<T>> viewMiddleware,
+    List<EffectMiddleware<T>> effectMiddleware,
+    List<AdapterMiddleware<T>> adapterMiddleware,
+  });
+
+  void append({
+    List<Middleware<T>> middleware,
+    List<ViewMiddleware<T>> viewMiddleware,
+    List<EffectMiddleware<T>> effectMiddleware,
+    List<AdapterMiddleware<T>> adapterMiddleware,
+  });
 }
 
 /// AOP End
