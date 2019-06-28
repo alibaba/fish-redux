@@ -78,33 +78,42 @@ class Adapter3 extends ToDoAdapterInstrument {
 
 Dependencies<ToDoList> toDoListDependencies(final Track track) =>
     Dependencies<ToDoList>(
-        adapter: TestStaticFlowAdapter<ToDoList>(
-            slots: [
-          Component0(track).asDependent(Connector<ToDoList, Todo>(
-              get: (ToDoList toDoList) => toDoList.list[0],
-              set: (ToDoList toDoList, Todo toDo) => toDoList.list[0] = toDo)),
-          Adapter1(track).asDependent(Connector<ToDoList, Todo>(
-              get: (ToDoList toDoList) => toDoList.list[1],
-              set: (ToDoList toDoList, Todo toDo) => toDoList.list[1] = toDo)),
-          Component2(track).asDependent(Connector<ToDoList, Todo>(
-              get: (ToDoList toDoList) => toDoList.list[2],
-              set: (ToDoList toDoList, Todo toDo) => toDoList.list[2] = toDo)),
-          Adapter3(track).asDependent(Connector<ToDoList, Todo>(
-              get: (ToDoList toDoList) => toDoList.list[3],
-              set: (ToDoList toDoList, Todo toDo) => toDoList.list[3] = toDo))
-        ],
-            reducer: instrumentReducer<ToDoList>(toDoListReducer,
-                change: (ToDoList state, Action action) {
-              track.append('adapter-onReduce', state.clone());
-            }),
-            effect: instrumentEffect<ToDoList>(toDoListEffect,
-                (Action action, Get<ToDoList> getState) {
-              if (action.type == ToDoListAction.onAdd) {
-                track.append('adapter-onAdd', getState().clone());
-              } else if (action.type == ToDoAction.broadcast) {
-                track.append('adapter-onToDoBroadcast', getState().clone());
-              }
-            })));
+        adapter: NoneConn<ToDoList>() +
+            TestStaticFlowAdapter<ToDoList>(
+                slots: [
+                  ConnOp<ToDoList, Todo>(
+                          get: (ToDoList toDoList) => toDoList.list[0],
+                          set: (ToDoList toDoList, Todo toDo) =>
+                              toDoList.list[0] = toDo) +
+                      Component0(track),
+                  ConnOp<ToDoList, Todo>(
+                          get: (ToDoList toDoList) => toDoList.list[1],
+                          set: (ToDoList toDoList, Todo toDo) =>
+                              toDoList.list[1] = toDo) +
+                      Adapter1(track),
+                  ConnOp<ToDoList, Todo>(
+                          get: (ToDoList toDoList) => toDoList.list[2],
+                          set: (ToDoList toDoList, Todo toDo) =>
+                              toDoList.list[2] = toDo) +
+                      Component2(track),
+                  ConnOp<ToDoList, Todo>(
+                          get: (ToDoList toDoList) => toDoList.list[3],
+                          set: (ToDoList toDoList, Todo toDo) =>
+                              toDoList.list[3] = toDo) +
+                      Adapter3(track)
+                ],
+                reducer: instrumentReducer<ToDoList>(toDoListReducer,
+                    change: (ToDoList state, Action action) {
+                  track.append('adapter-onReduce', state.clone());
+                }),
+                effect: instrumentEffect<ToDoList>(toDoListEffect,
+                    (Action action, Get<ToDoList> getState) {
+                  if (action.type == ToDoListAction.onAdd) {
+                    track.append('adapter-onAdd', getState().clone());
+                  } else if (action.type == ToDoAction.broadcast) {
+                    track.append('adapter-onToDoBroadcast', getState().clone());
+                  }
+                })));
 
 void main() {
   group('static_flow_adapter', () {

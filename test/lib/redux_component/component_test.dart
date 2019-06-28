@@ -55,18 +55,22 @@ class Component3 extends ToDoComponentInstrument {
 
 Dependencies<ToDoList> toDoListDependencies(final Track track) =>
     Dependencies<ToDoList>(slots: {
-      'toDo0': Component0(track).asDependent(Connector<ToDoList, Todo>(
-          get: (ToDoList toDoList) => toDoList.list[0],
-          set: (ToDoList toDoList, Todo toDo) => toDoList.list[0] = toDo)),
-      'toDo1': Component1(track).asDependent(Connector<ToDoList, Todo>(
-          get: (ToDoList toDoList) => toDoList.list[1],
-          set: (ToDoList toDoList, Todo toDo) => toDoList.list[1] = toDo)),
-      'toDo2': Component2(track).asDependent(Connector<ToDoList, Todo>(
-          get: (ToDoList toDoList) => toDoList.list[2],
-          set: (ToDoList toDoList, Todo toDo) => toDoList.list[2] = toDo)),
-      'toDo3': Component3(track).asDependent(Connector<ToDoList, Todo>(
-          get: (ToDoList toDoList) => toDoList.list[3],
-          set: (ToDoList toDoList, Todo toDo) => toDoList.list[3] = toDo)),
+      'toDo0': ConnOp<ToDoList, Todo>(
+              get: (ToDoList toDoList) => toDoList.list[0],
+              set: (ToDoList toDoList, Todo toDo) => toDoList.list[0] = toDo) +
+          Component0(track),
+      'toDo1': ConnOp<ToDoList, Todo>(
+              get: (ToDoList toDoList) => toDoList.list[1],
+              set: (ToDoList toDoList, Todo toDo) => toDoList.list[1] = toDo) +
+          Component1(track),
+      'toDo2': ConnOp<ToDoList, Todo>(
+              get: (ToDoList toDoList) => toDoList.list[2],
+              set: (ToDoList toDoList, Todo toDo) => toDoList.list[2] = toDo) +
+          Component2(track),
+      'toDo3': ConnOp<ToDoList, Todo>(
+              get: (ToDoList toDoList) => toDoList.list[3],
+              set: (ToDoList toDoList, Todo toDo) => toDoList.list[3] = toDo) +
+          Component3(track),
     });
 
 Widget pageView(
@@ -133,8 +137,9 @@ void main() {
           view: toDoView, wrapper: (child) => ComponentWrapper(child));
       expect(component, isNotNull);
 
+      /// TODO
       final Widget componentWidget = component.buildComponent(
-          createMixedStore<Todo>(Todo.mock(), null), () => Todo.mock());
+          createBatchStore<Todo>(Todo.mock(), null), () => Todo.mock());
       expect(componentWidget, isNotNull);
 
       expect(

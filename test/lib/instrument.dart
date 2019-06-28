@@ -40,7 +40,9 @@ InitState<T, P> instrumentInitState<T extends Cloneable<T>, P>(
 typedef ReducerInstrument<T> = void Function(T state, Action action);
 
 Reducer<T> instrumentReducer<T>(Reducer<T> reducer,
-        {ReducerInstrument<T> pre, ReducerInstrument<T> suf,ReducerInstrument<T> change}) =>
+        {ReducerInstrument<T> pre,
+        ReducerInstrument<T> suf,
+        ReducerInstrument<T> change}) =>
     (T state, Action action) {
       T newState = state;
       if (pre != null) {
@@ -53,7 +55,7 @@ Reducer<T> instrumentReducer<T>(Reducer<T> reducer,
         suf(newState, action);
       }
 
-      if(change != null && newState != state) {
+      if (change != null && newState != state) {
         change(newState, action);
       }
 
@@ -94,12 +96,3 @@ Middleware<T> instrumentMiddleware<T>(Middleware<T> middleware,
     };
 
 typedef ErrorInstrument<T> = void Function(Exception exception, Context<T> ctx);
-
-OnError<T> instrumentError<T>(OnError<T> handler, ErrorInstrument<T> pre) =>
-    (Exception exception, Context<T> ctx) {
-      if (pre != null) {
-        pre(exception, ctx);
-      }
-
-      return handler(exception, ctx);
-    };

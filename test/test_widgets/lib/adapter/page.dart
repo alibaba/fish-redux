@@ -63,9 +63,10 @@ Widget createAdapterWidget(BuildContext context) {
           initState: initState,
           view: pageView,
           dependencies: Dependencies<ToDoList>(
-              adapter: TestAdapter<ToDoList>(
-                  adapter: toDoListAdapter,
-                  reducer: toDoListReducer,
-                  effect: toDoListEffect)))
+              adapter: NoneConn<ToDoList>() +
+                  TestAdapter<ToDoList>(
+                      adapter: toDoListAdapter,
+                      reducer: toDoListReducer,
+                      effect: toDoListEffect)))
       .buildPage(pageInitParams);
 }

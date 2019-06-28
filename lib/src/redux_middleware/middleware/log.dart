@@ -26,9 +26,9 @@ Middleware<T> logMiddleware<T>({
                 print('[$tag] next-state: ${monitor(nextState)}');
               }
 
-              if (prevState == nextState) {
-                print('[$tag] warning: ${action.type} has not been used.');
-              }
+              // if (prevState == nextState) {
+              //   print('[$tag] warning: ${action.type} has not been used.');
+              // }
 
               print('========== [$tag] ================');
             }

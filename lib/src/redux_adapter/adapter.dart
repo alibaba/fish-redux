@@ -1,12 +1,12 @@
 import 'package:flutter/widgets.dart' hide Action;
 
-import '../../fish_redux.dart';
-import '../redux/redux.dart';
+import '../redux/basic.dart';
+import '../redux_component/basic.dart';
+import '../redux_component/context.dart';
 import '../redux_component/logic.dart';
 import '../redux_component/redux_component.dart';
 
 /// abstract for custom extends
-@immutable
 abstract class Adapter<T> extends Logic<T> implements AbstractAdapter<T> {
   final AdapterBuilder<T> _adapter;
 
@@ -17,28 +17,68 @@ abstract class Adapter<T> extends Logic<T> implements AbstractAdapter<T> {
     Reducer<T> reducer,
     ReducerFilter<T> filter,
     Effect<T> effect,
-    HigherEffect<T> higherEffect,
     Dependencies<T> dependencies,
     Object Function(T) key,
   })  : assert(adapter != null),
         assert(dependencies?.adapter == null,
-            'Unexpected dependencies.adapter for Adapter.'),
+            'Unexpected dependencies.list for Adapter.'),
         _adapter = adapter,
         super(
           reducer: reducer,
           filter: filter,
           effect: effect,
-          higherEffect: higherEffect,
           dependencies: dependencies,
           key: key,
         );
 
   @override
-  ListAdapter buildAdapter(
-      T state, Dispatch dispatch, ViewService viewService) {
-    final ContextSys<T> ctx = viewService;
-    return ctx.store
-        .adapterEnhance(protectedAdapter, this)
-        .call(state, dispatch, viewService);
+  ListAdapter buildAdapter(ContextSys<T> ctx) =>
+      ctx.enhancer
+          ?.adapterEnhance(protectedAdapter, this, ctx.store)
+          ?.call(ctx.state, ctx.dispatch, ctx) ??
+      protectedAdapter?.call(ctx.state, ctx.dispatch, ctx);
+
+  @override
+  ContextSys<T> createContext(
+    Store<Object> store,
+    BuildContext buildContext,
+    Get<T> getState, {
+    @required Enhancer<Object> enhancer,
+    @required DispatchBus bus,
+  }) {
+    assert(bus != null && enhancer != null);
+    return AdapterContext<T>(
+      logic: this,
+      store: store,
+      buildContext: buildContext,
+      getState: getState,
+      bus: bus,
+      enhancer: enhancer,
+    );
+  }
+}
+
+class AdapterContext<T> extends LogicContext<T> {
+  AdapterContext({
+    @required AbstractAdapter<T> logic,
+    @required Store<Object> store,
+    @required BuildContext buildContext,
+    @required Get<T> getState,
+    @required DispatchBus bus,
+    @required Enhancer<Object> enhancer,
+  })  : assert(bus != null && enhancer != null),
+        super(
+          logic: logic,
+          store: store,
+          buildContext: buildContext,
+          getState: getState,
+          bus: bus,
+          enhancer: enhancer,
+        );
+
+  @override
+  ListAdapter buildAdapter() {
+    final AbstractAdapter<T> curLogic = logic;
+    return curLogic.buildAdapter(this);
   }
 }

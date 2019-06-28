@@ -1,4 +1,3 @@
-import '../../fish_redux.dart';
 import '../redux/redux.dart';
 import 'basic.dart';
 import 'logic.dart';
@@ -26,13 +25,8 @@ mixin PrivateReducerMixin<T> on Logic<T> {
   }
 
   @override
-  Dispatch createDispatch(
-      OnAction onAction, Context<T> ctx, Dispatch parentDispatch) {
-    final Dispatch superDispatch = super.createDispatch(
-      onAction,
-      ctx,
-      parentDispatch,
-    );
+  Dispatch createDispatch(Dispatch effect, Dispatch next, {Context<T> ctx}) {
+    final Dispatch superDispatch = super.createDispatch(effect, next, ctx: ctx);
     return (Action action) {
       if (action is! PrivateAction) {
         action = PrivateAction(

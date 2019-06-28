@@ -5,7 +5,7 @@ import '../global_store/state.dart';
 import 'report_component/component.dart';
 import 'todo_component/component.dart';
 
-class PageState implements GlobalBaseState<PageState> {
+class PageState implements GlobalBaseState, Cloneable<PageState> {
   List<ToDoState> toDos;
 
   @override

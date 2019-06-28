@@ -109,7 +109,7 @@ dynamic toDoListEffectAsync(Action action, Context<ToDoList> ctx) {
   return null;
 }
 
-OnAction toDoListHigherEffect(Context<ToDoList> ctx) =>
+Dispatch toDoListHigherEffect(Context<ToDoList> ctx) =>
     (Action action) => toDoListEffect(action, ctx);
 
 ToDoList toDoListReducer(ToDoList state, Action action) {

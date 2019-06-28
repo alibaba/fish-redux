@@ -51,6 +51,7 @@ Widget createStaticAdapterWidget(BuildContext context) {
   return TestPage<ToDoList, Map>(
           initState: initState,
           view: pageView,
-          dependencies: Dependencies<ToDoList>(adapter: testAdapter))
+          dependencies: Dependencies<ToDoList>(
+              adapter: NoneConn<ToDoList>() + testAdapter))
       .buildPage(pageInitParams);
 }

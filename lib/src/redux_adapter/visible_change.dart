@@ -1,18 +1,17 @@
 import 'package:flutter/widgets.dart' hide Action;
 
 import '../redux/redux.dart';
+import '../redux_component/auto_dispose.dart';
+import '../redux_component/basic.dart';
 import '../redux_component/context.dart';
-import '../redux_component/redux_component.dart';
+import '../redux_component/lifecycle.dart';
+
 import '../utils/utils.dart';
 
 mixin VisibleChangeMixin<T> on AbstractAdapter<T> {
   @override
-  ListAdapter buildAdapter(
-      T state, Dispatch dispatch, ViewService viewService) {
-    return _wrapVisibleChange<T>(
-      super.buildAdapter(state, dispatch, viewService),
-      viewService,
-    );
+  ListAdapter buildAdapter(ContextSys<T> ctx) {
+    return _wrapVisibleChange<T>(super.buildAdapter(ctx), ctx);
   }
 }
 
@@ -52,7 +51,7 @@ class _VisibleChangeWidget extends StatefulWidget {
 
 ListAdapter _wrapVisibleChange<T>(
   ListAdapter listAdapter,
-  DefaultContext<T> ctx,
+  LogicContext<T> ctx,
 ) {
   final _VisibleChangeDispatch onChange =
       (ctx.extra['\$visible'] ??= _VisibleChangeDispatch(ctx.dispatch));

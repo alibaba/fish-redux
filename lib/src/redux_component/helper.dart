@@ -64,20 +64,33 @@ Effect<T> combineEffects<T>(Map<Object, SubEffect<T>> map) =>
                         action.type == entry.key,
                     orElse: () => null)
                 ?.value;
+
+            /// false
             return subEffect?.call(action, ctx) ?? subEffect != null;
           };
-
-HigherEffect<T> asHigherEffect<T>(Effect<T> effect) => effect != null
-    ? (Context<T> ctx) => (Action action) => effect(action, ctx)
-    : null;
 
 ViewMiddleware<T> mergeViewMiddleware<T>(List<ViewMiddleware<T>> middleware) {
   return Collections.reduce<ViewMiddleware<T>>(middleware,
       (ViewMiddleware<T> first, ViewMiddleware<T> second) {
-    return (AbstractComponent<dynamic> component, MixedStore<T> store) {
+    return (AbstractComponent<dynamic> component, Store<T> store) {
       final Composable<ViewBuilder<dynamic>> inner = first(component, store);
       final Composable<ViewBuilder<dynamic>> outer = second(component, store);
       return (ViewBuilder<dynamic> view) {
+        return outer(inner(view));
+      };
+    };
+  });
+}
+
+AdapterMiddleware<T> mergeAdapterMiddleware<T>(
+    List<AdapterMiddleware<T>> middleware) {
+  return Collections.reduce<AdapterMiddleware<T>>(middleware,
+      (AdapterMiddleware<T> first, AdapterMiddleware<T> second) {
+    return (AbstractAdapter<dynamic> component, Store<T> store) {
+      final Composable<AdapterBuilder<dynamic>> inner = first(component, store);
+      final Composable<AdapterBuilder<dynamic>> outer =
+          second(component, store);
+      return (AdapterBuilder<dynamic> view) {
         return outer(inner(view));
       };
     };
@@ -88,11 +101,11 @@ EffectMiddleware<T> mergeEffectMiddleware<T>(
     List<EffectMiddleware<T>> middleware) {
   return Collections.reduce<EffectMiddleware<T>>(middleware,
       (EffectMiddleware<T> first, EffectMiddleware<T> second) {
-    return (AbstractLogic<dynamic> logic, MixedStore<T> store) {
-      final Composable<HigherEffect<dynamic>> inner = first(logic, store);
-      final Composable<HigherEffect<dynamic>> outer = second(logic, store);
-      return (HigherEffect<dynamic> higherEffect) {
-        return outer(inner(higherEffect));
+    return (AbstractLogic<dynamic> logic, Store<T> store) {
+      final Composable<Effect<dynamic>> inner = first(logic, store);
+      final Composable<Effect<dynamic>> outer = second(logic, store);
+      return (Effect<dynamic> effect) {
+        return outer(inner(effect));
       };
     };
   });

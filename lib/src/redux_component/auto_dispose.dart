@@ -64,7 +64,7 @@ class AutoDispose {
     }
 
     if (newParent != null) {
-      newParent._fields.children ??= Set<AutoDispose>();
+      newParent._fields.children ??= <AutoDispose>{};
       newParent._fields.children.add(this);
     }
     if (oldParent != null) {
@@ -76,11 +76,4 @@ class AutoDispose {
   AutoDispose registerOnDisposed(void Function() onDisposed) => AutoDispose()
     ..setParent(this)
     ..onDisposed(onDisposed);
-
-  @deprecated
-  void follow(AutoDispose newParent) => setParent(newParent);
-
-  @deprecated
-  AutoDispose follower([void Function() onDisposed]) =>
-      registerOnDisposed(onDisposed);
 }

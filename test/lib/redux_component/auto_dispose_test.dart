@@ -22,14 +22,14 @@ void main() {
       expect(parent.isDisposed, isFalse);
 
       final AutoDispose follow0 = AutoDispose();
-      follow0.follow(parent);
+      follow0.setParent(parent);
       expect(follow0.isDisposed, isFalse);
       follow0.dispose();
       expect(follow0.isDisposed, isTrue);
       expect(parent.isDisposed, isFalse);
 
       final AutoDispose follow1 = AutoDispose();
-      follow1.follow(parent);
+      follow1.setParent(parent);
       expect(follow1.isDisposed, isFalse);
 
       parent.dispose();
@@ -37,7 +37,7 @@ void main() {
       expect(follow1.isDisposed, isTrue);
 
       final AutoDispose follow2 = AutoDispose();
-      follow2.follow(parent);
+      follow2.setParent(parent);
       expect(follow2.isDisposed, isTrue);
     });
 
@@ -48,10 +48,10 @@ void main() {
       expect(parent1.isDisposed, isFalse);
 
       final AutoDispose follow0 = AutoDispose();
-      follow0.follow(parent0);
+      follow0.setParent(parent0);
       expect(follow0.isDisposed, isFalse);
 
-      follow0.follow(parent1);
+      follow0.setParent(parent1);
       expect(follow0.isDisposed, isFalse);
 
       parent0.dispose();
@@ -67,20 +67,20 @@ void main() {
       final AutoDispose parent = AutoDispose();
       expect(parent.isDisposed, isFalse);
 
-      final AutoDispose follow0 = parent.follower();
+      final AutoDispose follow0 = parent.registerOnDisposed(null);
       expect(follow0.isDisposed, isFalse);
       follow0.dispose();
       expect(follow0.isDisposed, isTrue);
       expect(parent.isDisposed, isFalse);
 
-      final AutoDispose follow1 = parent.follower();
+      final AutoDispose follow1 = parent.registerOnDisposed(null);
       expect(follow1.isDisposed, isFalse);
 
       parent.dispose();
       expect(parent.isDisposed, isTrue);
       expect(follow1.isDisposed, isTrue);
 
-      final AutoDispose follow2 = parent.follower();
+      final AutoDispose follow2 = parent.registerOnDisposed(null);
       expect(follow2.isDisposed, isTrue);
     });
 
@@ -94,7 +94,7 @@ void main() {
       expect(pCount, equals(0));
 
       int fCount = 0;
-      final AutoDispose follow = parent.follower(() {
+      final AutoDispose follow = parent.registerOnDisposed(() {
         fCount++;
       });
       expect(fCount, equals(0));

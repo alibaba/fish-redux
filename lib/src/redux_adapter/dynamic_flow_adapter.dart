@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart' hide Action;
 
 import '../redux/redux.dart';
+import '../redux_component/basic.dart';
 import '../redux_component/logic.dart';
-import '../redux_component/redux_component.dart';
 import '../utils/utils.dart';
 import 'recycle_context.dart';
 
@@ -16,9 +16,7 @@ class ItemBean {
 }
 
 /// template is a map, driven by array
-class DynamicFlowAdapter<T> extends Logic<T>
-    with RecycleContextMixin<T>
-    implements AbstractAdapter<T> {
+class DynamicFlowAdapter<T> extends Logic<T> with RecycleContextMixin<T> {
   final Map<String, AbstractLogic<Object>> pool;
   final AbstractConnector<T, List<ItemBean>> connector;
 
@@ -28,30 +26,24 @@ class DynamicFlowAdapter<T> extends Logic<T>
     ReducerFilter<T> filter,
     Reducer<T> reducer,
     Effect<T> effect,
-    HigherEffect<T> higherEffect,
     Object Function(T) key,
   }) : super(
           reducer: _dynamicReducer(reducer, pool, connector),
           effect: effect,
-          higherEffect: higherEffect,
           filter: filter,
           dependencies: null,
           key: key,
         );
 
   @override
-  ListAdapter buildAdapter(
-    T state,
-    Dispatch dispatch,
-    ViewService viewService,
-  ) {
-    final List<ItemBean> list = connector.get(state);
+  ListAdapter buildAdapter(ContextSys<T> ctx) {
+    final List<ItemBean> list = connector.get(ctx.state);
     assert(list != null);
 
-    final RecycleContext<T> ctx = viewService;
+    final RecycleContext<T> recycleCtx = ctx;
     final List<ListAdapter> adapters = <ListAdapter>[];
 
-    ctx.markAllUnused();
+    recycleCtx.markAllUnused();
 
     for (int index = 0; index < list.length; index++) {
       final ItemBean itemBean = list[index];
@@ -61,35 +53,33 @@ class DynamicFlowAdapter<T> extends Logic<T>
           result != null, 'Type of $type has not benn registered in the pool.');
       if (result != null) {
         if (result is AbstractAdapter<Object>) {
-          final ContextSys<Object> subCtx = ctx.reuseOrCreate(
+          final ContextSys<Object> subCtx = recycleCtx.reuseOrCreate(
             Tuple2<Type, Object>(
               result.runtimeType,
               result.key(itemBean.data),
             ),
-            () {
-              return result.createContext(
-                store: ctx.store,
-                buildContext: ctx.context,
-                getState: _subGetter(() => connector.get(ctx.state), index),
-              );
-            },
+            () => result.createContext(
+                  recycleCtx.store,
+                  recycleCtx.context,
+                  _subGetter(() => connector.get(recycleCtx.state), index),
+                  bus: recycleCtx.bus,
+                  enhancer: recycleCtx.enhancer,
+                ),
           );
-          adapters.add(result.buildAdapter(
-            subCtx.state,
-            subCtx.dispatch,
-            subCtx,
-          ));
+          adapters.add(result.buildAdapter(subCtx));
         } else if (result is AbstractComponent<Object>) {
           adapters.add(ListAdapter((BuildContext buildContext, int _) {
             return result.buildComponent(
-              ctx.store,
-              _subGetter(() => connector.get(ctx.state), index),
+              recycleCtx.store,
+              _subGetter(() => connector.get(recycleCtx.state), index),
+              bus: recycleCtx.bus,
+              enhancer: recycleCtx.enhancer,
             );
           }, 1));
         }
       }
     }
-    ctx.cleanUnused();
+    recycleCtx.cleanUnused();
 
     return combineListAdapters(adapters);
   }
