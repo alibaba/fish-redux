@@ -76,11 +76,4 @@ class AutoDispose {
   AutoDispose registerOnDisposed(void Function() onDisposed) => AutoDispose()
     ..setParent(this)
     ..onDisposed(onDisposed);
-
-  @deprecated
-  void follow(AutoDispose newParent) => setParent(newParent);
-
-  @deprecated
-  AutoDispose follower([void Function() onDisposed]) =>
-      registerOnDisposed(onDisposed);
 }

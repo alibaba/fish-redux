@@ -89,15 +89,6 @@ Store<T> createBatchStore<T>(
       ),
     );
 
-/// Use [createBatchStore] instand of [createMixedStore]
-@deprecated
-Store<T> createMixedStore<T>(
-  T preloadedState,
-  Reducer<T> reducer, {
-  StoreEnhancer<T> storeEnhancer,
-}) =>
-    createBatchStore(preloadedState, reducer, storeEnhancer: storeEnhancer);
-
 /// connect with app-store
 
 enum _UpdateState { Assign }

@@ -68,7 +68,7 @@ Dependencies<ToDoList> toDoListDependencies(final Track track,
                   'toDo': ToDoComponentInstrument(track),
                   'toDoNoReducer': ToDoComponentNoReducer(track),
                 },
-                connector: Connector<ToDoList, List<ItemBean>>(
+                connector: ConnOp<ToDoList, List<ItemBean>>(
                     get: (ToDoList toDoList) => toDoList.list
                         .map<ItemBean>((Todo toDo) => noReducer
                             ? ItemBean('toDoNoReducer', toDo)

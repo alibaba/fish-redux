@@ -99,7 +99,7 @@ class TestDynamicFlowAdapter<T extends Cloneable<T>>
     extends DynamicFlowAdapter<T> {
   TestDynamicFlowAdapter({
     @required Map<String, AbstractLogic<Object>> pool,
-    @required Connector<T, List<ItemBean>> connector,
+    @required ConnOp<T, List<ItemBean>> connector,
     ReducerFilter<T> filter,
     Reducer<T> reducer,
     Effect<T> effect,
