@@ -109,5 +109,5 @@ abstract class Logic<T> implements AbstractLogic<T> {
   Dependent<T> slot(String type) => protectedDependencies?.slot(type);
 
   @override
-  Dependent<T> adapterDep() => protectedDependencies?.list;
+  Dependent<T> adapterDep() => protectedDependencies?.adapter;
 }

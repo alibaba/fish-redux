@@ -17,7 +17,7 @@ void main() {
           initState: initState,
           view: pageView,
           dependencies: Dependencies<ToDoList>(
-              list: NoneConn<ToDoList>() +
+              adapter: NoneConn<ToDoList>() +
                   TestAdapter<ToDoList>(
                       adapter: toDoListAdapter,
                       reducer: toDoListReducer,
@@ -33,7 +33,7 @@ void main() {
               initState: initState,
               view: pageView,
               dependencies: Dependencies<ToDoList>(
-                  list: NoneConn<ToDoList>() +
+                  adapter: NoneConn<ToDoList>() +
                       TestAdapter<ToDoList>(
                           adapter: toDoListAdapter,
                           reducer: toDoListReducer,
@@ -77,7 +77,7 @@ void main() {
                 track.append('build', state.clone());
               }),
               dependencies: Dependencies<ToDoList>(
-                  list: NoneConn<ToDoList>() +
+                  adapter: NoneConn<ToDoList>() +
                       TestAdapter<ToDoList>(
                           adapter: toDoListAdapter,
                           reducer: instrumentReducer<ToDoList>(toDoListReducer,
@@ -163,7 +163,7 @@ void main() {
                 track.append('build', state.clone());
               }),
               dependencies: Dependencies<ToDoList>(
-                  list: NoneConn<ToDoList>() +
+                  adapter: NoneConn<ToDoList>() +
                       TestAdapter<ToDoList>(
                           adapter: toDoListAdapter,
                           reducer: instrumentReducer<ToDoList>(toDoListReducer,
@@ -240,7 +240,7 @@ void main() {
                 track.append('build', state.clone());
               }),
               dependencies: Dependencies<ToDoList>(
-                  list: NoneConn<ToDoList>() +
+                  adapter: NoneConn<ToDoList>() +
                       TestAdapter<ToDoList>(
                           adapter: toDoListAdapter,
                           reducer: instrumentReducer<ToDoList>(toDoListReducer,
@@ -317,7 +317,7 @@ void main() {
                 track.append('build', state.clone());
               }),
               dependencies: Dependencies<ToDoList>(
-                  list: NoneConn<ToDoList>() +
+                  adapter: NoneConn<ToDoList>() +
                       TestAdapter<ToDoList>(
                           adapter: toDoListAdapter,
                           reducer: instrumentReducer<ToDoList>(toDoListReducer,

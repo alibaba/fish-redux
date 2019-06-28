@@ -78,7 +78,7 @@ class Adapter3 extends ToDoAdapterInstrument {
 
 Dependencies<ToDoList> toDoListDependencies(final Track track) =>
     Dependencies<ToDoList>(
-        list: NoneConn<ToDoList>() +
+        adapter: NoneConn<ToDoList>() +
             TestStaticFlowAdapter<ToDoList>(
                 slots: [
                   ConnOp<ToDoList, Todo>(

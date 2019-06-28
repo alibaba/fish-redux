@@ -91,7 +91,7 @@ Widget createDynamicAdapterWidget(BuildContext context) {
           view: pageView,
           initState: initState,
           effect: pageEffect,
-          dependencies:
-              Dependencies<ToDoList>(list: NoneConn<ToDoList>() + testAdapter))
+          dependencies: Dependencies<ToDoList>(
+              adapter: NoneConn<ToDoList>() + testAdapter))
       .buildPage(pageInitParams);
 }

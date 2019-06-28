@@ -63,7 +63,7 @@ Widget createAdapterWidget(BuildContext context) {
           initState: initState,
           view: pageView,
           dependencies: Dependencies<ToDoList>(
-              list: NoneConn<ToDoList>() +
+              adapter: NoneConn<ToDoList>() +
                   TestAdapter<ToDoList>(
                       adapter: toDoListAdapter,
                       reducer: toDoListReducer,

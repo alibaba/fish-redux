@@ -20,7 +20,7 @@ abstract class Adapter<T> extends Logic<T> implements AbstractAdapter<T> {
     Dependencies<T> dependencies,
     Object Function(T) key,
   })  : assert(adapter != null),
-        assert(dependencies?.list == null,
+        assert(dependencies?.adapter == null,
             'Unexpected dependencies.list for Adapter.'),
         _adapter = adapter,
         super(

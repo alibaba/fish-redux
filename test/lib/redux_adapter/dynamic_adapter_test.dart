@@ -62,7 +62,7 @@ class ToDoComponentNoReducer extends TestComponent<Todo> {
 Dependencies<ToDoList> toDoListDependencies(final Track track,
         {bool noReducer = false}) =>
     Dependencies<ToDoList>(
-        list: NoneConn<ToDoList>() +
+        adapter: NoneConn<ToDoList>() +
             TestDynamicFlowAdapter<ToDoList>(
                 pool: <String, AbstractLogic<Todo>>{
                   'toDo': ToDoComponentInstrument(track),
