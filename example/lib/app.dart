@@ -57,6 +57,15 @@ Widget createApp() {
         });
       }
 
+      page.enhancer.append(
+        viewMiddleware: <ViewMiddleware<dynamic>>[safetyView<dynamic>()],
+        adapterMiddleware: <AdapterMiddleware<dynamic>>[
+          safetyAdapter<dynamic>()
+        ],
+        effectMiddleware: [],
+        middleware: <Middleware<dynamic>>[logMiddleware<dynamic>()],
+      );
+
       // }
       ///updateMiddleware
       /// TODO
