@@ -2,7 +2,8 @@ String Function() generator() {
   int nextId = 0;
   String prefix = '';
   return () {
-    if (++nextId >= 0x3FFFFFFFFFFFFFFF) {
+    /// fix '0x3FFFFFFFFFFFFFFF' can't be represented exactly in JavaScript.
+    if (++nextId >= 0x3FFFFFFF) {
       nextId = 0;
       prefix = '\$' + prefix;
     }
