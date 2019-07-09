@@ -77,3 +77,15 @@
 - add congruent conn 
 - fields mainCtx & viewUpdater in ComponentState become public 
 - fix bug when a store recived action after teardown
+
+## [0.2.3]
+- Reconstruct Context
+- Breaking-change 
+  - Reconstruct dependencies
+  - Remove OOP style
+  - Remove higherEffect
+  - Remove deprecated api(Connector, createMixedStore, AutoDispose:follow, AutoDispose:follower)
+  - Remove unused DisposedException
+- Hide widgets.dart's Action to compate with flutter1.7
+- Compate with flutter_web
+
