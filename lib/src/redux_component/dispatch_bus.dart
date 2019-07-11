@@ -35,7 +35,7 @@ class DispatchBusDefault implements DispatchBus {
 
   @override
   void broadcast(Action action, {DispatchBus excluded}) {
-    parent?.dispatch(action, excluded: excluded.dispatch);
+    parent?.dispatch(action, excluded: excluded?.dispatch);
   }
 
   @override
