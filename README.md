@@ -76,4 +76,4 @@ flutter run
 
 <img src="https://img.alicdn.com/tfs/TB1uh7MXq61gK0jSZFlXXXDKFXa-656-656.png" width="328px" height="328px">
 
-[for English](https://twitter.com/xianyutech "for English")
+[For English](https://twitter.com/xianyutech "For English")
