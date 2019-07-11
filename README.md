@@ -61,8 +61,7 @@ flutter run
 -   Fish Redux is released under the Apache 2.0 license. See [LICENSE](LICENSE) for details.
 
 
-## Flutter合集-阿里巴巴-闲鱼技术团队官方出品（持续更新）
->
+## Flutter合集
 阿里巴巴-闲鱼是国内最早也是最大规模线上运行Flutter的团队，我们会在合集中为你精选Flutter独家干货，全面而深入。
 内容包括：Flutter的接入、规模化应用、引擎探秘、工程体系、创新技术等教程和开源信息。
 
@@ -72,6 +71,6 @@ flutter run
 
 订阅地址
 
-![erweima.png](https://img.alicdn.com/tfs/TB1uh7MXq61gK0jSZFlXXXDKFXa-656-656.png "erweima" width="328px" height="328px")
+<img src="https://img.alicdn.com/tfs/TB1uh7MXq61gK0jSZFlXXXDKFXa-656-656.png" width="328px" height="328px">
 
 [for English](https://twitter.com/xianyutech"for English")
