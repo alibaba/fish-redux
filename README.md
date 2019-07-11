@@ -67,10 +67,11 @@ flutter run
 内容包括：Flutter的接入、规模化应用、引擎探秘、工程体系、创新技术等教程和开源信息。
 
 **架构／服务端／客户端／前端／算法／质量工程师 在公众号中投递简历，名额不限哦**
-- 欢迎来闲鱼做一个好奇、幸福、有影响力的程序员，简历投递：tino.wjf@alibaba-inc.com
+
+欢迎来闲鱼做一个好奇、幸福、有影响力的程序员，简历投递：tino.wjf@alibaba-inc.com
 
 订阅地址
 
-![erweima.png](https://img.alicdn.com/tfs/TB1uh7MXq61gK0jSZFlXXXDKFXa-656-656.png width="328px" height="328px" "erweima")
+![erweima.png](https://img.alicdn.com/tfs/TB1uh7MXq61gK0jSZFlXXXDKFXa-656-656.png "erweima" width="328px" height="328px")
 
 [for English](https://twitter.com/xianyutech"for English")
