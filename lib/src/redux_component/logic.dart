@@ -91,7 +91,7 @@ abstract class Logic<T> implements AbstractLogic<T> {
       };
 
   @override
-  Dispatch createDispatch(Dispatch onEffect, Dispatch next, {Context<T> ctx}) =>
+  Dispatch createDispatch(Dispatch onEffect, Dispatch next, Context<T> ctx) =>
       (Action action) {
         final Object result = onEffect?.call(action);
         if (result != null && result != false) {

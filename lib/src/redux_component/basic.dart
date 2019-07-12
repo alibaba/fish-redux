@@ -243,9 +243,9 @@ abstract class AbstractLogic<T> {
   /// Dispatch is the most important api for users which is provided by framework
   Dispatch createDispatch(
     Dispatch onEffect,
-    Dispatch next, {
+    Dispatch next,
     ContextSys<T> ctx,
-  });
+  );
 
   /// To create each instance's context
   ContextSys<T> createContext(
