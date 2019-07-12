@@ -1,5 +1,6 @@
 import '../redux/redux.dart';
 import 'basic.dart';
+import 'lifecycle.dart';
 import 'logic.dart';
 
 class PrivateAction extends Action {
@@ -25,10 +26,10 @@ mixin PrivateReducerMixin<T> on Logic<T> {
   }
 
   @override
-  Dispatch createDispatch(Dispatch effect, Dispatch next, {Context<T> ctx}) {
-    final Dispatch superDispatch = super.createDispatch(effect, next, ctx: ctx);
+  Dispatch createDispatch(Dispatch effect, Dispatch next, Context<T> ctx) {
+    final Dispatch superDispatch = super.createDispatch(effect, next, ctx);
     return (Action action) {
-      if (action is! PrivateAction) {
+      if (action.type is! Lifecycle && action is! PrivateAction) {
         action = PrivateAction(
           action.type,
           payload: action.payload,

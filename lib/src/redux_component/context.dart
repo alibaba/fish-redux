@@ -48,11 +48,13 @@ abstract class LogicContext<T> extends ContextSys<T> with _ExtraMixin {
 
     /// create Dispatch
     _dispatch = logic.createDispatch(
-        _onEffect,
-        logic.createAfterEffect(
-          this,
-          enhancer,
-        ));
+      _onEffect,
+      logic.createAfterEffect(
+        this,
+        enhancer,
+      ),
+      this,
+    );
 
     /// Register inter-component broadcast
     registerOnDisposed(bus.registerReceiver(_onEffect));
