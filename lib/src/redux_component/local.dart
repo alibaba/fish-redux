@@ -29,13 +29,13 @@ class LocalStateProvider<T> {
 
 abstract class LocalState<T extends LocalState<T>> {
   LocalState(Context<Object> ctx) : assert(ctx != null);
-  void destruct(Context<Object> ctx);
+  void destructor(Context<Object> ctx);
 
   static LocalStateProvider<T> provide<T extends LocalState<T>>(
           T Function(Context<Object>) construct) =>
       LocalStateProvider<T>(
         construct: construct,
-        destruct: (T local, Context<Object> ctx) => local.destruct(ctx),
+        destruct: (T local, Context<Object> ctx) => local.destructor(ctx),
       );
 }
 
