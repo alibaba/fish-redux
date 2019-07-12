@@ -89,3 +89,8 @@
 - Hide widgets.dart's Action to compate with flutter1.7
 - Compate with flutter_web
 
+## [0.2.4]
+- fix Context.broadcast bug #375
+- fix PrivateReducerMixin bug #380 
+- add LocalState
+
