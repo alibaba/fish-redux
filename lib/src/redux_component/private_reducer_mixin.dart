@@ -36,7 +36,7 @@ mixin PrivateReducerMixin<T> on Logic<T> {
           target: ctx.state,
         );
       }
-      superDispatch(action);
+      return superDispatch(action);
     };
   }
 }
