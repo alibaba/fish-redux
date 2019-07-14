@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import '../redux_component/page.dart';
+import '../redux_component/redux_component.dart';
 
 /// Define a basic behavior of routes.
 abstract class AbstractRoutes {

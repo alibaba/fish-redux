@@ -1,8 +1,7 @@
 import 'package:flutter/widgets.dart' hide Action;
 
 import '../redux/redux.dart';
-import '../redux_component/basic.dart';
-import '../redux_component/logic.dart';
+import '../redux_component/redux_component.dart';
 import '../utils/utils.dart';
 import 'recycle_context.dart';
 

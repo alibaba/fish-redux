@@ -1,13 +1,16 @@
 import 'package:flutter/widgets.dart' hide Action;
 
 import '../redux/redux.dart';
-import '../redux_component/auto_dispose.dart';
-import '../redux_component/basic.dart';
-import '../redux_component/context.dart';
-import '../redux_component/lifecycle.dart';
+import '../redux_component/redux_component.dart';
 
 import '../utils/utils.dart';
 
+/// usage
+/// class MyAdapter extends Adapter<T> with VisibleChangeMixin<T> {
+///   MyAdapter():super(
+///     ///
+///   );
+/// }
 mixin VisibleChangeMixin<T> on AbstractAdapter<T> {
   @override
   ListAdapter buildAdapter(ContextSys<T> ctx) {
@@ -60,12 +63,11 @@ ListAdapter _wrapVisibleChange<T>(
       ? null
       : ListAdapter(
           (BuildContext buildContext, int index) => _VisibleChangeWidget(
-                itemBuilder: listAdapter.itemBuilder,
-                index: index,
-                dispatch: onChange.onAction,
-                key: ValueKey<Tuple2<Object, int>>(
-                    Tuple2<Object, int>(ctx, index)),
-              ),
+            itemBuilder: listAdapter.itemBuilder,
+            index: index,
+            dispatch: onChange.onAction,
+            key: ValueKey<Tuple2<Object, int>>(Tuple2<Object, int>(ctx, index)),
+          ),
           listAdapter.itemCount,
         );
 }

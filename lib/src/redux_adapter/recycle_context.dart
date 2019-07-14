@@ -1,8 +1,7 @@
 import 'package:flutter/widgets.dart' hide Action;
 
 import '../redux/redux.dart';
-import '../redux_component/basic.dart';
-import '../redux_component/lifecycle.dart';
+import '../redux_component/redux_component.dart';
 import 'adapter.dart';
 
 class RecycleContext<T> extends AdapterContext<T> {

@@ -1,9 +1,6 @@
 import 'package:flutter/widgets.dart' hide Action;
 
-import '../redux/basic.dart';
-import '../redux_component/basic.dart';
-import '../redux_component/context.dart';
-import '../redux_component/logic.dart';
+import '../redux/redux.dart';
 import '../redux_component/redux_component.dart';
 
 /// abstract for custom extends
