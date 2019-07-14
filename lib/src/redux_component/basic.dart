@@ -56,6 +56,31 @@ typedef ShouldUpdate<T> = bool Function(T old, T now);
 typedef Effect<T> = dynamic Function(Action action, Context<T> ctx);
 
 /// AOP on view
+/// usage
+/// ViewMiddleware<T> safetyView<T>(
+///     {Widget Function(dynamic, StackTrace,
+///             {AbstractComponent<dynamic> component, Store<T> store})
+///         onError}) {
+///   return (AbstractComponent<dynamic> component, Store<T> store) {
+///     return (ViewBuilder<dynamic> next) {
+///       return isDebug()
+///           ? next
+///           : (dynamic state, Dispatch dispatch, ViewService viewService) {
+///               try {
+///                 return next(state, dispatch, viewService);
+///               } catch (e, stackTrace) {
+///                 return onError?.call(
+///                       e,
+///                       stackTrace,
+///                       component: component,
+///                       store: store,
+///                     ) ??
+///                     Container(width: 0, height: 0);
+///               }
+///             };
+///     };
+///   };
+/// }
 typedef ViewMiddleware<T> = Composable<ViewBuilder<dynamic>> Function(
   AbstractComponent<dynamic>,
   Store<T>,
@@ -68,6 +93,19 @@ typedef AdapterMiddleware<T> = Composable<AdapterBuilder<dynamic>> Function(
 );
 
 /// AOP on effect
+/// usage
+/// EffectMiddleware<T> pageAnalyticsMiddleware<T>() {
+///   return (AbstractLogic<dynamic> logic, Store<T> store) {
+///     return (Effect<dynamic> effect) {
+///       return effect == null ? null : (Action action, Context<dynamic> ctx) {
+///         if (logic is Page<dynamic, dynamic>) {
+///           print('${logic.runtimeType} ${action.type.toString()} ${ctx.hashCode}');
+///         }
+///         return effect(action, ctx);
+///       };
+///     };
+///   };
+/// }
 typedef EffectMiddleware<T> = Composable<Effect<dynamic>> Function(
   AbstractLogic<dynamic>,
   Store<T>,
@@ -153,12 +191,9 @@ abstract class Context<T> extends AutoDispose implements ExtraData {
   /// How to use ?
   /// For example, we want to use SingleTickerProviderStateMixin
   /// We should
-  /// 1. Define a new ComponentState
-  ///    class CustomStfState<T> extends ComponentState<T> with SingleTickerProviderStateMixin {}
-  /// 2. Override the createState method of the Component with the newly defined CustomStfState.
-  ///    @override
-  ///    CustomStfState createState() => CustomStfState();
-  /// 3. Get the CustomStfState via context.stfState in Effect.
+  /// 1. Define a new Component mixin SingleTickerProviderMixin
+  ///    class MyComponent<T> extends Component<T> with SingleTickerProviderMixin<T> {}
+  /// 2. Get the CustomStfState via context.stfState in Effect.
   ///    /// Through BuildContext -> StatefulElement -> State
   ///    final TickerProvider tickerProvider = context.stfState;
   ///    AnimationController controller = AnimationController(vsync: tickerProvider);
