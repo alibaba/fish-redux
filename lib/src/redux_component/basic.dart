@@ -191,12 +191,9 @@ abstract class Context<T> extends AutoDispose implements ExtraData {
   /// How to use ?
   /// For example, we want to use SingleTickerProviderStateMixin
   /// We should
-  /// 1. Define a new ComponentState
-  ///    class CustomStfState<T> extends ComponentState<T> with SingleTickerProviderStateMixin {}
-  /// 2. Override the createState method of the Component with the newly defined CustomStfState.
-  ///    @override
-  ///    CustomStfState createState() => CustomStfState();
-  /// 3. Get the CustomStfState via context.stfState in Effect.
+  /// 1. Define a new Component mixin SingleTickerProviderMixin
+  ///    class MyComponent<T> extends Component<T> with SingleTickerProviderMixin<T> {}
+  /// 2. Get the CustomStfState via context.stfState in Effect.
   ///    /// Through BuildContext -> StatefulElement -> State
   ///    final TickerProvider tickerProvider = context.stfState;
   ///    AnimationController controller = AnimationController(vsync: tickerProvider);
