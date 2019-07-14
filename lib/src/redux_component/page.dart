@@ -178,6 +178,7 @@ class _PageState<T, P> extends State<_PageWidget<T, P>> {
   }
 }
 
+@deprecated
 class PageProvider extends InheritedWidget {
   final Store<Object> store;
 
