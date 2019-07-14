@@ -20,7 +20,7 @@ It has four characteristics:
 
 ## Architecture diagram
 
-<img src="https://img.alicdn.com/tfs/TB1pkhoJr2pK1RjSZFsXXaNlXXa-1004-1370.png" width="500px" height="680px">
+<img src="https://img.alicdn.com/tfs/TB1pkhoJr2pK1RjSZFsXXaNlXXa-1004-1370.png" width="500px" height="680px"/>
 
 ## Installation
 
@@ -74,6 +74,6 @@ flutter run
 
 订阅地址
 
-<img src="https://img.alicdn.com/tfs/TB1uh7MXq61gK0jSZFlXXXDKFXa-656-656.png" width="328px" height="328px">
+<img src="https://img.alicdn.com/tfs/TB1uh7MXq61gK0jSZFlXXXDKFXa-656-656.png" width="328px" height="328px"/>
 
 [For English](https://twitter.com/xianyutech "For English")
