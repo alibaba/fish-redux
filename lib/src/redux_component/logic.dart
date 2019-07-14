@@ -1,10 +1,10 @@
 import 'package:flutter/widgets.dart' hide Action;
 
-import '../../fish_redux.dart';
 import '../redux/redux.dart';
 import 'basic.dart';
 import 'dependencies.dart';
 import 'helper.dart';
+import 'lifecycle.dart';
 
 /// Four parts
 /// 1. Reducer & ReducerFilter
@@ -39,6 +39,9 @@ abstract class Logic<T> implements AbstractLogic<T> {
         _effect = effect,
         _dependencies = dependencies,
         _key = key;
+
+  @override
+  Type get propertyType => T;
 
   /// if
   /// _resultCache['key'] = null;
@@ -80,6 +83,8 @@ abstract class Logic<T> implements AbstractLogic<T> {
       if (action.type is Lifecycle) {
         return true;
       }
+
+      return null;
     };
   }
 

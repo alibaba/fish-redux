@@ -1,4 +1,4 @@
-import '../redux/connector.dart';
+import '../redux/redux.dart';
 import 'op_mixin.dart';
 
 bool _listEquals(List<dynamic> list1, List<dynamic> list2) {

@@ -1,16 +1,12 @@
 import '../redux/redux.dart';
-import 'basic.dart';
-import 'lifecycle.dart';
-import 'logic.dart';
+import '../redux_component/redux_component.dart';
 
-class PrivateAction extends Action {
-  final Object target;
-  PrivateAction(Object type, {dynamic payload, this.target})
-      : super(type, payload: payload);
-
-  Action asAction() => Action(type, payload: payload);
-}
-
+/// usage
+/// class MyComponent extends Component<T> with PrivateReducerMixin<T> {
+///   MyComponent():super(
+///     ///
+///   );
+/// }
 mixin PrivateReducerMixin<T> on Logic<T> {
   @override
   Reducer<T> get protectedReducer {
@@ -39,4 +35,12 @@ mixin PrivateReducerMixin<T> on Logic<T> {
       return superDispatch(action);
     };
   }
+}
+
+class PrivateAction extends Action {
+  final Object target;
+  PrivateAction(Object type, {dynamic payload, this.target})
+      : super(type, payload: payload);
+
+  Action asAction() => Action(type, payload: payload);
 }

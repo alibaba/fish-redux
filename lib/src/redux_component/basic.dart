@@ -264,6 +264,8 @@ abstract class AbstractLogic<T> {
 
   /// Get a adapter-dependent
   Dependent<T> adapterDep();
+
+  Type get propertyType;
 }
 
 abstract class AbstractComponent<T> implements AbstractLogic<T> {

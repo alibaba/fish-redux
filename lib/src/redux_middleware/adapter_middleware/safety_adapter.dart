@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart' hide Action;
 
 import '../../redux/redux.dart';
 import '../../redux_component/redux_component.dart';
-import '../../utils/debug.dart';
+import '../../utils/utils.dart';
 
 /// type = {0, 1}
 AdapterMiddleware<T> safetyAdapter<T>({

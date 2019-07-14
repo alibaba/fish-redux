@@ -1,8 +1,7 @@
 import 'package:flutter/widgets.dart' hide Action;
 
 import '../redux/redux.dart';
-import '../redux_component/basic.dart';
-import '../redux_component/logic.dart';
+import '../redux_component/redux_component.dart';
 import '../utils/utils.dart';
 import 'recycle_context.dart';
 
@@ -59,12 +58,12 @@ class DynamicFlowAdapter<T> extends Logic<T> with RecycleContextMixin<T> {
               result.key(itemBean.data),
             ),
             () => result.createContext(
-                  recycleCtx.store,
-                  recycleCtx.context,
-                  _subGetter(() => connector.get(recycleCtx.state), index),
-                  bus: recycleCtx.bus,
-                  enhancer: recycleCtx.enhancer,
-                ),
+              recycleCtx.store,
+              recycleCtx.context,
+              _subGetter(() => connector.get(recycleCtx.state), index),
+              bus: recycleCtx.bus,
+              enhancer: recycleCtx.enhancer,
+            ),
           );
           adapters.add(result.buildAdapter(subCtx));
         } else if (result is AbstractComponent<Object>) {

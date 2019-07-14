@@ -1,6 +1,5 @@
 import '../redux/redux.dart';
-import '../redux_component/basic.dart';
-import '../redux_component/dependent.dart';
+import '../redux_component/redux_component.dart';
 
 mixin ConnOpMixin<T, P> on AbstractConnector<T, P> {
   Dependent<T> operator +(AbstractLogic<P> logic) =>

@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart' hide Action;
 
-import '../../fish_redux.dart';
 import '../redux/redux.dart';
 import 'basic.dart';
+import 'lifecycle.dart';
 
 mixin _ExtraMixin {
   Map<String, Object> _extra;

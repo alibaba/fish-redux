@@ -156,15 +156,17 @@ class _PageState<T, P> extends State<_PageWidget<T, P>> {
 
   @override
   Widget build(BuildContext context) {
-    return PageProvider(
-      store: _store,
-      extra: extra,
-      child: widget.page.buildComponent(
-        _store,
-        _store.getState,
-        bus: _pageBus,
-        enhancer: widget.page.enhancer,
-      ),
+    // return PageProvider(
+    //   store: _store,
+    //   extra: extra,
+    //   child:
+    // );
+
+    return widget.page.buildComponent(
+      _store,
+      _store.getState,
+      bus: _pageBus,
+      enhancer: widget.page.enhancer,
     );
   }
 

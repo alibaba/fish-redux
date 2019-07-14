@@ -1,3 +1,5 @@
+import 'package:flutter/scheduler.dart';
+
 import '../redux/redux.dart';
 
 enum Lifecycle {
@@ -9,11 +11,17 @@ enum Lifecycle {
 
   didUpdateWidget,
   deactivate,
-  dispose,
 
-  //adapter
+  /// willDispose
+  dispose,
+  didDisposed,
+
+  // adapter
   appear,
   disappear,
+
+  // app
+  didChangeAppLifecycleState,
 }
 
 class LifecycleCreator {
@@ -24,6 +32,8 @@ class LifecycleCreator {
   static Action reassemble() => const Action(Lifecycle.reassemble);
 
   static Action dispose() => const Action(Lifecycle.dispose);
+
+  static Action didDisposed() => const Action(Lifecycle.didDisposed);
 
   static Action didUpdateWidget() => const Action(Lifecycle.didUpdateWidget);
 
@@ -36,4 +46,7 @@ class LifecycleCreator {
 
   static Action disappear(int index) =>
       Action(Lifecycle.disappear, payload: index);
+
+  static Action didChangeAppLifecycleState(AppLifecycleState state) =>
+      Action(Lifecycle.didChangeAppLifecycleState, payload: state);
 }
