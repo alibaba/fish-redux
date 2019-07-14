@@ -14,7 +14,7 @@ enum Lifecycle {
 
   /// willDispose
   dispose,
-  didDisposed,
+  // didDisposed,
 
   // adapter
   appear,
@@ -33,7 +33,7 @@ class LifecycleCreator {
 
   static Action dispose() => const Action(Lifecycle.dispose);
 
-  static Action didDisposed() => const Action(Lifecycle.didDisposed);
+  // static Action didDisposed() => const Action(Lifecycle.didDisposed);
 
   static Action didUpdateWidget() => const Action(Lifecycle.didUpdateWidget);
 
