@@ -31,6 +31,6 @@ class _WidgetsBindingObserverStfState<T> extends ComponentState<T>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    mainCtx.dispatch(LifecycleCreator.didChangeAppLifecycleState(state));
+    ctx.dispatch(LifecycleCreator.didChangeAppLifecycleState(state));
   }
 }
