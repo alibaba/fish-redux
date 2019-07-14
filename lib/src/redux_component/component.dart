@@ -153,19 +153,21 @@ class ComponentWidget<T> extends StatefulWidget {
 }
 
 class ComponentState<T> extends State<ComponentWidget<T>> {
-  ComponentContext<T> mainCtx;
+  ComponentContext<T> _ctx;
+
+  ComponentContext<T> get ctx => _ctx;
 
   @mustCallSuper
   @override
-  Widget build(BuildContext context) => mainCtx.buildWidget();
+  Widget build(BuildContext context) => _ctx.buildWidget();
 
   @override
   @protected
   @mustCallSuper
   void reassemble() {
     super.reassemble();
-    mainCtx.reassemble();
-    mainCtx.onLifecycle(LifecycleCreator.reassemble());
+    _ctx.reassemble();
+    _ctx.onLifecycle(LifecycleCreator.reassemble());
   }
 
   @mustCallSuper
@@ -174,7 +176,7 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
     super.initState();
 
     /// init context
-    mainCtx = widget.component.createContext(
+    _ctx = widget.component.createContext(
       widget.store,
       context,
       () => widget.getter(),
@@ -188,38 +190,37 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
     );
 
     /// register store.subscribe
-    mainCtx
-        .registerOnDisposed(widget.store.subscribe(() => mainCtx.onNotify()));
+    _ctx.registerOnDisposed(widget.store.subscribe(() => _ctx.onNotify()));
 
-    mainCtx.onLifecycle(LifecycleCreator.initState());
+    _ctx.onLifecycle(LifecycleCreator.initState());
   }
 
   @mustCallSuper
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    mainCtx.onLifecycle(LifecycleCreator.didChangeDependencies());
+    _ctx.onLifecycle(LifecycleCreator.didChangeDependencies());
   }
 
   @mustCallSuper
   @override
   void deactivate() {
     super.deactivate();
-    mainCtx.onLifecycle(LifecycleCreator.deactivate());
+    _ctx.onLifecycle(LifecycleCreator.deactivate());
   }
 
   @mustCallSuper
   @override
   void didUpdateWidget(ComponentWidget<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    mainCtx.didUpdateWidget();
-    mainCtx.onLifecycle(LifecycleCreator.didUpdateWidget());
+    _ctx.didUpdateWidget();
+    _ctx.onLifecycle(LifecycleCreator.didUpdateWidget());
   }
 
   @mustCallSuper
   @override
   void dispose() {
-    mainCtx
+    _ctx
       ..onLifecycle(LifecycleCreator.dispose())
       ..dispose();
     super.dispose();
