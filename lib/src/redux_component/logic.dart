@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart' hide Action;
 
 import '../redux/redux.dart';
+import '../utils/utils.dart';
 import 'basic.dart';
 import 'dependencies.dart';
 import 'helper.dart';
@@ -42,6 +43,10 @@ abstract class Logic<T> implements AbstractLogic<T> {
 
   @override
   Type get propertyType => T;
+
+  bool isSuperTypeof<K>() => Tuple0<K>() is Tuple0<T>;
+
+  bool isTypeof<K>() => Tuple0<T>() is Tuple0<K>;
 
   /// if
   /// _resultCache['key'] = null;

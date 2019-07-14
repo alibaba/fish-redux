@@ -6,77 +6,67 @@ import 'global_store/store.dart';
 import 'todo_edit_page/page.dart';
 import 'todo_list_page/page.dart';
 
-//create global page helper
-// Page<T, dynamic> pageConfiguration<T extends GlobalBaseState>(
-//     Page<T, dynamic> page) {
-//   return page
-
-//         ///connect with app-store
-//         ..connectExtraStore(GlobalStore.store,
-//             (T pagestate, GlobalState appState) {
-//           return pagestate.themeColor == appState.themeColor
-//               ? pagestate
-//               : ((pagestate.clone())..themeColor = appState.themeColor);
-//         })
-
-//       ///updateMiddleware
-//       /// TODO
-//       // ..updateMiddleware(
-//       //   view: (List<ViewMiddleware<T>> viewMiddleware) {
-//       //     viewMiddleware.add(safetyView<T>());
-//       //   },
-//       //   adapter: (List<AdapterMiddleware<T>> adapterMiddleware) {
-//       //     adapterMiddleware.add(safetyAdapter<T>());
-//       //   },
-//       // )
-//       ;
-// }
-
+/// 创建应用的根Widget
+/// 1. 创建一个简单的路由，并注册页面
+/// 2. 对所需的页面进行和AppStore的连接
+/// 3. 对所需的页面进行AOP的增强
 Widget createApp() {
   final AbstractRoutes routes = PageRoutes(
     pages: <String, Page<Object, dynamic>>{
+      /// 注册TodoList主页面
       'todo_list': ToDoListPage(),
+
+      /// 注册Todo编辑页面
       'todo_edit': TodoEditPage(),
     },
     visitor: (String path, Page<Object, dynamic> page) {
-      /// XXX
+      /// 只有特定的范围的Page才需要建立和AppStore的连接关系
+      /// 满足Page<T> T 是GlobalBaseState的之类
       if (page.isTypeof<GlobalBaseState>()) {
-        page.connectExtraStore<GlobalState>(GlobalStore.store,
-            (Object pagestate, GlobalState appState) {
-          final GlobalBaseState p = pagestate;
-          if (p.themeColor == appState.themeColor) {
-            return pagestate;
-          } else {
-            if (pagestate is Cloneable) {
-              final Object copy = pagestate.clone();
-              final GlobalBaseState newState = copy;
-              newState.themeColor = appState.themeColor;
-              return newState;
+        /// 建立AppStore驱动PageStore的单项数据连接
+        /// 1. 参数1 AppStore
+        /// 2. 参数2 当 AppStore.state 变化时, PageStore.state 该如何变化
+        page.connectExtraStore<GlobalState>(
+          GlobalStore.store,
+          (Object pagestate, GlobalState appState) {
+            final GlobalBaseState p = pagestate;
+            if (p.themeColor != appState.themeColor) {
+              if (pagestate is Cloneable) {
+                final Object copy = pagestate.clone();
+                final GlobalBaseState newState = copy;
+                newState.themeColor = appState.themeColor;
+                return newState;
+              }
             }
-          }
-        });
+            return pagestate;
+          },
+        );
       }
 
+      /// AOP
+      /// 页面可以有一些私有的AOP的增强， 但往往会有一些AOP是整个应用下，所有页面都会有的。
+      /// 这些公共的通用AOP，通过遍历路由页面的形式统一加入。
       page.enhancer.append(
-        viewMiddleware: <ViewMiddleware<dynamic>>[safetyView<dynamic>()],
+        /// View AOP
+        viewMiddleware: <ViewMiddleware<dynamic>>[
+          safetyView<dynamic>(),
+        ],
+
+        /// Adapter AOP
         adapterMiddleware: <AdapterMiddleware<dynamic>>[
           safetyAdapter<dynamic>()
         ],
-        effectMiddleware: [],
-        middleware: <Middleware<dynamic>>[logMiddleware<dynamic>()],
-      );
 
-      // }
-      ///updateMiddleware
-      /// TODO
-      // ..updateMiddleware(
-      //   view: (List<ViewMiddleware<T>> viewMiddleware) {
-      //     viewMiddleware.add(safetyView<T>());
-      //   },
-      //   adapter: (List<AdapterMiddleware<T>> adapterMiddleware) {
-      //     adapterMiddleware.add(safetyAdapter<T>());
-      //   },
-      // )
+        /// Effect AOP
+        effectMiddleware: [
+          _pageAnalyticsMiddleware<dynamic>(),
+        ],
+
+        /// Store AOP
+        middleware: <Middleware<dynamic>>[
+          logMiddleware<dynamic>(tag: page.runtimeType.toString()),
+        ],
+      );
     },
   );
 
@@ -93,4 +83,19 @@ Widget createApp() {
       });
     },
   );
+}
+
+/// 简单的Effect AOP
+/// 只针对页面的生命周期进行打印
+EffectMiddleware<T> _pageAnalyticsMiddleware<T>({String tag = 'redux'}) {
+  return (AbstractLogic<dynamic> logic, Store<T> store) {
+    return (Effect<dynamic> effect) {
+      return (Action action, Context<dynamic> ctx) {
+        if (logic is Page<dynamic, dynamic> && action.type is Lifecycle) {
+          print('${logic.runtimeType} ${action.type.toString()} ');
+        }
+        return effect?.call(action, ctx);
+      };
+    };
+  };
 }
