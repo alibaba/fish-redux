@@ -134,6 +134,29 @@ abstract class LogicContext<T> extends ContextSys<T> with _ExtraMixin {
 
   @override
   void forceUpdate() => _forceUpdate?.call();
+
+  @override
+  void listen({
+    bool Function(T, T) isChanged,
+    @required void Function() onChange,
+  }) {
+    assert(onChange != null);
+    T oldState;
+    registerOnDisposed(
+      store.subscribe(
+        () => () {
+          final T newState = state;
+          final bool flag = isChanged == null
+              ? !identical(oldState, newState)
+              : isChanged(oldState, newState);
+          oldState = newState;
+          if (flag) {
+            onChange();
+          }
+        },
+      ),
+    );
+  }
 }
 
 class ComponentContext<T> extends LogicContext<T> implements ViewUpdater<T> {

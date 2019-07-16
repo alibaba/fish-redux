@@ -12,7 +12,7 @@ import 'basic.dart';
 ///
 ///   @override
 ///   void destruct(Context<Object> ctx) {
-///     // your destructor
+///     /// your destructor
 ///   }
 ///
 ///   factory ALocal.of(ExtraData ctx) =>
