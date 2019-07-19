@@ -2,40 +2,59 @@ import 'package:flutter/foundation.dart';
 
 import 'basic.dart';
 
-/// usage
-/// class ALocal extends LocalState<ALocal> {
-///   /// your fields
 ///
-///   ALocal(Context<Object> ctx) : super(ctx) {
-///     /// your constructor
-///   }
+/// Description:
+///
+/// LocalProps 所储存的 props 不参与 view 的刷新
+///
+///
+/// Define:
+///
+/// ```dart
+/// class ComponentLocalProps extends LocalProps<ComponentLocalProps> {
+///
+///   final controller = TextEditingController();
+///
+///   ComponentLocalProps(Context<Object> ctx) : super(ctx);
 ///
 ///   @override
-///   void destruct(Context<Object> ctx) {
-///     /// your destructor
-///   }
+///   void destruct(Context<Object> ctx) {}
 ///
-///   factory ALocal.of(ExtraData ctx) =>
-///       LocalState.provide<ALocal>((_) => ALocal(_)).of(ctx);
+///   factory ComponentLocalProps.of(ExtraData ctx) {
+///     return ComponentLocalProps.provide<ALocal>((_) => ComponentLocalProps(_)).of(ctx);
+///   }
 /// }
-abstract class LocalState<T extends LocalState<T>> {
-  LocalState(Context<Object> ctx) : assert(ctx != null);
+/// ```
+///
+/// Usage:
+///
+/// in View
+/// ```dart
+/// ComponentLocalProps.of(viewService).controller
+/// ```
+/// in effect
+/// ```dart
+/// ComponentLocalProps.of(context).controller
+/// ```
+///
+abstract class LocalProps<T extends LocalProps<T>> {
+  LocalProps(Context<Object> ctx) : assert(ctx != null);
   void destructor(Context<Object> ctx);
 
-  static _LocalStateProvider<T> provide<T extends LocalState<T>>(
+  static _LocalPropsProvider<T> provide<T extends LocalProps<T>>(
           T Function(Context<Object>) construct) =>
-      _LocalStateProvider<T>(
+      _LocalPropsProvider<T>(
         construct: construct,
         destruct: (T local, Context<Object> ctx) => local.destructor(ctx),
       );
 }
 
 @immutable
-class _LocalStateProvider<T> {
+class _LocalPropsProvider<T> {
   final T Function(Context<Object>) construct;
   final void Function(T, Context<Object>) destruct;
 
-  const _LocalStateProvider({@required this.construct, this.destruct})
+  const _LocalPropsProvider({@required this.construct, this.destruct})
       : assert(construct != null,
             'Please provide a constructor to create <T> instance.');
 
