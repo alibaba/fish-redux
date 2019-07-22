@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart' hide Action;
 
 import '../redux/redux.dart';
+import 'auto_dispose.dart';
 import 'basic.dart';
 import 'lifecycle.dart';
 
@@ -136,13 +137,13 @@ abstract class LogicContext<T> extends ContextSys<T> with _ExtraMixin {
   void forceUpdate() => _forceUpdate?.call();
 
   @override
-  void listen({
+  void Function() listen({
     bool Function(T, T) isChanged,
     @required void Function() onChange,
   }) {
     assert(onChange != null);
     T oldState;
-    registerOnDisposed(
+    final AutoDispose disposable = registerOnDisposed(
       store.subscribe(
         () => () {
           final T newState = state;
@@ -156,6 +157,8 @@ abstract class LogicContext<T> extends ContextSys<T> with _ExtraMixin {
         },
       ),
     );
+
+    return () => disposable?.dispose();
   }
 }
 
