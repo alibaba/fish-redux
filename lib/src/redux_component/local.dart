@@ -17,8 +17,7 @@ import 'basic.dart';
 ///   ComponentLocalProps(Context<Object> ctx) : super(ctx);
 ///
 ///   factory ComponentLocalProps.of(ExtraData ctx) {
-///     return LocalProps.provide<ComponentLocalProps>(
-///         (_) => ComponentLocalProps(_)).of(ctx);
+///     return LocalProps.provide((_) => ComponentLocalProps(_)).of(ctx);
 ///   }
 ///
 ///   @override
@@ -76,3 +75,14 @@ class _LocalPropsProvider<T> {
 
   String get _key => '\$ ${T.toString()}';
 }
+
+// class ComponentLocalProps extends LocalProps<ComponentLocalProps> {
+//   ComponentLocalProps(Context<Object> ctx) : super(ctx);
+
+//   factory ComponentLocalProps.of(ExtraData ctx) {
+//     return LocalProps.provide((_) => ComponentLocalProps(_)).of(ctx);
+//   }
+
+//   @override
+//   void destructor(Context<Object> ctx) {}
+// }
