@@ -5,25 +5,28 @@ import 'basic.dart';
 ///
 /// Description:
 ///
-/// LocalProps 所储存的 props 不参与 view 的刷新
+/// LocalProps的状态变化不会触发View的刷新
 ///
 ///
 /// Define:
 ///
 /// ```dart
 /// class ComponentLocalProps extends LocalProps<ComponentLocalProps> {
-///
-///   final controller = TextEditingController();
+///   final TextEditingController controller = TextEditingController();
 ///
 ///   ComponentLocalProps(Context<Object> ctx) : super(ctx);
 ///
-///   @override
-///   void destruct(Context<Object> ctx) {}
-///
 ///   factory ComponentLocalProps.of(ExtraData ctx) {
-///     return ComponentLocalProps.provide<ALocal>((_) => ComponentLocalProps(_)).of(ctx);
+///     return LocalProps.provide<ComponentLocalProps>(
+///         (_) => ComponentLocalProps(_)).of(ctx);
+///   }
+///
+///   @override
+///   void destructor(Context<Object> ctx) {
+///     controller.dispose();
 ///   }
 /// }
+///
 /// ```
 ///
 /// Usage:
