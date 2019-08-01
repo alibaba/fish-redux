@@ -60,7 +60,6 @@ dynamic _clone<T>(T state) {
 }
 
 /// Define a basic connector for mutable state.
-/// Define a basic connector for immutable state.
 ///     /// Example:
 ///     class State implments Cloneable<State>{
 ///       SubState sub;

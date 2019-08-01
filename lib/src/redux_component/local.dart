@@ -34,7 +34,7 @@ import 'basic.dart';
 /// ```
 /// in effect
 /// ```dart
-/// ComponentLocalProps.of(context).controller
+/// ComponentLocalProps.of(ctx).controller
 /// ```
 ///
 abstract class LocalProps<T extends LocalProps<T>> {
