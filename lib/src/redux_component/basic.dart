@@ -216,7 +216,10 @@ abstract class Context<T> extends AutoDispose implements ExtraData {
   void forceUpdate();
 
   /// listen on the changes of some parts of <T>.
-  void listen({bool Function(T, T) isChanged, void Function() onChange});
+  void Function() listen({
+    bool Function(T, T) isChanged,
+    void Function() onChange,
+  });
 }
 
 /// Seen in framework-component
