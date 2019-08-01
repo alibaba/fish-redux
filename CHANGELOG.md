@@ -94,3 +94,8 @@
 - fix PrivateReducerMixin bug #380 
 - add LocalState
 
+## [0.2.5]
+- add ctx.listen api
+- rename LocalState to LocalProps
+- correct some comments 
+
