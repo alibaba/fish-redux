@@ -69,7 +69,7 @@ mixin PrivateReducerMixin<T> on Logic<T> {
         action = PrivateAction(action.type,
             payload: action.payload, target: ctx.state);
       }
-      superDispatch(action);
+      return superDispatch(action);
     };
   }
 }
