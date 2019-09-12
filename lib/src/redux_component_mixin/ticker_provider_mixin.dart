@@ -10,9 +10,15 @@ import '../redux_component/redux_component.dart';
 /// }
 mixin TickerProviderMixin<T> on Component<T> {
   @override
-  _TickerProviderStfState<T> createState() =>
-      _TickerProviderStfState<T>();
+  _TickerProviderStfState<T> createState() => _TickerProviderStfState<T>();
 }
 
 class _TickerProviderStfState<T> extends ComponentState<T>
-    with TickerProviderStateMixin {}
+    with TickerProviderStateMixin {
+  /// fix TickerProviderStateMixin dispose bug
+  @override
+  void dispose() {
+    disposeCtx();
+    super.dispose();
+  }
+}
