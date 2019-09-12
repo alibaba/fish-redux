@@ -99,3 +99,9 @@
 - rename LocalState to LocalProps
 - correct some comments 
 
+## [0.2.6]
+- add TickerProviderMixin
+- let dispatch return whatever result in effect. #462 
+- fix Reselect's _listEquals bug #457 
+- fix SingleTickerProviderMixin & TickerProviderMixin’s dispose bug #461 
+
