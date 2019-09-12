@@ -15,4 +15,11 @@ mixin SingleTickerProviderMixin<T> on Component<T> {
 }
 
 class _SingleTickerProviderStfState<T> extends ComponentState<T>
-    with SingleTickerProviderStateMixin {}
+    with SingleTickerProviderStateMixin {
+  /// fix SingleTickerProviderStateMixin dispose bug
+  @override
+  void dispose() {
+    disposeCtx();
+    super.dispose();
+  }
+}

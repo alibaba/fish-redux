@@ -213,11 +213,18 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
   }
 
   @mustCallSuper
+  void disposeCtx() {
+    if (!_ctx.isDisposed) {
+      _ctx
+        ..onLifecycle(LifecycleCreator.dispose())
+        ..dispose();
+    }
+  }
+
+  @mustCallSuper
   @override
   void dispose() {
-    _ctx
-      ..onLifecycle(LifecycleCreator.dispose())
-      ..dispose();
+    disposeCtx();
     super.dispose();
 
     /// TODO
