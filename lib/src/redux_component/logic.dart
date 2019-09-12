@@ -4,8 +4,7 @@ import '../redux/redux.dart';
 import '../utils/utils.dart';
 import 'basic.dart';
 import 'dependencies.dart';
-import 'helper.dart';
-import 'lifecycle.dart';
+import 'helper.dart' as helper;
 
 /// Four parts
 /// 1. Reducer & ReducerFilter
@@ -57,7 +56,7 @@ abstract class Logic<T> implements AbstractLogic<T> {
       : (_resultCache[key] = getter());
 
   @override
-  Reducer<T> get reducer => filterReducer(
+  Reducer<T> get reducer => helper.filterReducer(
       combineReducers<T>(
           <Reducer<T>>[protectedReducer, protectedDependencies?.reducer]),
       protectedFilter);
@@ -68,49 +67,29 @@ abstract class Logic<T> implements AbstractLogic<T> {
       state;
 
   @override
-  Dispatch createOnEffect(ContextSys<T> ctx, Enhancer<Object> enhancer) {
-    final Effect<T> effect = enhancer.effectEnhance(
-      protectedEffect,
-      this,
-      ctx.store,
-    );
+  Dispatch createEffectDispatch(ContextSys<T> ctx, Enhancer<Object> enhancer) {
+    return helper.createEffectDispatch<T>(
 
-    final Dispatch effectDispatch =
-        effect != null ? (Action action) => effect(action, ctx) : null;
-
-    return (Action action) {
-      final Object result = effectDispatch?.call(action);
-      if (result != null && result != false) {
-        return result;
-      }
-
-      //skip-lifecycle-actions
-      if (action.type is Lifecycle) {
-        return true;
-      }
-
-      return null;
-    };
+        /// enhance userEffect
+        enhancer.effectEnhance(
+          protectedEffect,
+          this,
+          ctx.store,
+        ),
+        ctx);
   }
 
   @override
-  Dispatch createAfterEffect(ContextSys<T> ctx, Enhancer<Object> enhancer) =>
-      (Action action) {
-        ctx.broadcastEffect(action);
-        ctx.store.dispatch(action);
-      };
+  Dispatch createNextDispatch(ContextSys<T> ctx, Enhancer<Object> enhancer) =>
+      helper.createNextDispatch<T>(ctx);
 
   @override
-  Dispatch createDispatch(Dispatch onEffect, Dispatch next, Context<T> ctx) =>
-      (Action action) {
-        final Object result = onEffect?.call(action);
-        if (result != null && result != false) {
-          return result;
-        }
-
-        next(action);
-        return null;
-      };
+  Dispatch createDispatch(
+    Dispatch effectDispatch,
+    Dispatch nextDispatch,
+    Context<T> ctx,
+  ) =>
+      helper.createDispatch<T>(effectDispatch, nextDispatch, ctx);
 
   @override
   Object key(T state) => _key?.call(state) ?? ValueKey<Type>(runtimeType);

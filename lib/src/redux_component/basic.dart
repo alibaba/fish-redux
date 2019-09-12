@@ -275,16 +275,16 @@ abstract class AbstractLogic<T> {
   Object onReducer(Object state, Action action);
 
   /// To create each instance's side-effect-action-handler
-  Dispatch createOnEffect(ContextSys<T> ctx, Enhancer<Object> enhancer);
+  Dispatch createEffectDispatch(ContextSys<T> ctx, Enhancer<Object> enhancer);
 
   /// To create each instance's side-effect-action-handler
-  Dispatch createAfterEffect(ContextSys<T> ctx, Enhancer<Object> enhancer);
+  Dispatch createNextDispatch(ContextSys<T> ctx, Enhancer<Object> enhancer);
 
   /// To create each instance's dispatch
   /// Dispatch is the most important api for users which is provided by framework
   Dispatch createDispatch(
-    Dispatch onEffect,
-    Dispatch next,
+    Dispatch effectDispatch,
+    Dispatch nextDispatch,
     ContextSys<T> ctx,
   );
 

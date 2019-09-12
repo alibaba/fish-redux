@@ -27,7 +27,7 @@ abstract class LogicContext<T> extends ContextSys<T> with _ExtraMixin {
 
   BuildContext _buildContext;
   Dispatch _dispatch;
-  Dispatch _onEffect;
+  Dispatch _effectDispatch;
 
   LogicContext({
     @required this.logic,
@@ -45,12 +45,12 @@ abstract class LogicContext<T> extends ContextSys<T> with _ExtraMixin {
         assert(bus != null && enhancer != null),
         _buildContext = buildContext {
     ///
-    _onEffect = logic.createOnEffect(this, enhancer);
+    _effectDispatch = logic.createEffectDispatch(this, enhancer);
 
     /// create Dispatch
     _dispatch = logic.createDispatch(
-      _onEffect,
-      logic.createAfterEffect(
+      _effectDispatch,
+      logic.createNextDispatch(
         this,
         enhancer,
       ),
@@ -58,7 +58,7 @@ abstract class LogicContext<T> extends ContextSys<T> with _ExtraMixin {
     );
 
     /// Register inter-component broadcast
-    registerOnDisposed(bus.registerReceiver(_onEffect));
+    registerOnDisposed(bus.registerReceiver(_effectDispatch));
   }
 
   @override
@@ -119,7 +119,7 @@ abstract class LogicContext<T> extends ContextSys<T> with _ExtraMixin {
 
   @override
   void broadcastEffect(Action action, {bool excluded}) =>
-      bus.dispatch(action, excluded: excluded == true ? _onEffect : null);
+      bus.dispatch(action, excluded: excluded == true ? _effectDispatch : null);
 
   @override
   void broadcast(Action action) => bus.broadcast(action);
@@ -146,15 +146,15 @@ abstract class LogicContext<T> extends ContextSys<T> with _ExtraMixin {
     final AutoDispose disposable = registerOnDisposed(
       store.subscribe(
         () => () {
-          final T newState = state;
-          final bool flag = isChanged == null
-              ? !identical(oldState, newState)
-              : isChanged(oldState, newState);
-          oldState = newState;
-          if (flag) {
-            onChange();
-          }
-        },
+              final T newState = state;
+              final bool flag = isChanged == null
+                  ? !identical(oldState, newState)
+                  : isChanged(oldState, newState);
+              oldState = newState;
+              if (flag) {
+                onChange();
+              }
+            },
       ),
     );
 
