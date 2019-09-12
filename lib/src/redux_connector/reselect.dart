@@ -15,9 +15,10 @@ bool _listEquals(List<dynamic> list1, List<dynamic> list2) {
   for (int i = 0; i < length; i++) {
     final dynamic e1 = list1[i], e2 = list2[i];
     if (e1 != e2) {
-      if (e1 is List && e2 is List) {
-        /// e1.runtimeType == e2?.runtimeType
-        return _listEquals(e1, e2);
+      if (e1 is List && e1.runtimeType == e2?.runtimeType) {
+        if (!_listEquals(e1, e2)) {
+          return false;
+        }
       }
       return false;
     }
