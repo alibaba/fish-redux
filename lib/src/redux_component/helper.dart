@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart' hide Action;
 import '../redux/basic.dart';
 import '../utils/utils.dart';
 import 'basic.dart';
+import 'lifecycle.dart';
 
 AdapterBuilder<T> asAdapter<T>(ViewBuilder<T> view) {
   return (T unstableState, Dispatch dispatch, ViewService service) {
@@ -51,23 +52,67 @@ Reducer<T> filterReducer<T>(Reducer<T> reducer, ReducerFilter<T> filter) {
         };
 }
 
+const Object _SUB_EFFECT_RETURN_NULL = Object();
+
 typedef SubEffect<T> = FutureOr<void> Function(Action action, Context<T> ctx);
 
 /// for action.type which override it's == operator
+/// return [UserEffecr]
 Effect<T> combineEffects<T>(Map<Object, SubEffect<T>> map) =>
     (map == null || map.isEmpty)
         ? null
         : (Action action, Context<T> ctx) {
             final SubEffect<T> subEffect = map.entries
                 .firstWhere(
-                    (MapEntry<Object, SubEffect<T>> entry) =>
-                        action.type == entry.key,
-                    orElse: () => null)
+                  (MapEntry<Object, SubEffect<T>> entry) =>
+                      action.type == entry.key,
+                  orElse: () => null,
+                )
                 ?.value;
 
-            /// false
-            return subEffect?.call(action, ctx) ?? subEffect != null;
+            if (subEffect != null) {
+              return subEffect.call(action, ctx) ?? _SUB_EFFECT_RETURN_NULL;
+            }
+
+            //skip-lifecycle-actions
+            if (action.type is Lifecycle) {
+              return _SUB_EFFECT_RETURN_NULL;
+            }
+
+            /// no subEffect
+            return null;
           };
+
+/// return [EffectDispatch]
+Dispatch createEffectDispatch<T>(Effect<T> userEffect, Context<T> ctx) {
+  return (Action action) {
+    final Object result = userEffect?.call(action, ctx);
+
+    //skip-lifecycle-actions
+    if (action.type is Lifecycle && (result == null || result == false)) {
+      return _SUB_EFFECT_RETURN_NULL;
+    }
+
+    return result;
+  };
+}
+
+/// return [NextDispatch]
+Dispatch createNextDispatch<T>(ContextSys<T> ctx) => (Action action) {
+      ctx.broadcastEffect(action);
+      ctx.store.dispatch(action);
+    };
+
+/// return [Dispatch]
+Dispatch createDispatch<T>(Dispatch onEffect, Dispatch next, Context<T> ctx) =>
+    (Action action) {
+      final Object result = onEffect?.call(action);
+      if (result == null || result == false) {
+        next(action);
+      }
+
+      return result == _SUB_EFFECT_RETURN_NULL ? null : result;
+    };
 
 ViewMiddleware<T> mergeViewMiddleware<T>(List<ViewMiddleware<T>> middleware) {
   return Collections.reduce<ViewMiddleware<T>>(middleware,
