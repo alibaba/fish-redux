@@ -39,7 +39,7 @@ abstract class ViewUpdater<T> {
   void didUpdateWidget();
   void onNotify();
   void forceUpdate();
-  void reassemble();
+  void clearCache();
 }
 
 /// A little different with Dispatch (with if it is interrupted).

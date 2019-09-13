@@ -244,7 +244,7 @@ class ComponentContext<T> extends LogicContext<T> implements ViewUpdater<T> {
   }
 
   @override
-  void reassemble() {
+  void clearCache() {
     _widgetCache = null;
   }
 

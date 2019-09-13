@@ -17,10 +17,12 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
   final ViewBuilder<T> _view;
   final ShouldUpdate<T> _shouldUpdate;
   final WidgetWrapper _wrapper;
+  final bool _clearOnDependenciesChanged;
 
   ViewBuilder<T> get protectedView => _view;
   ShouldUpdate<T> get protectedShouldUpdate => _shouldUpdate;
   WidgetWrapper get protectedWrapper => _wrapper;
+  bool get protectedClearOnDependenciesChanged => _clearOnDependenciesChanged;
 
   Component({
     @required ViewBuilder<T> view,
@@ -31,10 +33,12 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
     ShouldUpdate<T> shouldUpdate,
     WidgetWrapper wrapper,
     Key Function(T) key,
+    bool clearOnDependenciesChanged = false,
   })  : assert(view != null),
         _view = view,
         _wrapper = wrapper ?? _wrapperByDefault,
         _shouldUpdate = shouldUpdate ?? updateByDefault<T>(),
+        _clearOnDependenciesChanged = clearOnDependenciesChanged,
         super(
           reducer: reducer,
           filter: filter,
@@ -161,7 +165,7 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
   @mustCallSuper
   void reassemble() {
     super.reassemble();
-    _ctx.reassemble();
+    _ctx.clearCache();
     _ctx.onLifecycle(LifecycleCreator.reassemble());
   }
 
@@ -194,6 +198,11 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
+    if (widget.component.protectedClearOnDependenciesChanged != false) {
+      _ctx.clearCache();
+    }
+
     _ctx.onLifecycle(LifecycleCreator.didChangeDependencies());
   }
 
