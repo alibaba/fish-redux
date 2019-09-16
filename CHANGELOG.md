@@ -104,4 +104,5 @@
 - let dispatch return whatever result in effect. #462 
 - fix Reselect's _listEquals bug #457 
 - fix SingleTickerProviderMixin & TickerProviderMixin’s dispose bug #461 
+- add ClearOnDependenciesChanged 
 
