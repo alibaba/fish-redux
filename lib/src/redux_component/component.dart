@@ -235,10 +235,5 @@ class ComponentState<T> extends State<ComponentWidget<T>> {
   void dispose() {
     disposeCtx();
     super.dispose();
-
-    /// TODO
-    // mainCtx
-    //   ..onLifecycle(LifecycleCreator.didDisposed())
-    //   ..dispose();
   }
 }
