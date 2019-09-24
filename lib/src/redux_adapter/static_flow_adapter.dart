@@ -16,7 +16,13 @@ class StaticFlowAdapter<T> extends Logic<T>
     Reducer<T> reducer,
     Effect<T> effect,
     ReducerFilter<T> filter,
-    Object Function(T) key,
+
+    /// implement [StateKey] in T instead of using key in Logic.
+    /// class T implements StateKey {
+    ///   Object _key = UniqueKey();
+    ///   Object key() => _key;
+    /// }
+    @deprecated Object Function(T) key,
   })  : assert(slots != null),
         _slots = Collections.compact(slots),
         super(
@@ -31,6 +37,7 @@ class StaticFlowAdapter<T> extends Logic<T>
           effect: effect,
           filter: filter,
           dependencies: null,
+          // ignore:deprecated_member_use_from_same_package
           key: key,
         );
 

@@ -33,12 +33,25 @@ abstract class Logic<T> implements AbstractLogic<T> {
     Dependencies<T> dependencies,
     ReducerFilter<T> filter,
     Effect<T> effect,
-    Object Function(T state) key,
+
+    /// implement [StateKey] in T instead of using key in Logic.
+    /// class T implements StateKey {
+    ///   Object _key = UniqueKey();
+    ///   Object key() => _key;
+    /// }
+    @deprecated Object Function(T state) key,
   })  : _reducer = reducer,
         _filter = filter,
         _effect = effect,
         _dependencies = dependencies,
-        _key = key;
+        // ignore:deprecated_member_use_from_same_package
+        assert(isAssignFrom<T, StateKey>() == false || key == null,
+            'Implements [StateKey] in T instead of using key in Logic.'),
+        _key = isAssignFrom<T, StateKey>()
+            // ignore:avoid_as
+            ? ((T state) => (state as StateKey).key())
+            // ignore:deprecated_member_use_from_same_package
+            : key;
 
   @override
   Type get propertyType => T;
@@ -46,6 +59,8 @@ abstract class Logic<T> implements AbstractLogic<T> {
   bool isSuperTypeof<K>() => Tuple0<K>() is Tuple0<T>;
 
   bool isTypeof<K>() => Tuple0<T>() is Tuple0<K>;
+
+  static bool isAssignFrom<P, Q>() => Tuple0<P>() is Tuple0<Q>;
 
   /// if
   /// _resultCache['key'] = null;

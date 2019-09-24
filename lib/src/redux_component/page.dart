@@ -34,7 +34,13 @@ abstract class Page<T, P> extends Component<T> {
     Dependencies<T> dependencies,
     ShouldUpdate<T> shouldUpdate,
     WidgetWrapper wrapper,
-    Key Function(T) key,
+
+    /// implement [StateKey] in T instead of using key in Logic.
+    /// class T implements StateKey {
+    ///   Object _key = UniqueKey();
+    ///   Object key() => _key;
+    /// }
+    @deprecated Key Function(T) key,
     List<Middleware<T>> middleware,
     List<ViewMiddleware<T>> viewMiddleware,
     List<EffectMiddleware<T>> effectMiddleware,
@@ -55,6 +61,7 @@ abstract class Page<T, P> extends Component<T> {
           effect: effect,
           shouldUpdate: shouldUpdate,
           wrapper: wrapper,
+          // ignore:deprecated_member_use_from_same_package
           key: key,
         );
 

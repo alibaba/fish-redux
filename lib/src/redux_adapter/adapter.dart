@@ -15,7 +15,7 @@ abstract class Adapter<T> extends Logic<T> implements AbstractAdapter<T> {
     ReducerFilter<T> filter,
     Effect<T> effect,
     Dependencies<T> dependencies,
-    Object Function(T) key,
+    @deprecated Object Function(T) key,
   })  : assert(adapter != null),
         assert(dependencies?.adapter == null,
             'Unexpected dependencies.list for Adapter.'),
@@ -25,6 +25,7 @@ abstract class Adapter<T> extends Logic<T> implements AbstractAdapter<T> {
           filter: filter,
           effect: effect,
           dependencies: dependencies,
+          // ignore:deprecated_member_use_from_same_package
           key: key,
         );
 

@@ -32,7 +32,13 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
     Dependencies<T> dependencies,
     ShouldUpdate<T> shouldUpdate,
     WidgetWrapper wrapper,
-    Key Function(T) key,
+
+    /// implement [StateKey] in T instead of using key in Logic.
+    /// class T implements StateKey {
+    ///   Object _key = UniqueKey();
+    ///   Object key() => _key;
+    /// }
+    @deprecated Key Function(T) key,
     bool clearOnDependenciesChanged = false,
   })  : assert(view != null),
         _view = view,
@@ -44,6 +50,7 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
           filter: filter,
           effect: effect,
           dependencies: dependencies,
+          // ignore:deprecated_member_use_from_same_package
           key: key,
         );
 

@@ -6,12 +6,12 @@ import '../utils/utils.dart';
 import 'recycle_context.dart';
 
 class ItemBean {
-  String type;
-  Object data;
+  final String type;
+  final Object data;
 
-  ItemBean(this.type, this.data);
+  const ItemBean(this.type, this.data);
 
-  ItemBean clone() => ItemBean(type, data);
+  ItemBean clone({String type, Object data}) => ItemBean(type, data);
 }
 
 /// template is a map, driven by array
@@ -25,12 +25,19 @@ class DynamicFlowAdapter<T> extends Logic<T> with RecycleContextMixin<T> {
     ReducerFilter<T> filter,
     Reducer<T> reducer,
     Effect<T> effect,
-    Object Function(T) key,
+
+    /// implement [StateKey] in T instead of using key in Logic.
+    /// class T implements StateKey {
+    ///   Object _key = UniqueKey();
+    ///   Object key() => _key;
+    /// }
+    @deprecated Object Function(T) key,
   }) : super(
           reducer: _dynamicReducer(reducer, pool, connector),
           effect: effect,
           filter: filter,
           dependencies: null,
+          // ignore:deprecated_member_use_from_same_package
           key: key,
         );
 
@@ -100,7 +107,7 @@ Reducer<T> _dynamicReducer<T>(
         final Object newData = result.onReducer(itemBean.data, action);
         if (newData != itemBean.data) {
           copy ??= state.toList();
-          copy[i] = itemBean.clone()..data = newData;
+          copy[i] = itemBean.clone(data: newData);
         }
       }
     }
@@ -121,39 +128,35 @@ Reducer<T> _dynamicReducer<T>(
 /// frame. in this time the sub component will use cache state.
 Get<Object> _subGetter(Get<List<ItemBean>> getter, int index) {
   final List<ItemBean> curState = getter();
-  final Object subCache = curState[index].data;
+  ItemBean cacheItem = curState[index];
+
   return () {
     final List<ItemBean> newState = getter();
 
     /// Either all sub-components use cache or not.
-    if (_isSimilar(curState, newState)) {
-      return newState[index].data;
-    } else {
-      return subCache;
+    if (newState != null && newState.length > index) {
+      final ItemBean newItem = newState[index];
+      if (_couldReuse(cacheItem, newItem)) {
+        cacheItem = newItem;
+      }
     }
+
+    return cacheItem.data;
   };
 }
 
-/// Judge [oldList] and [newList] is similar
-///
-/// if true: means the list size and every itemBean type & data.runtimeType
-/// is equal.
-bool _isSimilar(
-  List<ItemBean> oldList,
-  List<ItemBean> newList,
-) {
-  if (oldList != newList &&
-      oldList?.length == newList.length &&
-      Collections.isNotEmpty(newList)) {
-    bool isEvery = true;
-    for (int i = 0; i < newList.length; i++) {
-      if (oldList[i].type != newList[i].type ||
-          oldList[i].data.runtimeType != newList[i].data.runtimeType) {
-        isEvery = false;
-        break;
-      }
-    }
-    return isEvery;
+bool _couldReuse(ItemBean beanA, ItemBean beanB) {
+  if (beanA.type != beanB.type) {
+    return false;
   }
-  return false;
+
+  final Object dataA = beanA.data;
+  final Object dataB = beanB.data;
+  if (dataA.runtimeType != dataB.runtimeType) {
+    return false;
+  }
+
+  final Object keyA = dataA is StateKey ? dataA.key() : null;
+  final Object keyB = dataB is StateKey ? dataB.key() : null;
+  return keyA == keyB;
 }
