@@ -327,7 +327,17 @@ abstract class AbstractAdapter<T> implements AbstractLogic<T> {
 /// When a reducer is slow to handle an action, maybe we should use ReducerFilter to improve the performance.
 typedef ReducerFilter<T> = bool Function(T state, Action action);
 
-///
+/// implement [StateKey] in T .
+/// class T implements StateKey {
+///   Object _key = UniqueKey();
+///   Object key() => _key;
+/// }
+/// see [https://github.com/alibaba/fish-redux/issues/461]
+abstract class StateKey {
+  Object key();
+}
+
+/// Define a DispatchBus
 abstract class DispatchBus {
   void attach(DispatchBus parent);
 
