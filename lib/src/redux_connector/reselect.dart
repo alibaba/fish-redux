@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart';
+
 import '../redux/redux.dart';
 import 'op_mixin.dart';
 
@@ -158,4 +160,27 @@ abstract class Reselect<T, P> extends _BasicReselect<T, P> {
 
   @override
   P reduceSubs(List<dynamic> list) => Function.apply(computed, list);
+}
+
+/// issue [https://github.com/alibaba/fish-redux/issues/482]
+mixin ReselectMixin<T, P> on MutableConn<T, P> {
+  List<dynamic> _cachedFactors;
+  P _cachedResult;
+  bool _hasBeenCalled = false;
+
+  P computed(T state);
+
+  List<dynamic> factors(T state);
+
+  @mustCallSuper
+  @override
+  P get(T state) {
+    final List<dynamic> newFactors = factors(state);
+    if (!_hasBeenCalled || !_listEquals(newFactors, _cachedFactors)) {
+      _cachedFactors = newFactors.toList(growable: false);
+      _cachedResult = computed(state);
+      _hasBeenCalled = true;
+    }
+    return _cachedResult;
+  }
 }
