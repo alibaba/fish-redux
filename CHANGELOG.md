@@ -106,3 +106,7 @@
 - fix SingleTickerProviderMixin & TickerProviderMixin’s dispose bug #461 
 - add ClearOnDependenciesChanged 
 
+## [0.2.7]
+- add StateKey #461
+- reselect optimization #482
+
