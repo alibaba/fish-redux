@@ -44,7 +44,7 @@ abstract class ViewUpdater<T> {
 
 /// A little different with Dispatch (with if it is interrupted).
 /// bool for sync-functions, interrupted if true
-/// Futur<void> for async-functions, should always be interrupted.
+/// Future<void> for async-functions, should always be interrupted.
 // typedef OnAction = Dispatch;
 
 /// Predicate if a component should be updated when the store is changed.
@@ -52,7 +52,7 @@ typedef ShouldUpdate<T> = bool Function(T old, T now);
 
 /// Interrupt if not null not false
 /// bool for sync-functions, interrupted if true
-/// Futur<void> for async-functions, should always be interrupted.
+/// Future<void> for async-functions, should always be interrupted.
 typedef Effect<T> = dynamic Function(Action action, Context<T> ctx);
 
 /// AOP on view
