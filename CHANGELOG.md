@@ -111,5 +111,5 @@
 - reselect optimization #482
 
 ## [0.2.8]
-- add StateKey #461
+- fix item-bean clone bug #493
 
