@@ -11,7 +11,8 @@ class ItemBean {
 
   const ItemBean(this.type, this.data);
 
-  ItemBean clone({String type, Object data}) => ItemBean(type, data);
+  ItemBean clone({String type, Object data}) =>
+      ItemBean(type ?? this.type, data ?? this.data);
 }
 
 /// template is a map, driven by array
