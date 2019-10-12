@@ -26,7 +26,8 @@ Widget createApp() {
         /// 建立 AppStore 驱动 PageStore 的单向数据连接
         /// 1. 参数1 AppStore
         /// 2. 参数2 当 AppStore.state 变化时, PageStore.state 该如何变化
-        page.connectExtraStore<GlobalState>(GlobalStore.store, (Object pagestate, GlobalState appState) {
+        page.connectExtraStore<GlobalState>(GlobalStore.store,
+            (Object pagestate, GlobalState appState) {
           final GlobalBaseState p = pagestate;
           if (p.themeColor != appState.themeColor) {
             if (pagestate is Cloneable) {
@@ -55,7 +56,7 @@ Widget createApp() {
         ],
 
         /// Effect AOP
-        effectMiddleware: [
+        effectMiddleware: <EffectMiddleware<dynamic>>[
           _pageAnalyticsMiddleware<dynamic>(),
         ],
 

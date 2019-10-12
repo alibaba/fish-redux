@@ -1,18 +1,8 @@
 import 'package:fish_redux/fish_redux.dart';
 
-enum ToDoEditAction { update, onDone, onChangeTheme }
+enum ToDoEditAction { onDone, onChangeTheme }
 
 class ToDoEditActionCreator {
-  static Action update(String name, String desc) {
-    return Action(
-      ToDoEditAction.update,
-      payload: <String, String>{
-        'name': name,
-        'desc': desc,
-      },
-    );
-  }
-
   static Action onDone() {
     return const Action(ToDoEditAction.onDone);
   }
