@@ -15,9 +15,23 @@ class ToDoListAdapter extends DynamicFlowAdapter<PageState> {
         );
 }
 
-class _ToDoListConnector extends ConnOp<PageState, List<ItemBean>> {
+class _ToDoListConnector extends ConnOp<PageState, List<ItemBean>>
+
+    /// [https://github.com/alibaba/fish-redux/issues/482] #482
+    with
+        ReselectMixin<PageState, List<ItemBean>> {
   @override
-  List<ItemBean> get(PageState state) {
+  void set(PageState state, List<ItemBean> toDos) {
+    if (toDos?.isNotEmpty == true) {
+      state.toDos = List<ToDoState>.from(
+          toDos.map<ToDoState>((ItemBean bean) => bean.data).toList());
+    } else {
+      state.toDos = <ToDoState>[];
+    }
+  }
+
+  @override
+  List<ItemBean> computed(PageState state) {
     if (state.toDos?.isNotEmpty == true) {
       return state.toDos
           .map<ItemBean>((ToDoState data) => ItemBean('toDo', data))
@@ -27,13 +41,9 @@ class _ToDoListConnector extends ConnOp<PageState, List<ItemBean>> {
     }
   }
 
+  /// watched factors
   @override
-  void set(PageState state, List<ItemBean> toDos) {
-    if (toDos?.isNotEmpty == true) {
-      state.toDos = List<ToDoState>.from(
-          toDos.map<ToDoState>((ItemBean bean) => bean.data).toList());
-    } else {
-      state.toDos = <ToDoState>[];
-    }
+  List<dynamic> factors(PageState state) {
+    return <dynamic>[state.toDos];
   }
 }
