@@ -9,29 +9,19 @@ import 'state.dart';
 
 Effect<TodoEditState> buildEffect() {
   return combineEffects(<Object, Effect<TodoEditState>>{
-    Lifecycle.initState: _init,
     ToDoEditAction.onDone: _onDone,
     ToDoEditAction.onChangeTheme: _onChangeTheme,
   });
 }
 
-void _init(Action action, Context<TodoEditState> ctx) {
-  ctx.state.nameEditController.addListener(() {
-    ctx.dispatch(
-        ToDoEditActionCreator.update(ctx.state.nameEditController.text, null));
-  });
-
-  ctx.state.descEditController.addListener(() {
-    ctx.dispatch(
-        ToDoEditActionCreator.update(null, ctx.state.descEditController.text));
-  });
-}
-
 void _onDone(Action action, Context<TodoEditState> ctx) {
-  Navigator.of(ctx.context).pop<ToDoState>(ctx.state.toDo);
+  Navigator.of(ctx.context).pop<ToDoState>(
+    ctx.state.toDo.clone()
+      ..desc = ctx.state.descEditController.text
+      ..title = ctx.state.nameEditController.text,
+  );
 }
 
 void _onChangeTheme(Action action, Context<TodoEditState> ctx) {
-  //change global data
   GlobalStore.store.dispatch(GlobalActionCreator.onchangeThemeColor());
 }
