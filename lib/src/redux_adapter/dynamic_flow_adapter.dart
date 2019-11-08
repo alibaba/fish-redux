@@ -16,6 +16,9 @@ class ItemBean {
 }
 
 /// template is a map, driven by array
+/// Use [SourceFlowAdapter] instead of [DynamicFlowAdapter]
+/// see in example
+@deprecated
 class DynamicFlowAdapter<T> extends Logic<T> with RecycleContextMixin<T> {
   final Map<String, AbstractLogic<Object>> pool;
   final AbstractConnector<T, List<ItemBean>> connector;
