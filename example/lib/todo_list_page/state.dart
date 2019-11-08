@@ -5,7 +5,8 @@ import '../global_store/state.dart';
 import 'report_component/component.dart';
 import 'todo_component/component.dart';
 
-class PageState implements GlobalBaseState, Cloneable<PageState> {
+class PageState extends MutableSource
+    implements GlobalBaseState, Cloneable<PageState> {
   List<ToDoState> toDos;
 
   @override
@@ -17,6 +18,18 @@ class PageState implements GlobalBaseState, Cloneable<PageState> {
       ..toDos = toDos
       ..themeColor = themeColor;
   }
+
+  @override
+  Object getData(int index) => toDos[index];
+
+  @override
+  String getType(int index) => 'toDo';
+
+  @override
+  int get itemCount => toDos?.length ?? 0;
+
+  @override
+  void setData(int index, Object data) => toDos[index] = data;
 }
 
 PageState initState(Map<String, dynamic> args) {

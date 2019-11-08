@@ -66,12 +66,12 @@ class DynamicFlowAdapter<T> extends Logic<T> with RecycleContextMixin<T> {
               result.key(itemBean.data),
             ),
             () => result.createContext(
-                  recycleCtx.store,
-                  recycleCtx.context,
-                  _subGetter(() => connector.get(recycleCtx.state), index),
-                  bus: recycleCtx.bus,
-                  enhancer: recycleCtx.enhancer,
-                ),
+              recycleCtx.store,
+              recycleCtx.context,
+              _subGetter(() => connector.get(recycleCtx.state), index),
+              bus: recycleCtx.bus,
+              enhancer: recycleCtx.enhancer,
+            ),
           );
           adapters.add(result.buildAdapter(subCtx));
         } else if (result is AbstractComponent<Object>) {
