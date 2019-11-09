@@ -9,22 +9,22 @@ import 'recycle_context.dart';
 abstract class AdapterSource {
   int get itemCount;
 
-  String getType(int index);
+  String getItemType(int index);
 
-  Object getData(int index);
+  Object getItemData(int index);
 
-  AdapterSource update(int index, Object data, bool isStateCopied);
+  AdapterSource updateItemData(int index, Object data, bool isStateCopied);
 }
 
 abstract class MutableSource extends AdapterSource {
   @mustCallSuper
   @override
-  MutableSource update(int index, Object data, bool isStateCopied) {
+  MutableSource updateItemData(int index, Object data, bool isStateCopied) {
     final MutableSource result = isStateCopied ? this : clone();
-    return result..setData(index, data);
+    return result..setItemData(index, data);
   }
 
-  void setData(int index, Object data);
+  void setItemData(int index, Object data);
 
   MutableSource clone();
 }
@@ -32,10 +32,10 @@ abstract class MutableSource extends AdapterSource {
 abstract class ImmutableSource extends AdapterSource {
   @mustCallSuper
   @override
-  ImmutableSource update(int index, Object data, bool isStateCopied) =>
-      setData(index, data);
+  ImmutableSource updateItemData(int index, Object data, bool isStateCopied) =>
+      setItemData(index, data);
 
-  ImmutableSource setData(int index, Object data);
+  ImmutableSource setItemData(int index, Object data);
 
   ImmutableSource clone();
 }
@@ -77,7 +77,7 @@ class SourceFlowAdapter<T extends AdapterSource> extends Logic<T>
     recycleCtx.markAllUnused();
 
     for (int index = 0; index < adapterSource.itemCount; index++) {
-      final String type = adapterSource.getType(index);
+      final String type = adapterSource.getItemType(index);
       final AbstractLogic<Object> result = pool[type];
 
       assert(
@@ -87,7 +87,7 @@ class SourceFlowAdapter<T extends AdapterSource> extends Logic<T>
           final ContextSys<Object> subCtx = recycleCtx.reuseOrCreate(
             Tuple2<Type, Object>(
               result.runtimeType,
-              result.key(adapterSource.getData(index)),
+              result.key(adapterSource.getItemData(index)),
             ),
             () => result.createContext(
               recycleCtx.store,
@@ -124,12 +124,12 @@ Reducer<T> _dynamicReducer<T extends AdapterSource>(
   final Reducer<T> dyReducer = (AdapterSource state, Action action) {
     AdapterSource copy;
     for (int i = 0; i < state.itemCount; i++) {
-      final AbstractLogic<Object> result = pool[state.getType(i)];
+      final AbstractLogic<Object> result = pool[state.getItemType(i)];
       if (result != null) {
-        final Object oldData = state.getData(i);
+        final Object oldData = state.getItemData(i);
         final Object newData = result.onReducer(oldData, action);
         if (newData != oldData) {
-          copy = state.update(i, newData, copy != null);
+          copy = state.updateItemData(i, newData, copy != null);
         }
       }
     }
@@ -147,16 +147,16 @@ Reducer<T> _dynamicReducer<T extends AdapterSource>(
 /// frame. in this time the sub component will use cache state.
 Get<Object> _subGetter(Get<AdapterSource> getter, int index) {
   final AdapterSource curState = getter();
-  String type = curState.getType(index);
-  Object data = curState.getData(index);
+  String type = curState.getItemType(index);
+  Object data = curState.getItemData(index);
 
   return () {
     final AdapterSource newState = getter();
 
     /// Either all sub-components use cache or not.
     if (newState != null && newState.itemCount > index) {
-      final String newType = newState.getType(index);
-      final Object newData = newState.getData(index);
+      final String newType = newState.getItemType(index);
+      final Object newData = newState.getItemData(index);
 
       if (_couldReuse(
         typeA: type,
