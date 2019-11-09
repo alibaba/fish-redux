@@ -43,7 +43,7 @@ abstract class Logic<T> implements AbstractLogic<T> {
   })  : _reducer = reducer,
         _filter = filter,
         _effect = effect,
-        _dependencies = dependencies,
+        _dependencies = dependencies?.trim(),
         // ignore:deprecated_member_use_from_same_package
         assert(isAssignFrom<T, StateKey>() == false || key == null,
             'Implements [StateKey] in T instead of using key in Logic.'),

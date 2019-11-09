@@ -146,15 +146,15 @@ abstract class LogicContext<T> extends ContextSys<T> with _ExtraMixin {
     final AutoDispose disposable = registerOnDisposed(
       store.subscribe(
         () => () {
-              final T newState = state;
-              final bool flag = isChanged == null
-                  ? !identical(oldState, newState)
-                  : isChanged(oldState, newState);
-              oldState = newState;
-              if (flag) {
-                onChange();
-              }
-            },
+          final T newState = state;
+          final bool flag = isChanged == null
+              ? !identical(oldState, newState)
+              : isChanged(oldState, newState);
+          oldState = newState;
+          if (flag) {
+            onChange();
+          }
+        },
       ),
     );
 
@@ -259,4 +259,31 @@ class ComponentContext<T> extends LogicContext<T> implements ViewUpdater<T> {
       /// should try-catch in force mode which is called from outside
     }
   }
+}
+
+class PureViweViewService implements ViewService {
+  final DispatchBus bus;
+
+  @override
+  final BuildContext context;
+
+  PureViweViewService(this.bus, this.context);
+
+  @override
+  void broadcast(Action action) => bus.broadcast(action);
+
+  @override
+  void broadcastEffect(Action action, {bool excluded}) => bus.dispatch(action);
+
+  @override
+  ListAdapter buildAdapter() => throw Exception(
+      'Unexpected call of "buildAdapter" in a PureViewComponent');
+
+  @override
+  Widget buildComponent(String name) => throw Exception(
+      'Unexpected call of "buildComponent" in a PureViewComponent');
+
+  @override
+  Map<String, Object> get extra =>
+      throw Exception('Unexpected call of "extra" in a PureViewComponent');
 }

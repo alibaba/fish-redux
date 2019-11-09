@@ -61,18 +61,24 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
     @required DispatchBus bus,
     @required Enhancer<Object> enhancer,
   }) {
-    // assert(bus != null && enhancer != null);
-    return protectedWrapper(
-      ComponentWidget<T>(
-        component: this,
-        getter: _asGetter<T>(getter),
-        store: store,
-        key: key(getter()),
+    /// Check bus: DispatchBusDefault(); enhancer: EnhancerDefault<Object>();
+    assert(bus != null && enhancer != null);
 
-        ///
-        bus: bus ?? DispatchBusDefault(),
-        enhancer: enhancer ?? EnhancerDefault<Object>(),
-      ),
+    return protectedWrapper(
+      isPureView()
+          ? _PureViweWidget<T>(
+              enhancer.viewEnhance(protectedView, this, store),
+              getter,
+              bus,
+            )
+          : ComponentWidget<T>(
+              component: this,
+              getter: _asGetter<T>(getter),
+              store: store,
+              key: key(getter()),
+              bus: bus,
+              enhancer: enhancer,
+            ),
     );
   }
 
@@ -111,7 +117,12 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
 
   String get name => cache<String>('name', () => runtimeType.toString());
 
-  ///
+  bool isPureView() {
+    return protectedReducer == null &&
+        protectedEffect == null &&
+        protectedDependencies == null;
+  }
+
   static ShouldUpdate<K> neverUpdate<K>() => (K _, K __) => false;
 
   static ShouldUpdate<K> alwaysUpdate<K>() => (K _, K __) => true;
@@ -132,6 +143,23 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
       };
     }
     return runtimeGetter;
+  }
+}
+
+class _PureViweWidget<T> extends StatelessWidget {
+  final ViewBuilder<T> viewBuilder;
+  final Get<Object> getter;
+  final DispatchBus bus;
+
+  const _PureViweWidget(this.viewBuilder, this.getter, this.bus);
+
+  @override
+  Widget build(BuildContext context) {
+    return viewBuilder(
+      getter(),
+      bus.dispatch,
+      PureViweViewService(bus, context),
+    );
   }
 }
 

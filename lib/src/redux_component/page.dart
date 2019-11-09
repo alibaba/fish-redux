@@ -13,10 +13,12 @@ typedef InitState<T, P> = T Function(P params);
 
 typedef StoreUpdater<T> = Store<T> Function(Store<T> store);
 
+final DispatchBus sharedBus = DispatchBusDefault();
+
 @immutable
 abstract class Page<T, P> extends Component<T> {
   /// AppBus is a event-bus used to communicate between pages.
-  final DispatchBus appBus = DispatchBusDefault.shared;
+  final DispatchBus appBus = sharedBus;
 
   final InitState<T, P> _initState;
 

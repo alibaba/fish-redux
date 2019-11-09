@@ -110,3 +110,18 @@ class TestDynamicFlowAdapter<T extends Cloneable<T>>
             effect: effect,
             filter: filter);
 }
+
+class TestSourceFlowAdapter<T extends AdapterSource>
+    extends SourceFlowAdapter<T> {
+  TestSourceFlowAdapter({
+    @required Map<String, AbstractLogic<Object>> pool,
+    ReducerFilter<T> filter,
+    Reducer<T> reducer,
+    Effect<T> effect,
+  }) : super(
+          pool: pool,
+          reducer: reducer,
+          effect: effect,
+          filter: filter,
+        );
+}

@@ -101,7 +101,11 @@ void main() {
 
       /// TODO
       final Widget componentWidget = component.buildComponent(
-          createBatchStore<Todo>(Todo.mock(), null), () => Todo.mock());
+        createBatchStore<Todo>(Todo.mock(), null),
+        () => Todo.mock(),
+        bus: DispatchBusDefault(),
+        enhancer: EnhancerDefault<Object>(),
+      );
       expect(componentWidget, isNotNull);
 
       expect(
