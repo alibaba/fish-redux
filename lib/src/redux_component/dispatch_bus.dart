@@ -2,8 +2,6 @@ import '../redux/redux.dart';
 import 'basic.dart';
 
 class DispatchBusDefault implements DispatchBus {
-  static final DispatchBus shared = DispatchBusDefault();
-
   final List<Dispatch> _dispatchList = <Dispatch>[];
   DispatchBus parent;
   void Function() unregister;

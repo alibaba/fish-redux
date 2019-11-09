@@ -30,4 +30,7 @@ class Dependencies<T> {
   }
 
   Dependent<T> slot(String type) => slots[type];
+
+  Dependencies<T> trim() =>
+      adapter != null || slots?.isNotEmpty == true ? this : null;
 }

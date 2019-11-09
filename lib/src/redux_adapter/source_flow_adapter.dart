@@ -6,6 +6,7 @@ import '../redux_component/redux_component.dart';
 import '../utils/utils.dart';
 import 'recycle_context.dart';
 
+/// Use [AdapterSource] instead of [List<ItemItemBean>]
 abstract class AdapterSource {
   int get itemCount;
 

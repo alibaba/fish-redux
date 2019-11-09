@@ -6,6 +6,7 @@ export 'context.dart';
 export 'dependencies.dart';
 export 'dependent.dart';
 export 'dispatch_bus.dart';
+export 'enhancer.dart';
 export 'helper.dart';
 export 'lifecycle.dart';
 export 'local.dart';
