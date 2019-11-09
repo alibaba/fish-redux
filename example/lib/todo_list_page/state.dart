@@ -20,16 +20,16 @@ class PageState extends MutableSource
   }
 
   @override
-  Object getData(int index) => toDos[index];
+  Object getItemData(int index) => toDos[index];
 
   @override
-  String getType(int index) => 'toDo';
+  String getItemType(int index) => 'toDo';
 
   @override
   int get itemCount => toDos?.length ?? 0;
 
   @override
-  void setData(int index, Object data) => toDos[index] = data;
+  void setItemData(int index, Object data) => toDos[index] = data;
 }
 
 PageState initState(Map<String, dynamic> args) {
