@@ -170,6 +170,9 @@ abstract class ViewService implements ExtraData {
   void broadcast(Action action);
 
   /// Broadcast in all component receivers;
+  /// Dispatch is enough. Use [Dispatch] instead of [broadcastEffect]
+  /// [Dispatch] = [SelfEffect] | ([broadcastEffect] & [store.dispatch])
+  @deprecated
   void broadcastEffect(Action action, {bool excluded});
 }
 

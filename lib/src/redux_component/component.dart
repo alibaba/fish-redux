@@ -154,13 +154,8 @@ class _PureViweWidget<T> extends StatelessWidget {
   const _PureViweWidget(this.viewBuilder, this.getter, this.bus);
 
   @override
-  Widget build(BuildContext context) {
-    return viewBuilder(
-      getter(),
-      bus.dispatch,
-      PureViweViewService(bus, context),
-    );
-  }
+  Widget build(BuildContext context) =>
+      viewBuilder(getter(), bus.dispatch, PureViweViewService(bus, context));
 }
 
 class ComponentWidget<T> extends StatefulWidget {
