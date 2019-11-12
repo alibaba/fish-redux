@@ -48,7 +48,10 @@ class ReportConnector extends ConnOp<PageState, ReportState>
 
   @override
   List<dynamic> factors(PageState state) {
-    return state.toDos;
+    return <int>[
+      state.toDos.where((ToDoState tds) => tds.isDone).length,
+      state.toDos.length
+    ];
   }
 
   @override
