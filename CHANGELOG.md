@@ -1,3 +1,8 @@
+## [0.3.1]
+- rename AdapterSource’s api 
+- add PureViewComponent 
+- deprecate broadcastEffect 
+- 
 ## [0.3.0]
 - add SourceFlowAdapter
 - Use SourceFlowAdapter instead of DynamicFlowAdapter in example
