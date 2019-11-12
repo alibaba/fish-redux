@@ -37,22 +37,18 @@ PageState initState(Map<String, dynamic> args) {
   return PageState();
 }
 
-class ReportConnector extends Reselect2<PageState, ReportState, int, int> {
+class ReportConnector extends ConnOp<PageState, ReportState>
+    with ReselectMixin<PageState, ReportState> {
   @override
-  ReportState computed(int sub0, int sub1) {
+  ReportState computed(PageState state) {
     return ReportState()
-      ..done = sub0
-      ..total = sub1;
+      ..done = state.toDos.where((ToDoState tds) => tds.isDone).length
+      ..total = state.toDos.length;
   }
 
   @override
-  int getSub0(PageState state) {
-    return state.toDos.where((ToDoState tds) => tds.isDone).toList().length;
-  }
-
-  @override
-  int getSub1(PageState state) {
-    return state.toDos.length;
+  List<dynamic> factors(PageState state) {
+    return state.toDos;
   }
 
   @override
