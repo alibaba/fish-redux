@@ -170,7 +170,7 @@ mixin ReselectMixin<T, P> on MutableConn<T, P> {
 
   P computed(T state);
 
-  List<dynamic> factors(T state);
+  List<dynamic> factors(T state) => <dynamic>[state];
 
   @mustCallSuper
   @override
