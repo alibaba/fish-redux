@@ -8,6 +8,7 @@ import '../redux_component/redux_component.dart';
 ///     ///
 ///   );
 /// }
+/// For Both [Component] & [Page]
 mixin WidgetsBindingObserverMixin<T> on Component<T> {
   @override
   _WidgetsBindingObserverStfState<T> createState() =>
