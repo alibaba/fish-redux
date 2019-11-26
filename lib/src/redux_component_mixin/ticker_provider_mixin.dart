@@ -8,6 +8,7 @@ import '../redux_component/redux_component.dart';
 ///     ///
 ///   );
 /// }
+/// For Both [Component] & [Page]
 mixin TickerProviderMixin<T> on Component<T> {
   @override
   _TickerProviderStfState<T> createState() => _TickerProviderStfState<T>();
