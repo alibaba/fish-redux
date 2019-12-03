@@ -77,13 +77,14 @@ abstract class LogicContext<T> extends ContextSys<T> with _ExtraMixin {
   dynamic dispatch(Action action) => _dispatch(action);
 
   @override
-  Widget buildComponent(String name) {
+  Widget buildComponent(String name,{Widget defaultWidget}) {
     assert(name != null, 'The name must be NotNull for buildComponent.');
     final Dependent<T> dependent = logic.slot(name);
     final Widget result = dependent?.buildComponent(store, getState,
         bus: bus, enhancer: enhancer);
-    assert(result != null, 'Could not found component by name "$name."');
-    return result ?? Container();
+    assert(result != null || defaultWidget != null,
+        'Could not found component by name "$name." You can set a default widget for buildComponent');
+    return result ?? (defaultWidget ?? Container());
   }
 
   @override
@@ -280,7 +281,7 @@ class PureViweViewService implements ViewService {
       'Unexpected call of "buildAdapter" in a PureViewComponent');
 
   @override
-  Widget buildComponent(String name) => throw Exception(
+  Widget buildComponent(String name,{Widget defaultWidget}) => throw Exception(
       'Unexpected call of "buildComponent" in a PureViewComponent');
 
   @override
