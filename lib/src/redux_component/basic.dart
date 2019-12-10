@@ -161,7 +161,7 @@ abstract class ViewService implements ExtraData {
   ListAdapter buildAdapter();
 
   /// The way to build slot component which is configured in Dependencies.slots
-  Widget buildComponent(String name);
+  Widget buildComponent(String name,{Widget defaultWidget});
 
   /// Get BuildContext from the host-widget
   BuildContext get context;
