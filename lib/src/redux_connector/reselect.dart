@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/foundation.dart';
 
 import '../redux/redux.dart';
 import 'op_mixin.dart';

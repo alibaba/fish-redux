@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' hide Action;
+import 'package:flutter/material.dart' hide Action, Page;
 
 import 'app.dart';
 

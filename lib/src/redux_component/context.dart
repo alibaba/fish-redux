@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart' hide Action;
+import 'package:flutter/widgets.dart' hide Action, Page;
 
 import '../redux/redux.dart';
 import 'auto_dispose.dart';
@@ -77,7 +77,7 @@ abstract class LogicContext<T> extends ContextSys<T> with _ExtraMixin {
   dynamic dispatch(Action action) => _dispatch(action);
 
   @override
-  Widget buildComponent(String name,{Widget defaultWidget}) {
+  Widget buildComponent(String name, {Widget defaultWidget}) {
     assert(name != null, 'The name must be NotNull for buildComponent.');
     final Dependent<T> dependent = logic.slot(name);
     final Widget result = dependent?.buildComponent(store, getState,
@@ -281,7 +281,7 @@ class PureViweViewService implements ViewService {
       'Unexpected call of "buildAdapter" in a PureViewComponent');
 
   @override
-  Widget buildComponent(String name,{Widget defaultWidget}) => throw Exception(
+  Widget buildComponent(String name, {Widget defaultWidget}) => throw Exception(
       'Unexpected call of "buildComponent" in a PureViewComponent');
 
   @override

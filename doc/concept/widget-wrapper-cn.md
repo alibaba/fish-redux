@@ -4,7 +4,7 @@
 -   示例代码
 
 ```dart
-import 'package:flutter/material.dart' hide Action;
+import 'package:flutter/material.dart' hide Action, Page;
 
 Widget repaintBoundaryWrapper(Widget widget) {
   return RepaintBoundary(child: widget);

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/widgets.dart' hide Action;
+import 'package:flutter/widgets.dart' hide Action, Page;
 
 import '../redux/basic.dart';
 import '../utils/utils.dart';
