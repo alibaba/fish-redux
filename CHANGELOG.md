@@ -1,5 +1,14 @@
+## [0.3.3]
+- fix Page name duplication
+- easy to use reselect
+- add keep-alive-client wrapper
+- fix spell error on pure-view-widget
+- add default widget for component.buildComponent api
+- add docsify to view docs
+- add unit test for collection utils and maplike connector
+
 ## [0.3.2]
-- Fixed Page class name duplication
+- fix Page name duplication
 
 ## [0.3.1]
 - rename AdapterSource’s api 
