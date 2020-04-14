@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart' hide Page;
+import 'package:flutter/widgets.dart' hide Action, Page;
 
 import '../redux_component/redux_component.dart';
 

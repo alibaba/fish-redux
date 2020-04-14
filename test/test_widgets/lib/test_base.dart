@@ -1,5 +1,5 @@
 import 'package:fish_redux/fish_redux.dart';
-import 'package:flutter/material.dart' hide Action,Page;
+import 'package:flutter/material.dart' hide Action, Page;
 
 @immutable
 class TestStub extends StatefulWidget {

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' hide Action;
+import 'package:flutter/material.dart' hide Action, Page;
 import 'package:test_widgets/adapter/page.dart';
 import 'package:test_widgets/component/page.dart';
 import 'package:test_widgets/dynamic_flow_adapter/page.dart';
