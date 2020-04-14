@@ -262,13 +262,13 @@ class ComponentContext<T> extends LogicContext<T> implements ViewUpdater<T> {
   }
 }
 
-class PureViweViewService implements ViewService {
+class PureViewViewService implements ViewService {
   final DispatchBus bus;
 
   @override
   final BuildContext context;
 
-  PureViweViewService(this.bus, this.context);
+  PureViewViewService(this.bus, this.context);
 
   @override
   void broadcast(Action action) => bus.broadcast(action);

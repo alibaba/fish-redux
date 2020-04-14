@@ -1,3 +1,6 @@
+## [0.3.2]
+- Fixed Page class name duplication
+
 ## [0.3.1]
 - rename AdapterSource’s api 
 - add PureViewComponent 
