@@ -65,9 +65,10 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
     return protectedWrapper(
       isPureView()
           ? _PureViewWidget<T>(
-              enhancer.viewEnhance(protectedView, this, store),
-              getter,
-              bus,
+              store: store,
+              viewBuilder: enhancer.viewEnhance(protectedView, this, store),
+              getter: getter,
+              bus: bus,
             )
           : ComponentWidget<T>(
               component: this,
@@ -148,12 +149,24 @@ class _PureViewWidget<T> extends StatelessWidget {
   final ViewBuilder<T> viewBuilder;
   final Get<Object> getter;
   final DispatchBus bus;
+  final Store<Object> store;
 
-  const _PureViewWidget(this.viewBuilder, this.getter, this.bus);
+  const _PureViewWidget({
+    @required this.viewBuilder,
+    @required this.getter,
+    @required this.bus,
+    @required this.store,
+  });
 
   @override
-  Widget build(BuildContext context) =>
-      viewBuilder(getter(), bus.dispatch, PureViewViewService(bus, context));
+  Widget build(BuildContext context) => viewBuilder(
+        getter(),
+        (Action action) {
+          store.dispatch(action);
+          bus.dispatch(action);
+        },
+        PureViewViewService(bus, context),
+      );
 }
 
 class ComponentWidget<T> extends StatefulWidget {
