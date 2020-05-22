@@ -1,3 +1,6 @@
+## [0.3.4]
+- fix PureViewComponent's dispatch bug
+
 ## [0.3.3]
 - fix Page name duplication
 - easy to use reselect
