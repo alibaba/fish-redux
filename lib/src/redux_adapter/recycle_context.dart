@@ -128,3 +128,29 @@ ListAdapter combineListAdapters(Iterable<ListAdapter> adapters) {
     maxItemCount,
   );
 }
+
+ListAdapter memoizeListAdapter(
+  AbstractAdapterBuilder<Object> result,
+  ContextSys<Object> subCtx,
+) {
+  final Object newState = subCtx.state;
+  if (subCtx.extra['@last-state'] != newState) {
+    subCtx.extra['@last-state'] = newState;
+    subCtx.extra['@last-adapter'] =
+        _memoizeListAdapter(result.buildAdapter(subCtx));
+  }
+
+  return subCtx.extra['@last-adapter'];
+}
+
+ListAdapter _memoizeListAdapter(ListAdapter adapter) {
+  if (adapter.itemCount > 0) {
+    final List<Widget> memoized =
+        List<Widget>.filled(adapter.itemCount, null, growable: false);
+    return ListAdapter((BuildContext context, int index) {
+      return (memoized[index] ??= adapter.itemBuilder(context, index));
+    }, adapter.itemCount);
+  } else {
+    return adapter;
+  }
+}

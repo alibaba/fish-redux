@@ -239,8 +239,12 @@ abstract class ContextSys<T> extends Context<T> implements ViewService {
   DispatchBus get bus;
 }
 
+abstract class AbstractAdapterBuilder<T> {
+  ListAdapter buildAdapter(ContextSys<T> ctx);
+}
+
 /// Representation of each dependency
-abstract class Dependent<T> {
+abstract class Dependent<T> implements AbstractAdapterBuilder<Object> {
   Get<Object> subGetter(Get<T> getter);
 
   SubReducer<T> createSubReducer();
@@ -251,9 +255,6 @@ abstract class Dependent<T> {
     @required DispatchBus bus,
     @required Enhancer<Object> enhancer,
   });
-
-  /// P state
-  ListAdapter buildAdapter(ContextSys<Object> ctx);
 
   ContextSys<Object> createContext(
     Store<Object> store,
@@ -322,9 +323,8 @@ abstract class AbstractComponent<T> implements AbstractLogic<T> {
   });
 }
 
-abstract class AbstractAdapter<T> implements AbstractLogic<T> {
-  ListAdapter buildAdapter(ContextSys<T> ctx);
-}
+abstract class AbstractAdapter<T>
+    implements AbstractLogic<T>, AbstractAdapterBuilder<T> {}
 
 /// Because a main reducer will be very complicated with multiple level's state.
 /// When a reducer is slow to handle an action, maybe we should use ReducerFilter to improve the performance.
