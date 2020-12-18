@@ -130,7 +130,7 @@ Reducer<T> _dynamicReducer<T extends AdapterSource>(
         final Object oldData = state.getItemData(i);
         final Object newData = result.onReducer(oldData, action);
         if (newData != oldData) {
-          copy = state.updateItemData(i, newData, copy != null);
+          copy = (copy ?? state).updateItemData(i, newData, copy != null);
         }
       }
     }
