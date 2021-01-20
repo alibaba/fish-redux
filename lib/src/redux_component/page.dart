@@ -205,7 +205,7 @@ class PageProvider extends InheritedWidget {
 
   static PageProvider tryOf(BuildContext context) {
     final PageProvider provider =
-        context.inheritFromWidgetOfExactType(PageProvider);
+        context.dependOnInheritedWidgetOfExactType<PageProvider>();
     return provider;
   }
 
