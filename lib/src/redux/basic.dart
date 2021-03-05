@@ -9,7 +9,7 @@ import 'dart:async';
 ///    Middleware<T>   ---- AOP
 ///    Store<T>        ---- State management center
 /// 2. Additional abstractions beyond the basic concepts of the ReduxJs community.
-///    Connector<S, P> ---- The connection between big object <T> and small object <P>
+///    Connector<S, P> ---- The connection between big object <S> and small object <P>
 ///    SubReducer<T>   ---- A function that modifies data of partial <T>
 ///    The role of this layer of abstraction
 ///    a. It is obvious that the implementation of combineReducers are decoupled with the grammatical features of JS
