@@ -1,3 +1,6 @@
+## [0.3.5]
+- fix deprecated using of api - inheritFromWidgetOfExactType .
+
 ## [0.3.4]
 - fix PureViewComponent's dispatch bug
 

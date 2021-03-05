@@ -201,7 +201,7 @@ class PageProvider extends InheritedWidget {
     Key key,
   })  : assert(store != null),
         assert(child != null),
-        super(key: key, child: child);
+        super(child: child, key: key);
 
   static PageProvider tryOf(BuildContext context) {
     final PageProvider provider =
