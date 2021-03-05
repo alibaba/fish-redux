@@ -98,7 +98,9 @@ class SourceFlowAdapter<T extends AdapterSource> extends Logic<T>
               enhancer: recycleCtx.enhancer,
             ),
           );
-          adapters.add(result.buildAdapter(subCtx));
+
+          /// hack to reduce adapter's rebuilding
+          adapters.add(memoizeListAdapter(result, subCtx));
         } else if (result is AbstractComponent<Object>) {
           adapters.add(ListAdapter((BuildContext buildContext, int _) {
             return result.buildComponent(

@@ -16,9 +16,8 @@ dependencies:
     fish_redux:
         path: ../
     flutter:
-        sdk: flutter
-    path_provider: ^0.4.1
-    uuid: 2.0.4
+        sdk: flutter 
+    path_provider: ^0.4.1 
 
 dev_dependencies:
     test: ^1.3.0

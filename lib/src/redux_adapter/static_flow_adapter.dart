@@ -63,8 +63,9 @@ class StaticFlowAdapter<T> extends Logic<T>
               enhancer: recycleCtx.enhancer,
             );
           });
-          final ListAdapter subAdapter = dependent.buildAdapter(subCtx);
-          adapters.add(subAdapter);
+
+          /// hack to reduce adapter's rebuilding
+          adapters.add(memoizeListAdapter(dependent, subCtx));
         }
       } else if (subObject != null) {
         adapters.add(ListAdapter((BuildContext buildContext, int index) {
