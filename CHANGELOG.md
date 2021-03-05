@@ -1,3 +1,6 @@
+## [0.3.6]
+- fix some dos .
+
 ## [0.3.5]
 - fix deprecated using of api - inheritFromWidgetOfExactType .
 
