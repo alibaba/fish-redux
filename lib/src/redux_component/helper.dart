@@ -71,7 +71,7 @@ Effect<T> combineEffects<T>(Map<Object, SubEffect<T>> map) =>
                 ?.value;
 
             if (subEffect != null) {
-              return subEffect.call(action, ctx);
+              return subEffect.call(action, ctx) ?? _SUB_EFFECT_RETURN_NULL;
             }
 
             //skip-lifecycle-actions
