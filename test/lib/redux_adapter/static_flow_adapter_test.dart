@@ -300,8 +300,8 @@ void main() {
             }),
             Pin('page-build', mockState.clone()),
             Pin('toDo0-build', mockState.list[0].clone()),
-            Pin('toDo1-build', mockState.list[1].clone()),
-            Pin('toDo3-build', mockState.list[3].clone()),
+            // Pin('toDo1-build', mockState.list[1].clone()),
+            // Pin('toDo3-build', mockState.list[3].clone()),
             Pin('toDo1-onEdit', mockState.list[1].clone()),
             Pin('toDo1-onReduce', () {
               String desc = '${mockState.list[1].desc}-effect';
@@ -310,7 +310,7 @@ void main() {
             }),
             Pin('page-build', mockState.clone()),
             Pin('toDo1-build', mockState.list[1].clone()),
-            Pin('toDo3-build', mockState.list[3].clone()),
+            // Pin('toDo3-build', mockState.list[3].clone()),
           ]));
     });
 
