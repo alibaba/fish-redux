@@ -1,3 +1,7 @@
+## [0.3.7]
+- fix test .
+- revert issue 613
+
 ## [0.3.6]
 - fix some dos .
 
