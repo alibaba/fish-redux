@@ -4,6 +4,7 @@ import '../redux/basic.dart';
 import 'basic.dart';
 import 'context.dart';
 import 'dependencies.dart';
+import 'helper.dart';
 import 'lifecycle.dart';
 import 'logic.dart';
 
@@ -38,8 +39,7 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
     /// }
     @deprecated Key Function(T) key,
     bool clearOnDependenciesChanged = false,
-  })  : assert(view != null),
-        _view = view,
+  })  : _view = view,
         _wrapper = wrapper ?? _wrapperByDefault,
         _shouldUpdate = shouldUpdate ?? updateByDefault<T>(),
         _clearOnDependenciesChanged = clearOnDependenciesChanged,
@@ -63,21 +63,14 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
     assert(bus != null && enhancer != null);
 
     return protectedWrapper(
-      isPureView()
-          ? _PureViewWidget<T>(
-              store: store,
-              viewBuilder: enhancer.viewEnhance(protectedView, this, store),
-              getter: getter,
-              bus: bus,
-            )
-          : ComponentWidget<T>(
-              component: this,
-              getter: _asGetter<T>(getter),
-              store: store,
-              key: key(getter()),
-              bus: bus,
-              enhancer: enhancer,
-            ),
+      ComponentWidget<T>(
+        component: this,
+        getter: asGetter<T>(getter),
+        store: store,
+        key: key(getter()),
+        bus: bus,
+        enhancer: enhancer,
+      ),
     );
   }
 
@@ -116,12 +109,6 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
 
   String get name => cache<String>('name', () => runtimeType.toString());
 
-  bool isPureView() {
-    return protectedReducer == null &&
-        protectedEffect == null &&
-        protectedDependencies == null;
-  }
-
   static ShouldUpdate<K> neverUpdate<K>() => (K _, K __) => false;
 
   static ShouldUpdate<K> alwaysUpdate<K>() => (K _, K __) => true;
@@ -130,43 +117,6 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
       (K _, K __) => !identical(_, __);
 
   static Widget _wrapperByDefault(Widget child) => child;
-
-  static Get<T> _asGetter<T>(Get<Object> getter) {
-    Get<T> runtimeGetter;
-    if (getter is Get<T>) {
-      runtimeGetter = getter;
-    } else {
-      runtimeGetter = () {
-        final T result = getter();
-        return result;
-      };
-    }
-    return runtimeGetter;
-  }
-}
-
-class _PureViewWidget<T> extends StatelessWidget {
-  final ViewBuilder<T> viewBuilder;
-  final Get<Object> getter;
-  final DispatchBus bus;
-  final Store<Object> store;
-
-  const _PureViewWidget({
-    @required this.viewBuilder,
-    @required this.getter,
-    @required this.bus,
-    @required this.store,
-  });
-
-  @override
-  Widget build(BuildContext context) => viewBuilder(
-        getter(),
-        (Action action) {
-          store.dispatch(action);
-          bus.dispatch(action);
-        },
-        PureViewViewService(bus, context),
-      );
 }
 
 class ComponentWidget<T> extends StatefulWidget {

@@ -202,7 +202,7 @@ class ComponentContext<T> extends LogicContext<T> implements ViewUpdater<T> {
   @override
   void onLifecycle(Action action) {
     super.onLifecycle(action);
-    sidecarCtx?.onLifecycle(LifecycleCreator.reassemble());
+    sidecarCtx?.onLifecycle(action);
   }
 
   @override

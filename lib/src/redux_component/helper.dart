@@ -7,6 +7,19 @@ import '../utils/utils.dart';
 import 'basic.dart';
 import 'lifecycle.dart';
 
+Get<T> asGetter<T>(Get<Object> getter) {
+  Get<T> runtimeGetter;
+  if (getter is Get<T>) {
+    runtimeGetter = getter;
+  } else {
+    runtimeGetter = () {
+      final T result = getter();
+      return result;
+    };
+  }
+  return runtimeGetter;
+}
+
 AdapterBuilder<T> asAdapter<T>(ViewBuilder<T> view) {
   return (T unstableState, Dispatch dispatch, ViewService service) {
     final ContextSys<T> ctx = service;

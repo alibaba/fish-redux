@@ -76,16 +76,17 @@ mixin RecycleContextMixin<T> implements AbstractAdapter<T> {
   RecycleContext<T> createContext(
     Store<Object> store,
     BuildContext buildContext,
-    Get<T> getState, {
+    Get<Object> getState, {
     @required DispatchBus bus,
     @required Enhancer<Object> enhancer,
   }) {
     assert(bus != null && enhancer != null);
+
     return RecycleContext<T>(
       logic: this,
       store: store,
       buildContext: buildContext,
-      getState: getState,
+      getState: asGetter<T>(getState),
       bus: bus,
       enhancer: enhancer,
     );

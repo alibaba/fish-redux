@@ -267,13 +267,15 @@ abstract class Dependent<T> implements AbstractAdapterBuilder<Object> {
   bool isComponent();
 
   bool isAdapter();
+
+  Object key(T state);
 }
 
 /// Encapsulation of the logic part of the component
 /// The logic is divided into two parts, Reducer & SideEffect.
 abstract class AbstractLogic<T> {
   /// To create a reducer<T>
-  Reducer<T> get reducer;
+  Reducer<T> createReducer();
 
   /// To solve Reducer<Object> is neither a subtype nor a supertype of Reducer<T> issue.
   Object onReducer(Object state, Action action);

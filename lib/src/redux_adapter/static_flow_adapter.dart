@@ -5,7 +5,11 @@ import '../redux_component/redux_component.dart';
 import '../utils/utils.dart';
 import 'recycle_context.dart';
 
+/// template is a map, driven by array
+/// Use [FlowAdapter.static] instead of [StaticFlowAdapter]
+/// see in example
 /// template is an array, driven by map like
+@deprecated
 class StaticFlowAdapter<T> extends Logic<T>
     with RecycleContextMixin<T>
     implements AbstractAdapter<T> {

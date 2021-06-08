@@ -1,3 +1,4 @@
+import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/widgets.dart' hide Action, Page;
 
 import '../redux/redux.dart';
@@ -6,18 +7,19 @@ import 'basic.dart';
 class _Dependent<T, P> implements Dependent<T> {
   final AbstractConnector<T, P> connector;
   final AbstractLogic<P> logic;
+  final SubReducer<T> subReducer;
 
   _Dependent({
     @required this.logic,
     @required this.connector,
   })  : assert(logic != null),
-        assert(connector != null);
+        assert(connector != null),
+        subReducer = logic.createReducer != null
+            ? connector.subReducer(logic.createReducer())
+            : null;
 
   @override
-  SubReducer<T> createSubReducer() {
-    final Reducer<P> reducer = logic.reducer;
-    return reducer != null ? connector.subReducer(reducer) : null;
-  }
+  SubReducer<T> createSubReducer() => subReducer;
 
   @override
   Widget buildComponent(
@@ -70,6 +72,15 @@ class _Dependent<T, P> implements Dependent<T> {
 
   @override
   bool isAdapter() => logic is AbstractAdapter;
+
+  @override
+  Object key(T state) {
+    return Tuple3<Type, Type, Object>(
+      logic.runtimeType,
+      connector.runtimeType,
+      logic.key(connector.get(state)),
+    );
+  }
 }
 
 Dependent<K> createDependent<K, T>(

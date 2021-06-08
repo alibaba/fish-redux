@@ -5,7 +5,7 @@ import '../global_store/state.dart';
 import 'report_component/component.dart';
 import 'todo_component/component.dart';
 
-class PageState extends MutableSource
+class PageState extends ItemListLike
     implements GlobalBaseState, Cloneable<PageState> {
   List<ToDoState> toDos;
 
@@ -29,7 +29,10 @@ class PageState extends MutableSource
   int get itemCount => toDos?.length ?? 0;
 
   @override
-  void setItemData(int index, Object data) => toDos[index] = data;
+  ItemListLike updateItemData(int index, Object data, bool isStateCopied) {
+    toDos[index] = data;
+    return this;
+  }
 }
 
 PageState initState(Map<String, dynamic> args) {

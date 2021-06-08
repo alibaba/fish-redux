@@ -13,7 +13,7 @@ class Dependencies<T> {
   }) : assert(adapter == null || adapter.isAdapter(),
             'The dependent must contains adapter.');
 
-  Reducer<T> get reducer {
+  Reducer<T> createReducer() {
     final List<SubReducer<T>> subs = <SubReducer<T>>[];
     if (slots != null && slots.isNotEmpty) {
       subs.addAll(slots.entries.map<SubReducer<T>>(
