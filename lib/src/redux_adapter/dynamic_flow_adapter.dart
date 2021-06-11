@@ -1,3 +1,4 @@
+import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/widgets.dart' hide Action, Page;
 
 import '../redux/redux.dart';
@@ -5,18 +6,8 @@ import '../redux_component/redux_component.dart';
 import '../utils/utils.dart';
 import 'recycle_context.dart';
 
-class ItemBean {
-  final String type;
-  final Object data;
-
-  const ItemBean(this.type, this.data);
-
-  ItemBean clone({String type, Object data}) =>
-      ItemBean(type ?? this.type, data ?? this.data);
-}
-
 /// template is a map, driven by array
-/// Use [SourceFlowAdapter] instead of [DynamicFlowAdapter]
+/// Use [SimpleFlowAdapter.dynamic] instead of [DynamicFlowAdapter]
 /// see in example
 @deprecated
 class DynamicFlowAdapter<T> extends Logic<T> with RecycleContextMixin<T> {

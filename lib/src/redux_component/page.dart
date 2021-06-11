@@ -74,7 +74,7 @@ abstract class Page<T, P> extends Component<T> {
 
   Store<T> createStore(P param) => updateStore(createBatchStore<T>(
         _initState(param),
-        reducer,
+        createReducer(),
         storeEnhancer: enhancer.storeEnhance,
       ));
 

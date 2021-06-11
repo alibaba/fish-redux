@@ -6,43 +6,12 @@ import '../redux_component/redux_component.dart';
 import '../utils/utils.dart';
 import 'recycle_context.dart';
 
-/// Use [AdapterSource] instead of [List<ItemItemBean>]
-abstract class AdapterSource {
-  int get itemCount;
-
-  String getItemType(int index);
-
-  Object getItemData(int index);
-
-  AdapterSource updateItemData(int index, Object data, bool isStateCopied);
-}
-
-abstract class MutableSource extends AdapterSource {
-  @mustCallSuper
-  @override
-  MutableSource updateItemData(int index, Object data, bool isStateCopied) {
-    final MutableSource result = isStateCopied ? this : clone();
-    return result..setItemData(index, data);
-  }
-
-  void setItemData(int index, Object data);
-
-  MutableSource clone();
-}
-
-abstract class ImmutableSource extends AdapterSource {
-  @mustCallSuper
-  @override
-  ImmutableSource updateItemData(int index, Object data, bool isStateCopied) =>
-      setItemData(index, data);
-
-  ImmutableSource setItemData(int index, Object data);
-
-  ImmutableSource clone();
-}
-
+/// template is a map, driven by array
+/// Use [FlowAdapter.source] instead of [SourceFlowAdapter]
+/// see in example
 /// template is a map, driven by source
-class SourceFlowAdapter<T extends AdapterSource> extends Logic<T>
+@deprecated
+class SourceFlowAdapter<T extends ItemListLike> extends Logic<T>
     with RecycleContextMixin<T> {
   final Map<String, AbstractLogic<Object>> pool;
 
@@ -69,7 +38,7 @@ class SourceFlowAdapter<T extends AdapterSource> extends Logic<T>
 
   @override
   ListAdapter buildAdapter(ContextSys<T> ctx) {
-    final AdapterSource adapterSource = ctx.state;
+    final ItemListLike adapterSource = ctx.state;
     assert(adapterSource != null);
 
     final RecycleContext<T> recycleCtx = ctx;
@@ -120,12 +89,12 @@ class SourceFlowAdapter<T extends AdapterSource> extends Logic<T>
 }
 
 /// Generate reducer for List<ItemBean> and combine them into one
-Reducer<T> _dynamicReducer<T extends AdapterSource>(
+Reducer<T> _dynamicReducer<T extends ItemListLike>(
   Reducer<T> reducer,
   Map<String, AbstractLogic<Object>> pool,
 ) {
-  final Reducer<T> dyReducer = (AdapterSource state, Action action) {
-    AdapterSource copy;
+  final Reducer<T> dyReducer = (ItemListLike state, Action action) {
+    ItemListLike copy;
     for (int i = 0; i < state.itemCount; i++) {
       final AbstractLogic<Object> result = pool[state.getItemType(i)];
       if (result != null) {
@@ -148,13 +117,13 @@ Reducer<T> _dynamicReducer<T extends AdapterSource>(
 /// [_isSimilar] return false we should use cache state before reducer invoke.
 /// for reducer change state immediately but sub component will refresh on next
 /// frame. in this time the sub component will use cache state.
-Get<Object> _subGetter(Get<AdapterSource> getter, int index) {
-  final AdapterSource curState = getter();
+Get<Object> _subGetter(Get<ItemListLike> getter, int index) {
+  final ItemListLike curState = getter();
   String type = curState.getItemType(index);
   Object data = curState.getItemData(index);
 
   return () {
-    final AdapterSource newState = getter();
+    final ItemListLike newState = getter();
 
     /// Either all sub-components use cache or not.
     if (newState != null && newState.itemCount > index) {

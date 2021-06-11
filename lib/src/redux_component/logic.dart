@@ -23,6 +23,8 @@ abstract class Logic<T> implements AbstractLogic<T> {
   ReducerFilter<T> get protectedFilter => _filter;
   Effect<T> get protectedEffect => _effect;
   Dependencies<T> get protectedDependencies => _dependencies;
+  Reducer<T> get protectedDependenciesReducer =>
+      protectedDependencies?.createReducer();
   Object Function(T state) get protectedKey => _key;
 
   /// Used as function cache to improve operational efficiency
@@ -71,14 +73,14 @@ abstract class Logic<T> implements AbstractLogic<T> {
       : (_resultCache[key] = getter());
 
   @override
-  Reducer<T> get reducer => helper.filterReducer(
+  Reducer<T> createReducer() => helper.filterReducer(
       combineReducers<T>(
-          <Reducer<T>>[protectedReducer, protectedDependencies?.reducer]),
+          <Reducer<T>>[protectedReducer, protectedDependenciesReducer]),
       protectedFilter);
 
   @override
   Object onReducer(Object state, Action action) =>
-      cache<Reducer<T>>('onReducer', () => reducer)?.call(state, action) ??
+      cache<Reducer<T>>('onReducer', createReducer)?.call(state, action) ??
       state;
 
   @override

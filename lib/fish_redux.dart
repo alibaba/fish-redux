@@ -1,3 +1,4 @@
+export 'src/extensions/extendsions.dart';
 export 'src/redux/redux.dart';
 export 'src/redux_adapter/redux_adapter.dart';
 export 'src/redux_aop/redux_aop.dart';
