@@ -2,9 +2,9 @@ import 'package:fish_redux/fish_redux.dart';
 // import 'package:uuid/uuid.dart';
 
 class ToDoState implements Cloneable<ToDoState> {
-  String uniqueId;
-  String title;
-  String desc;
+  String? uniqueId;
+  String? title;
+  String? desc;
   bool isDone;
 
   static int _seed = 202103051044;

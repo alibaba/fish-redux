@@ -10,7 +10,7 @@ Effect<PageState> buildEffect() {
   return combineEffects(<Object, Effect<PageState>>{
     Lifecycle.initState: _init,
     PageAction.onAdd: _onAdd,
-  });
+  })!;
 }
 
 void _init(Action action, Context<PageState> ctx) {

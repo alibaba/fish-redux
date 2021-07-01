@@ -7,7 +7,7 @@ import '../../utils/utils.dart';
 /// type = {0, 1}
 AdapterMiddleware<T> safetyAdapter<T>({
   Widget Function(dynamic, StackTrace,
-          {AbstractAdapter<dynamic> adapter, Store<T> store, int type})
+          {AbstractAdapter<dynamic> adapter, Store<T> store, int type})?
       onError,
 }) {
   return (AbstractAdapter<dynamic> adapter, Store<T> store) {
@@ -19,7 +19,8 @@ AdapterMiddleware<T> safetyAdapter<T>({
                 final ListAdapter result = next(state, dispatch, viewService);
                 return ListAdapter((BuildContext buildContext, int index) {
                   try {
-                    return result.itemBuilder(buildContext, index);
+                    ///todo(不确定)
+                    return result.itemBuilder!(buildContext, index);
                   } catch (e, stackTrace) {
                     return onError?.call(
                           e,
@@ -32,7 +33,7 @@ AdapterMiddleware<T> safetyAdapter<T>({
                   }
                 }, result.itemCount);
               } catch (e, stackTrace) {
-                final Widget errorWidget = onError?.call(
+                final Widget? errorWidget = onError?.call(
                   e,
                   stackTrace,
                   adapter: adapter,

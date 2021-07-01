@@ -13,10 +13,10 @@ class PageRoutes implements AbstractRoutes {
   final Map<String, Page<Object, dynamic>> pages;
 
   PageRoutes({
-    @required this.pages,
+    required this.pages,
 
     /// For common enhance
-    void Function(String, Page<Object, dynamic>) visitor,
+    void Function(String, Page<Object, dynamic>)? visitor,
   }) : assert(pages != null, 'Expected the pages to be non-null value.') {
     if (visitor != null) {
       pages.forEach(visitor);
@@ -25,5 +25,5 @@ class PageRoutes implements AbstractRoutes {
 
   @override
   Widget buildPage(String path, dynamic arguments) =>
-      pages[path]?.buildPage(arguments);
+      pages[path]!.buildPage(arguments);
 }

@@ -6,7 +6,8 @@ import 'basic.dart';
 import 'lifecycle.dart';
 
 mixin _ExtraMixin {
-  Map<String, Object> _extra;
+  Map<String, Object>? _extra;
+
   Map<String, Object> get extra => _extra ??= <String, Object>{};
 }
 
@@ -23,21 +24,21 @@ abstract class LogicContext<T> extends ContextSys<T> with _ExtraMixin {
 
   final Get<T> getState;
 
-  void Function() _forceUpdate;
+  void Function()? _forceUpdate;
 
   BuildContext _buildContext;
-  Dispatch _dispatch;
-  Dispatch _effectDispatch;
+  late Dispatch _dispatch;
+  late Dispatch _effectDispatch;
 
   LogicContext({
-    @required this.logic,
-    @required this.store,
-    @required BuildContext buildContext,
-    @required this.getState,
+    required this.logic,
+    required this.store,
+    required BuildContext buildContext,
+    required this.getState,
 
     /// pageBus
-    @required this.bus,
-    @required this.enhancer,
+    required this.bus,
+    required this.enhancer,
   })  : assert(logic != null),
         assert(store != null),
         assert(buildContext != null),
@@ -71,17 +72,16 @@ abstract class LogicContext<T> extends ContextSys<T> with _ExtraMixin {
   BuildContext get context => _buildContext;
 
   @override
-  T get state => getState();
+  T get state => getState.call();
 
   @override
   dynamic dispatch(Action action) => _dispatch(action);
 
   @override
-  Widget buildComponent(String name, {Widget defaultWidget}) {
+  Widget buildComponent(String name, {Widget? defaultWidget}) {
     assert(name != null, 'The name must be NotNull for buildComponent.');
-    final Dependent<T> dependent = logic.slot(name);
-    final Widget result = dependent?.buildComponent(store, getState,
-        bus: bus, enhancer: enhancer);
+    final Dependent<T>? dependent = logic.slot(name);
+    final Widget? result = dependent?.buildComponent(store, getState, bus: bus, enhancer: enhancer);
     assert(result != null || defaultWidget != null,
         'Could not found component by name "$name." You can set a default widget for buildComponent');
     return result ?? (defaultWidget ?? Container());
@@ -96,30 +96,29 @@ abstract class LogicContext<T> extends ContextSys<T> with _ExtraMixin {
   @override
   void dispose() {
     super.dispose();
-    _buildContext = null;
     _forceUpdate = null;
   }
 
   bool _throwIfDisposed() {
     if (isDisposed) {
-      throw Exception(
-          'Ctx has been disposed which could not been used any more.');
+      throw Exception('Ctx has been disposed which could not been used any more.');
     }
     return true;
   }
 
+  /// 可空
   @override
-  State<StatefulWidget> get stfState {
+  State<StatefulWidget>? get stfState {
     assert(_buildContext is StatefulElement);
     if (_buildContext is StatefulElement) {
-      final StatefulElement stfElement = _buildContext;
+      final StatefulElement stfElement = _buildContext as StatefulElement;
       return stfElement.state;
     }
     return null;
   }
 
   @override
-  void broadcastEffect(Action action, {bool excluded}) =>
+  void broadcastEffect(Action action, {bool? excluded}) =>
       bus.dispatch(action, excluded: excluded == true ? _effectDispatch : null);
 
   @override
@@ -139,12 +138,13 @@ abstract class LogicContext<T> extends ContextSys<T> with _ExtraMixin {
 
   @override
   void Function() listen({
-    bool Function(T, T) isChanged,
-    @required void Function() onChange,
+    /// 可空 #151
+    bool Function(T?, T?)? isChanged,
+     void Function()? onChange,
   }) {
     assert(onChange != null);
-    T oldState;
-    final AutoDispose disposable = registerOnDisposed(
+    T? oldState;
+    final AutoDispose? disposable = registerOnDisposed(
       store.subscribe(
         () => () {
           final T newState = state;
@@ -153,7 +153,7 @@ abstract class LogicContext<T> extends ContextSys<T> with _ExtraMixin {
               : isChanged(oldState, newState);
           oldState = newState;
           if (flag) {
-            onChange();
+            onChange?.call();
           }
         },
       ),
@@ -167,24 +167,24 @@ class ComponentContext<T> extends LogicContext<T> implements ViewUpdater<T> {
   final ViewBuilder<T> view;
   final ShouldUpdate<T> shouldUpdate;
   final String name;
-  final Function() markNeedsBuild;
-  final ContextSys<Object> sidecarCtx;
-
-  Widget _widgetCache;
-  T _latestState;
+  final Function()? markNeedsBuild;
+  final ContextSys<Object>? sidecarCtx;
+  /// 可空
+  Widget? _widgetCache;
+  late T _latestState;
 
   ComponentContext({
-    @required AbstractComponent<T> logic,
-    @required Store<Object> store,
-    @required BuildContext buildContext,
-    @required Get<T> getState,
-    @required this.view,
-    @required this.shouldUpdate,
-    @required this.name,
-    @required this.markNeedsBuild,
-    @required this.sidecarCtx,
-    @required DispatchBus bus,
-    @required Enhancer<Object> enhancer,
+    required AbstractComponent<T> logic,
+    required Store<Object> store,
+    required BuildContext buildContext,
+    required Get<T> getState,
+    required this.view,
+    required this.shouldUpdate,
+    required this.name,
+     this.markNeedsBuild,
+    required this.sidecarCtx,
+    required DispatchBus bus,
+    required Enhancer<Object> enhancer,
   })  : assert(bus != null && enhancer != null),
         super(
           logic: logic,
@@ -208,13 +208,13 @@ class ComponentContext<T> extends LogicContext<T> implements ViewUpdater<T> {
   @override
   ListAdapter buildAdapter() {
     assert(sidecarCtx != null);
-    return logic.adapterDep()?.buildAdapter(sidecarCtx) ??
+    return logic.adapterDep()?.buildAdapter(sidecarCtx!) ??
         const ListAdapter(null, 0);
   }
 
   @override
   Widget buildWidget() {
-    Widget result = _widgetCache;
+    Widget? result = _widgetCache;
     if (result == null) {
       result = _widgetCache = view(state, dispatch, this);
 
@@ -238,7 +238,7 @@ class ComponentContext<T> extends LogicContext<T> implements ViewUpdater<T> {
     if (shouldUpdate(_latestState, now)) {
       _widgetCache = null;
 
-      markNeedsBuild();
+      markNeedsBuild?.call();
 
       _latestState = now;
     }
@@ -254,7 +254,7 @@ class ComponentContext<T> extends LogicContext<T> implements ViewUpdater<T> {
     _widgetCache = null;
 
     try {
-      markNeedsBuild();
+      markNeedsBuild?.call();
     } catch (e) {
       /// TODO
       /// should try-catch in force mode which is called from outside
@@ -274,14 +274,14 @@ class PureViewViewService implements ViewService {
   void broadcast(Action action) => bus.broadcast(action);
 
   @override
-  void broadcastEffect(Action action, {bool excluded}) => bus.dispatch(action);
+  void broadcastEffect(Action action, {bool? excluded}) => bus.dispatch(action);
 
   @override
   ListAdapter buildAdapter() => throw Exception(
       'Unexpected call of "buildAdapter" in a PureViewComponent');
 
   @override
-  Widget buildComponent(String name, {Widget defaultWidget}) => throw Exception(
+  Widget buildComponent(String name, {Widget? defaultWidget}) => throw Exception(
       'Unexpected call of "buildComponent" in a PureViewComponent');
 
   @override

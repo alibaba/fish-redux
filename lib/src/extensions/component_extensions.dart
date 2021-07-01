@@ -4,11 +4,11 @@ import 'package:flutter/widgets.dart' hide Action;
 
 abstract class SimpleComponent<T> extends Component<T> {
   SimpleComponent({
-    ReducerFilter<T> filter,
-    Dependencies<T> dependencies,
-    ShouldUpdate<T> shouldUpdate,
-    WidgetWrapper wrapper,
-    @deprecated Key Function(T) key,
+    ReducerFilter<T>? filter,
+    Dependencies<T>? dependencies,
+    ShouldUpdate<T>? shouldUpdate,
+    WidgetWrapper? wrapper,
+    @deprecated  Key Function(T)? key,
     bool clearOnDependenciesChanged = false,
   }) : super(
           view: null,

@@ -9,11 +9,13 @@ import 'connector_extensions.dart';
 
 class SimpleFlowAdapter<T> extends FlowAdapter<T> {
   SimpleFlowAdapter({
-    @required FlowAdapterView<T> view,
-    ReducerFilter<T> filter,
-    Reducer<T> reducer,
-    Effect<T> effect,
-    @deprecated Object Function(T state) key,
+    required FlowAdapterView<T> view,
+
+    /// 父类可空
+    ReducerFilter<T>? filter,
+    Reducer<T>? reducer,
+    Effect<T>? effect,
+    @deprecated Object Function(T state)? key,
   }) : super(
           view: view,
           filter: filter,
@@ -23,11 +25,11 @@ class SimpleFlowAdapter<T> extends FlowAdapter<T> {
         );
 
   SimpleFlowAdapter.static({
-    @required List<Dependent<T>> children,
-    ReducerFilter<T> filter,
-    Reducer<T> reducer,
-    Effect<T> effect,
-    @deprecated Object Function(T state) key,
+    required List<Dependent<T>> children,
+    ReducerFilter<T>? filter,
+    Reducer<T>? reducer,
+    Effect<T>? effect,
+    @deprecated Object Function(T state)? key,
   }) : this(
           view: _buildByStatic(children),
           filter: filter,
@@ -37,12 +39,12 @@ class SimpleFlowAdapter<T> extends FlowAdapter<T> {
         );
 
   SimpleFlowAdapter.dynamic({
-    @required Map<String, AbstractLogic<Object>> pool,
-    @required AbstractConnector<T, List<ItemBean>> connector,
-    ReducerFilter<T> filter,
-    Reducer<T> reducer,
-    Effect<T> effect,
-    @deprecated Object Function(T state) key,
+    required Map<String, AbstractLogic<Object>> pool,
+    required AbstractConnector<T, List<ItemBean>> connector,
+    ReducerFilter<T>? filter,
+    Reducer<T>? reducer,
+    Effect<T>? effect,
+    @deprecated required Object Function(T state) key,
   }) : this(
           view: _buildByDynamic(pool: pool, connector: connector),
           filter: filter,
@@ -52,12 +54,12 @@ class SimpleFlowAdapter<T> extends FlowAdapter<T> {
         );
 
   SimpleFlowAdapter.listLike({
-    @required Map<String, AbstractLogic<Object>> pool,
-    @required AbstractConnector<T, MutableItemListLike> connector,
-    ReducerFilter<T> filter,
-    Reducer<T> reducer,
-    Effect<T> effect,
-    @deprecated Object Function(T state) key,
+    required Map<String, AbstractLogic<Object>> pool,
+    required AbstractConnector<T, MutableItemListLike> connector,
+    ReducerFilter<T>? filter,
+    Reducer<T>? reducer,
+    Effect<T>? effect,
+    @deprecated required Object Function(T state) key,
   }) : this(
           view: _buildByListLike(pool: pool, connector: connector),
           filter: filter,
@@ -69,28 +71,28 @@ class SimpleFlowAdapter<T> extends FlowAdapter<T> {
 
 FlowAdapterView<T> _buildByStatic<T>(List<Dependent<T>> children) {
   return (T state) {
-    return DependentArray<T>.fromList(children
-        .where((Dependent<T> dep) => dep.subGetter(() => state).call() != null)
-        .toList());
+    return DependentArray<T>.fromList(
+        children.where((Dependent<T> dep) => dep.subGetter(() => state).call() != null).toList());
   };
 }
 
 FlowAdapterView<T> _buildByListLike<T>({
-  @required Map<String, AbstractLogic<Object>> pool,
-  @required AbstractConnector<T, MutableItemListLike> connector,
+  required Map<String, AbstractLogic<Object>> pool,
+  required AbstractConnector<T, MutableItemListLike> connector,
 }) {
   return (T state) {
-    final MutableItemListLike source = connector.get(state);
+    ///todo(不确定)
+    final MutableItemListLike source = connector.get(state)!;
     final DependentArray<T> depList = DependentArray<T>(
       length: source.itemCount,
       builder: (int index) {
         final String type = source.getItemType(index);
-        final Dependent<T> dep = ConnHelper.join(
+        final Dependent<T>? dep = ConnHelper.join(
           ConnHelper.to(
             connector,
             IndexedListLikeConn<MutableItemListLike>(index),
           ),
-          pool[type],
+          pool[type]!,
         );
         return dep;
       },
@@ -100,11 +102,12 @@ FlowAdapterView<T> _buildByListLike<T>({
 }
 
 FlowAdapterView<T> _buildByDynamic<T>({
-  @required Map<String, AbstractLogic<Object>> pool,
-  @required AbstractConnector<T, List<ItemBean>> connector,
+  required Map<String, AbstractLogic<Object>> pool,
+  required AbstractConnector<T, List<ItemBean>> connector,
 }) {
   return (T state) {
-    final List<ItemBean> list = connector.get(state);
+    ///todo(不确定)
+    final List<ItemBean> list = connector.get(state)!;
     final DependentArray<T> depList = DependentArray<T>(
       length: list.length,
       builder: (int index) {
@@ -117,7 +120,8 @@ FlowAdapterView<T> _buildByDynamic<T>({
               connector,
               IndexedListConn<ItemBean>(index),
             ),
-            pool[ib.type],
+            ///todo(不确定)
+            pool[ib.type]!,
           );
         }
         return null;

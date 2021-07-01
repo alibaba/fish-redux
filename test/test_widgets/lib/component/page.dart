@@ -31,7 +31,7 @@ Widget toDoListView(
               padding: const EdgeInsets.all(8.0),
               margin: const EdgeInsets.all(8.0),
               color: Colors.grey,
-              child: Text(toDo.desc),
+              child: Text(toDo.desc ?? ''),
               alignment: AlignmentDirectional.center,
             );
           }
@@ -130,7 +130,7 @@ const Map pageInitParams = <String, dynamic>{
   ]
 };
 
-ToDoList initState(Map map) => ToDoList.fromMap(map);
+ToDoList initState(Map? map) => ToDoList.fromMap(map!);
 
 class ToDoComponent0 extends ToDoComponent {}
 

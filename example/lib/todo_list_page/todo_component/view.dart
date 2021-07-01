@@ -38,7 +38,7 @@ Widget buildView(
                           : const Icon(Icons.check_box_outline_blank))(),
                     ),
                     onTap: () {
-                      dispatch(ToDoActionCreator.doneAction(state.uniqueId));
+                      dispatch(ToDoActionCreator.doneAction(state.uniqueId!));
                     },
                   )
                 ],
@@ -63,7 +63,7 @@ Widget buildView(
                     child: const Icon(Icons.edit),
                   ),
                   onTap: () {
-                    dispatch(ToDoActionCreator.onEditAction(state.uniqueId));
+                    dispatch(ToDoActionCreator.onEditAction(state.uniqueId!));
                   },
                 )
               ],
@@ -72,7 +72,7 @@ Widget buildView(
         ],
       ),
       onLongPress: () {
-        dispatch(ToDoActionCreator.onRemoveAction(state.uniqueId));
+        dispatch(ToDoActionCreator.onRemoveAction(state.uniqueId!));
       },
     ),
   );

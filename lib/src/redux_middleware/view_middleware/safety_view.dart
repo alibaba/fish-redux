@@ -6,7 +6,7 @@ import '../../utils/utils.dart';
 
 ViewMiddleware<T> safetyView<T>(
     {Widget Function(dynamic, StackTrace,
-            {AbstractComponent<dynamic> component, Store<T> store})
+            {AbstractComponent<dynamic> component, Store<T> store})?
         onError}) {
   return (AbstractComponent<dynamic> component, Store<T> store) {
     return (ViewBuilder<dynamic> next) {

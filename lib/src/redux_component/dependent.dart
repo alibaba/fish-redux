@@ -7,64 +7,69 @@ import 'basic.dart';
 class _Dependent<T, P> implements Dependent<T> {
   final AbstractConnector<T, P> connector;
   final AbstractLogic<P> logic;
-  final SubReducer<T> subReducer;
+
+  /// 依据：[dependent.dart#21]
+  /// 可空
+  final SubReducer<T>? subReducer;
 
   _Dependent({
-    @required this.logic,
-    @required this.connector,
+    required this.logic,
+    required this.connector,
   })  : assert(logic != null),
         assert(connector != null),
-        subReducer = logic.createReducer != null
-            ? connector.subReducer(logic.createReducer())
-            : null;
+        subReducer = logic.createReducer != null ? connector.subReducer(logic.createReducer()) : null;
 
   @override
-  SubReducer<T> createSubReducer() => subReducer;
+  SubReducer<T>? createSubReducer() => subReducer;
 
   @override
   Widget buildComponent(
     Store<Object> store,
     Get<T> getter, {
-    @required DispatchBus bus,
-    @required Enhancer<Object> enhancer,
+    required DispatchBus bus,
+    required Enhancer<Object> enhancer,
   }) {
     assert(bus != null && enhancer != null);
     assert(isComponent(), 'Unexpected type of ${logic.runtimeType}.');
-    final AbstractComponent<P> component = logic;
+    final AbstractComponent<P> component = logic as AbstractComponent<P>;
     return component.buildComponent(
       store,
-      () => connector.get(getter()),
+
+      /// todo(不确定)
+      () => connector.get(getter())!,
       bus: bus,
       enhancer: enhancer,
     );
   }
 
   @override
-  ListAdapter buildAdapter(covariant ContextSys<P> ctx) {
+  ListAdapter? buildAdapter(ContextSys<Object> ctx) {
     assert(isAdapter(), 'Unexpected type of ${logic.runtimeType}.');
-    final AbstractAdapter<P> adapter = logic;
-    return adapter.buildAdapter(ctx);
+    final AbstractAdapter<P> adapter = logic as dynamic;
+    return adapter.buildAdapter(ctx as dynamic);
   }
 
   @override
-  Get<P> subGetter(Get<T> getter) => () => connector.get(getter());
+  Get<P?> subGetter(Get<T> getter) {
+    return () => connector.get(getter())!;
+  }
 
   @override
-  ContextSys<P> createContext(
+  ContextSys<Object> createContext(
     Store<Object> store,
     BuildContext buildContext,
     Get<T> getState, {
-    @required DispatchBus bus,
-    @required Enhancer<Object> enhancer,
+    required DispatchBus bus,
+    required Enhancer<Object> enhancer,
   }) {
     assert(bus != null && enhancer != null);
     return logic.createContext(
       store,
       buildContext,
-      subGetter(getState),
+      subGetter(getState) as dynamic,
       bus: bus,
       enhancer: enhancer,
-    );
+    ) as ContextSys<Object>;
   }
 
   @override
@@ -78,11 +83,15 @@ class _Dependent<T, P> implements Dependent<T> {
     return Tuple3<Type, Type, Object>(
       logic.runtimeType,
       connector.runtimeType,
-      logic.key(connector.get(state)),
+
+      ///todo(不确定)
+      logic.key(connector.get(state)!),
     );
   }
 }
 
-Dependent<K> createDependent<K, T>(
-        AbstractConnector<K, T> connector, AbstractLogic<T> logic) =>
-    logic != null ? _Dependent<K, T>(connector: connector, logic: logic) : null;
+/// 可空
+Dependent<K>? createDependent<K, T>(AbstractConnector<K, T> connector, AbstractLogic<T> logic){
+  return logic != null ? _Dependent<K, T>(connector: connector, logic: logic) : null;
+}
+

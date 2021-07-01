@@ -4,10 +4,14 @@ import '../redux/redux.dart';
 import 'basic.dart';
 
 class EnhancerDefault<T> implements Enhancer<T> {
-  StoreEnhancer<T> _storeEnhancer;
-  ViewMiddleware<T> _viewEnhancer;
-  EffectMiddleware<T> _effectEnhancer;
-  AdapterMiddleware<T> _adapterEnhancer;
+  /// 可空 #44
+  StoreEnhancer<T>? _storeEnhancer;
+  /// 可空 #51
+  ViewMiddleware<T>? _viewEnhancer;
+  /// 可空 #51
+  EffectMiddleware<T>? _effectEnhancer;
+  /// 可空 #51
+  AdapterMiddleware<T>? _adapterEnhancer;
 
   final List<Middleware<T>> _middleware = <Middleware<T>>[];
   final List<ViewMiddleware<T>> _viewMiddleware = <ViewMiddleware<T>>[];
@@ -16,10 +20,10 @@ class EnhancerDefault<T> implements Enhancer<T> {
       <AdapterMiddleware<T>>[];
 
   EnhancerDefault({
-    List<Middleware<T>> middleware,
-    List<ViewMiddleware<T>> viewMiddleware,
-    List<EffectMiddleware<T>> effectMiddleware,
-    List<AdapterMiddleware<T>> adapterMiddleware,
+    List<Middleware<T>>? middleware,
+    List<ViewMiddleware<T>> ?viewMiddleware,
+    List<EffectMiddleware<T>>? effectMiddleware,
+    List<AdapterMiddleware<T>>? adapterMiddleware,
   }) {
     append(
       middleware: middleware,
@@ -31,10 +35,10 @@ class EnhancerDefault<T> implements Enhancer<T> {
 
   @override
   void unshift({
-    List<Middleware<T>> middleware,
-    List<ViewMiddleware<T>> viewMiddleware,
-    List<EffectMiddleware<T>> effectMiddleware,
-    List<AdapterMiddleware<T>> adapterMiddleware,
+    List<Middleware<T>>? middleware,
+    List<ViewMiddleware<T>>? viewMiddleware,
+    List<EffectMiddleware<T>>? effectMiddleware,
+    List<AdapterMiddleware<T>>? adapterMiddleware,
   }) {
     if (middleware != null) {
       _middleware.insertAll(0, middleware);
@@ -56,10 +60,10 @@ class EnhancerDefault<T> implements Enhancer<T> {
 
   @override
   void append({
-    List<Middleware<T>> middleware,
-    List<ViewMiddleware<T>> viewMiddleware,
-    List<EffectMiddleware<T>> effectMiddleware,
-    List<AdapterMiddleware<T>> adapterMiddleware,
+    List<Middleware<T>>? middleware,
+    List<ViewMiddleware<T>>? viewMiddleware,
+    List<EffectMiddleware<T>>? effectMiddleware,
+    List<AdapterMiddleware<T>>? adapterMiddleware,
   }) {
     if (middleware != null) {
       _middleware.addAll(middleware);
@@ -79,49 +83,75 @@ class EnhancerDefault<T> implements Enhancer<T> {
     }
   }
 
+  /// 可空
   @override
-  ViewBuilder<K> viewEnhance<K>(
-    ViewBuilder<K> view,
+  ViewBuilder<K>? viewEnhance<K>(
+    ViewBuilder<K>? view,
     AbstractComponent<K> component,
     Store<T> store,
-  ) =>
-      _viewEnhancer?.call(component, store)?.call(_inverterView<K>(view)) ??
-      view;
+  ) {
+    if(view == null){
+      return null;
+    }
+    final ViewBuilder<dynamic>? viewBuilder = _inverterView<K>(view);
+    if(viewBuilder == null){
+      return view;
+    }
+    return _viewEnhancer?.call(component, store).call(viewBuilder) ?? view;
+  }
+
 
   @override
-  AdapterBuilder<K> adapterEnhance<K>(
-    AdapterBuilder<K> adapterBuilder,
+  AdapterBuilder<K>? adapterEnhance<K>(
+    AdapterBuilder<K>? adapterBuilder,
     AbstractAdapter<K> logic,
     Store<T> store,
-  ) =>
-      _adapterEnhancer
-          ?.call(logic, store)
-          ?.call(_inverterAdapter<K>(adapterBuilder)) ??
-      adapterBuilder;
+  ) {
+    if(adapterBuilder == null){
+      return null;
+    }
+    final AdapterBuilder<dynamic>? viewBuilder = _inverterAdapter<K>(adapterBuilder);
+    if(viewBuilder == null){
+      return adapterBuilder;
+    }
+    return _adapterEnhancer?.call(logic, store).call(viewBuilder) ?? adapterBuilder;
+  }
 
+
+  /// 可空
   @override
-  Effect<K> effectEnhance<K>(
-    Effect<K> effect,
+  Effect<K>? effectEnhance<K>(
+    Effect<K>? effect,
     AbstractLogic<K> logic,
     Store<T> store,
-  ) =>
-      _effectEnhancer?.call(logic, store)?.call(_inverterEffect<K>(effect)) ??
-      effect;
+  ) {
+    if(effect == null){
+      return null;
+    }
+    final Effect<dynamic>? viewBuilder = _inverterEffect<K>(effect);
+    if(viewBuilder == null){
+      return effect;
+    }
+    return _effectEnhancer?.call(logic, store).call(viewBuilder) ?? effect;
+  }
 
   @override
   StoreCreator<T> storeEnhance(StoreCreator<T> creator) =>
       _storeEnhancer?.call(creator) ?? creator;
 
-  Effect<dynamic> _inverterEffect<K>(Effect<K> effect) => effect == null
+  /// 可空
+  Effect<dynamic>? _inverterEffect<K>(Effect<K>? effect) => effect == null
       ? null
-      : (Action action, Context<dynamic> ctx) => effect(action, ctx);
+      : (Action action, Context<dynamic> ctx) => effect(action, ctx as Context<K>);
 
-  ViewBuilder<dynamic> _inverterView<K>(ViewBuilder<K> view) => view == null
+  /// 可空
+  ViewBuilder<dynamic>? _inverterView<K>(ViewBuilder<K>? view) => view == null
       ? null
       : (dynamic state, Dispatch dispatch, ViewService viewService) =>
           view(state, dispatch, viewService);
 
-  AdapterBuilder<dynamic> _inverterAdapter<K>(AdapterBuilder<K> adapter) =>
+  /// 可空
+  AdapterBuilder<dynamic>? _inverterAdapter<K>(AdapterBuilder<K>? adapter) =>
       adapter == null
           ? null
           : (dynamic state, Dispatch dispatch, ViewService viewService) =>

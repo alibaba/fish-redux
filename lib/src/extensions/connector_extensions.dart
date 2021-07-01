@@ -5,21 +5,22 @@ import '../redux_component/basic.dart';
 import '../redux_connector/redux_connector.dart';
 
 mixin IndexedConnMixin<T, P> on AbstractConnector<T, P> {
-  P _cached;
+  late P _cached;
 
   int get index;
 
   P getByIndex(T state, int index);
 
   @override
-  P get(T state) {
-    final P newState = getByIndex(state, index);
-    return checkNextState(newState);
+  P? get(T? state) {
+    ///todo(不确定)
+    final P newState = getByIndex(state!, index);
+    return checkNextState(newState as dynamic);
   }
 
   /// fix get 存在状态不同步
   P checkNextState(Object newState) {
-    final Object lastState = _cached;
+    final Object lastState = _cached as Object;
     final Object nextState =
         ((newState is! P || newState.runtimeType != lastState.runtimeType)
                 ? false
@@ -27,7 +28,7 @@ mixin IndexedConnMixin<T, P> on AbstractConnector<T, P> {
                     (lastState is StateKey ? lastState.key() : null))
             ? newState
             : lastState;
-    return _cached = nextState;
+    return _cached = nextState as P;
   }
 }
 
@@ -63,11 +64,11 @@ class IndexedListConn<P> extends MutableIndexedConn<List<P>, P>
   @override
   P getByIndex(List<P> state, int index) {
     final P newState = state[index];
-    return checkNextState(newState);
+    return checkNextState(newState as Object);
   }
 
   @override
-  void setByIndex(List<P> state, Object subState, int index) {
+  void setByIndex(List<P> state, P subState, int index) {
     state[index] = subState;
   }
 }

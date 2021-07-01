@@ -9,7 +9,8 @@ import 'dispatch_bus.dart';
 import 'enhancer.dart';
 
 /// init store's state by route-params
-typedef InitState<T, P> = T Function(P params);
+/// 可空 params？
+typedef InitState<T, P> = T Function(P? params);
 
 typedef StoreUpdater<T> = Store<T> Function(Store<T> store);
 
@@ -28,25 +29,25 @@ abstract class Page<T, P> extends Component<T> {
   final List<StoreUpdater<T>> _storeUpdaters = <StoreUpdater<T>>[];
 
   Page({
-    @required InitState<T, P> initState,
-    @required ViewBuilder<T> view,
-    Reducer<T> reducer,
-    ReducerFilter<T> filter,
-    Effect<T> effect,
-    Dependencies<T> dependencies,
-    ShouldUpdate<T> shouldUpdate,
-    WidgetWrapper wrapper,
+    required InitState<T, P> initState,
+    required ViewBuilder<T> view,
+    Reducer<T>? reducer,
+    ReducerFilter<T>? filter,
+    Effect<T>? effect,
+    Dependencies<T>? dependencies,
+    ShouldUpdate<T>? shouldUpdate,
+    WidgetWrapper? wrapper,
 
     /// implement [StateKey] in T instead of using key in Logic.
     /// class T implements StateKey {
     ///   Object _key = UniqueKey();
     ///   Object key() => _key;
     /// }
-    @deprecated Key Function(T) key,
-    List<Middleware<T>> middleware,
-    List<ViewMiddleware<T>> viewMiddleware,
-    List<EffectMiddleware<T>> effectMiddleware,
-    List<AdapterMiddleware<T>> adapterMiddleware,
+    @deprecated Key Function(T)? key,
+    List<Middleware<T>>? middleware,
+    List<ViewMiddleware<T>>? viewMiddleware,
+    List<EffectMiddleware<T>>? effectMiddleware,
+    List<AdapterMiddleware<T>>? adapterMiddleware,
   })  : assert(initState != null),
         _initState = initState,
         enhancer = EnhancerDefault<T>(
@@ -67,12 +68,14 @@ abstract class Page<T, P> extends Component<T> {
           key: key,
         );
 
-  Widget buildPage(P param) => protectedWrapper(_PageWidget<T, P>(
+  /// 可空 param？
+  Widget buildPage(P? param) => protectedWrapper(_PageWidget<T, P>(
         page: this,
         param: param,
       ));
 
-  Store<T> createStore(P param) => updateStore(createBatchStore<T>(
+  /// 可空 param？
+  Store<T> createStore(P? param) => updateStore(createBatchStore<T>(
         _initState(param),
         createReducer(),
         storeEnhancer: enhancer.storeEnhance,
@@ -80,30 +83,30 @@ abstract class Page<T, P> extends Component<T> {
 
   Store<T> updateStore(Store<T> store) => _storeUpdaters.fold(
         store,
-        (Store<T> previousValue, StoreUpdater<T> element) =>
-            element(previousValue),
+        (Store<T> previousValue, StoreUpdater<T> element) => element(previousValue),
       );
 
   /// page-store connect with app-store
   void connectExtraStore<K>(
     Store<K> extraStore,
 
+        // Object pagestate, GlobalState appState
     /// To solve Reducer<Object> is neither a subtype nor a supertype of Reducer<T> issue.
     Object Function(Object, K) update,
   ) =>
       _storeUpdaters.add((Store<T> store) => connectStores<Object, K>(
-            store,
+            store as Store<Object>,
             extraStore,
             update,
-          ));
+          ) as Store<T>);
 
   DispatchBus createPageBus() => DispatchBusDefault();
 
   void unshift({
-    List<Middleware<T>> middleware,
-    List<ViewMiddleware<T>> viewMiddleware,
-    List<EffectMiddleware<T>> effectMiddleware,
-    List<AdapterMiddleware<T>> adapterMiddleware,
+    List<Middleware<T>>? middleware,
+    List<ViewMiddleware<T>>? viewMiddleware,
+    List<EffectMiddleware<T>>? effectMiddleware,
+    List<AdapterMiddleware<T>>? adapterMiddleware,
   }) {
     enhancer.unshift(
       middleware: middleware,
@@ -114,10 +117,10 @@ abstract class Page<T, P> extends Component<T> {
   }
 
   void append({
-    List<Middleware<T>> middleware,
-    List<ViewMiddleware<T>> viewMiddleware,
-    List<EffectMiddleware<T>> effectMiddleware,
-    List<AdapterMiddleware<T>> adapterMiddleware,
+    List<Middleware<T>>? middleware,
+    List<ViewMiddleware<T>>? viewMiddleware,
+    List<EffectMiddleware<T>>? effectMiddleware,
+    List<AdapterMiddleware<T>>? adapterMiddleware,
   }) {
     enhancer.append(
       middleware: middleware,
@@ -130,12 +133,13 @@ abstract class Page<T, P> extends Component<T> {
 
 class _PageWidget<T, P> extends StatefulWidget {
   final Page<T, P> page;
-  final P param;
+  /// 可空 【app.dart#77】
+  final P? param;
 
   const _PageWidget({
-    Key key,
-    @required this.page,
-    @required this.param,
+    Key? key,
+    required this.page,
+    this.param,
   }) : super(key: key);
 
   @override
@@ -143,8 +147,8 @@ class _PageWidget<T, P> extends StatefulWidget {
 }
 
 class _PageState<T, P> extends State<_PageWidget<T, P>> {
-  Store<T> _store;
-  DispatchBus _pageBus;
+  late Store<T> _store;
+  late DispatchBus _pageBus;
 
   final Map<String, Object> extra = <String, Object>{};
 
@@ -172,10 +176,10 @@ class _PageState<T, P> extends State<_PageWidget<T, P>> {
     // );
 
     return widget.page.buildComponent(
-      _store,
+      _store as Store<Object>,
       _store.getState,
       bus: _pageBus,
-      enhancer: widget.page.enhancer,
+      enhancer: widget.page.enhancer as Enhancer<Object>,
     );
   }
 
@@ -195,21 +199,20 @@ class PageProvider extends InheritedWidget {
   final Map<String, Object> extra;
 
   const PageProvider({
-    @required this.store,
-    @required this.extra,
-    @required Widget child,
-    Key key,
+    required this.store,
+    required this.extra,
+    required Widget child,
+    Key? key,
   })  : assert(store != null),
         assert(child != null),
         super(child: child, key: key);
 
-  static PageProvider tryOf(BuildContext context) {
-    final PageProvider provider =
-        context.dependOnInheritedWidgetOfExactType<PageProvider>();
+  /// 可空 【framework.dart#2113】
+  static PageProvider? tryOf(BuildContext context) {
+    final PageProvider? provider = context.dependOnInheritedWidgetOfExactType<PageProvider>();
     return provider;
   }
 
   @override
-  bool updateShouldNotify(PageProvider oldWidget) =>
-      store != oldWidget.store && extra != oldWidget.extra;
+  bool updateShouldNotify(PageProvider oldWidget) => store != oldWidget.store && extra != oldWidget.extra;
 }

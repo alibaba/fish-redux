@@ -1,9 +1,9 @@
 import 'package:fish_redux/fish_redux.dart';
 
 class Todo implements Cloneable<Todo> {
-  String id;
-  String title;
-  String desc;
+  String? id;
+  String? title;
+  String? desc;
   bool isDone = false;
 
   Todo();

@@ -7,7 +7,7 @@ Reducer<ToDoState> buildReducer() {
   return asReducer(<Object, Reducer<ToDoState>>{
     ToDoAction.edit: _edit,
     ToDoAction.done: _markDone
-  });
+  })!;
 }
 
 ToDoState _edit(ToDoState state, Action action) {

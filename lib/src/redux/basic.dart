@@ -28,7 +28,8 @@ class Action {
 
 /// Definition of the standard Reducer.
 /// If the Reducer needs to respond to the Action, it returns a new state, otherwise it returns the old state.
-typedef Reducer<T> = T Function(T state, Action action);
+/// 可空
+typedef Reducer<T> = T? Function(T state, Action action);
 
 /// Definition of the standard Dispatch.
 /// Send an "intention".
@@ -58,12 +59,12 @@ typedef Middleware<T> = Composable<Dispatch> Function({
 
 /// Definition of the standard Store.
 class Store<T> {
-  Get<T> getState;
-  Dispatch dispatch;
-  Subscribe subscribe;
-  Observable<T> observable;
-  ReplaceReducer<T> replaceReducer;
-  Future<dynamic> Function() teardown;
+  late Get<T> getState;
+  late Dispatch dispatch;
+  late Subscribe subscribe;
+  late Observable<T> observable;
+  late ReplaceReducer<T> replaceReducer;
+  late Future<dynamic> Function() teardown;
 }
 
 /// Create a store definition
@@ -85,7 +86,8 @@ typedef SubReducer<T> = T Function(T state, Action action, bool isStateCopied);
 /// 2. How to synchronize changes of an instance of type P to an instance of type S.
 /// 3. How to clone a new S.
 abstract class AbstractConnector<S, P> {
-  P get(S state);
+  /// 可空 【connector.dart#17】 [helper.dart#24] state?
+  P? get(S? state);
 
   /// For mutable state, there are three abilities needed to be met.
   ///     1. get: (S) => P
@@ -97,5 +99,6 @@ abstract class AbstractConnector<S, P> {
   ///     2. set: (S, P) => S
   ///
   /// See in [connector].
-  SubReducer<S> subReducer(Reducer<P> reducer);
+  /// 可空 【connector.dart#87】 [basic.dart#286] reducer?
+  SubReducer<S>? subReducer(Reducer<P>? reducer);
 }

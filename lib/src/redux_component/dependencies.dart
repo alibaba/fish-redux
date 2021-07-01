@@ -2,8 +2,10 @@ import '../redux/redux.dart';
 import 'basic.dart';
 
 class Dependencies<T> {
-  final Map<String, Dependent<T>> slots;
-  final Dependent<T> adapter;
+  /// 可空
+  final Map<String, Dependent<T>>? slots;
+  /// 可空
+  final Dependent<T>? adapter;
 
   /// Use [adapter: NoneConn<T>() + Adapter<T>()] instead of [adapter: Adapter<T>()],
   /// Which is better reusability and consistency.
@@ -13,24 +15,32 @@ class Dependencies<T> {
   }) : assert(adapter == null || adapter.isAdapter(),
             'The dependent must contains adapter.');
 
-  Reducer<T> createReducer() {
-    final List<SubReducer<T>> subs = <SubReducer<T>>[];
-    if (slots != null && slots.isNotEmpty) {
-      subs.addAll(slots.entries.map<SubReducer<T>>(
+  /// 可空 combine_reducers.dart#32
+  Reducer<T>? createReducer() {
+    final List<SubReducer<T>?> subs = <SubReducer<T>?>[];
+    if (slots != null && slots?.isNotEmpty == true) {
+      subs.addAll(slots!.entries.map<SubReducer<T>?>(
         (MapEntry<String, Dependent<T>> entry) =>
             entry.value.createSubReducer(),
       ));
     }
 
     if (adapter != null) {
-      subs.add(adapter.createSubReducer());
+      subs.add(adapter?.createSubReducer());
     }
 
-    return combineReducers(<Reducer<T>>[combineSubReducers(subs)]);
+    return combineReducers(<Reducer<T>?>[combineSubReducers(subs)]);
   }
 
-  Dependent<T> slot(String type) => slots[type];
+  /// 可空
+  Dependent<T>? slot(String type) {
+    if(slots != null && slots?.isNotEmpty == true){
+      return slots![type];
+    }
+    return null;
+  }
 
-  Dependencies<T> trim() =>
+  /// 可空
+  Dependencies<T>? trim() =>
       adapter != null || slots?.isNotEmpty == true ? this : null;
 }

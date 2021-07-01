@@ -54,23 +54,23 @@ abstract class LocalProps<T extends LocalProps<T>> {
 @immutable
 class _LocalPropsProvider<T> {
   final T Function(Context<Object>) construct;
-  final void Function(T, Context<Object>) destruct;
+  final void Function(T, Context<Object>)? destruct;
 
-  const _LocalPropsProvider({@required this.construct, this.destruct})
+  const _LocalPropsProvider({required this.construct, this.destruct})
       : assert(construct != null,
             'Please provide a constructor to create <T> instance.');
 
-  T of(ExtraData context) {
+  T? of(ExtraData context) {
     assert(context is Context<Object>);
-    final Context<Object> ctx = context;
+    final Context<Object> ctx = context as Context<Object>;
     if (ctx.extra[_key] == null) {
       final T result = construct(ctx);
-      ctx.extra[_key] = result;
+      ctx.extra[_key] = result as Object;
       if (destruct != null) {
-        ctx.registerOnDisposed(() => destruct(result, ctx));
+        ctx.registerOnDisposed(() => destruct!(result, ctx));
       }
     }
-    return ctx.extra[_key];
+    return ctx.extra[_key] as T?;
   }
 
   String get _key => '\$ ${T.toString()}';

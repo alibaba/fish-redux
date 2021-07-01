@@ -1,6 +1,6 @@
 import '../aop.dart';
 
-bool _listEquals<E>(List<E> list1, List<E> list2) {
+bool _listEquals<E>(List<E> list1, List<E>? list2) {
   if (identical(list1, list2)) {
     return true;
   }
@@ -22,12 +22,12 @@ bool _listEquals<E>(List<E> list1, List<E> list2) {
 /// memoize returns cached result of function call when inputs were not changed from previous invocation.
 ApplyLikeEnhancer memoize() {
   return (dynamic Function(List<dynamic>) functor) {
-    List<dynamic> memoizeArguments;
+    List<dynamic>? memoizeArguments;
     dynamic memoizeResult;
     bool hasBeenCalled = false;
 
     return (List<dynamic> positionalArguments,
-        [Map<Symbol, dynamic> namedArguments]) {
+        [Map<Symbol, dynamic>? namedArguments]) {
       if (!hasBeenCalled ||
           !_listEquals<dynamic>(positionalArguments, memoizeArguments)) {
         memoizeResult = functor(positionalArguments);

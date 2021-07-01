@@ -8,7 +8,7 @@ Effect<ToDoState> buildEffect() {
   return combineEffects(<Object, Effect<ToDoState>>{
     ToDoAction.onEdit: _onEdit,
     ToDoAction.onRemove: _onRemove,
-  });
+  })!;
 }
 
 void _onEdit(Action action, Context<ToDoState> ctx) {
@@ -27,7 +27,7 @@ void _onEdit(Action action, Context<ToDoState> ctx) {
 }
 
 void _onRemove(Action action, Context<ToDoState> ctx) async {
-  final String select = await showDialog<String>(
+  final String? select = await showDialog<String>(
       context: ctx.context,
       builder: (BuildContext buildContext) {
         return AlertDialog(
@@ -49,6 +49,6 @@ void _onRemove(Action action, Context<ToDoState> ctx) async {
       });
 
   if (select == 'Yes') {
-    ctx.dispatch(ToDoActionCreator.removeAction(ctx.state.uniqueId));
+    ctx.dispatch(ToDoActionCreator.removeAction(ctx.state.uniqueId!));
   }
 }

@@ -39,7 +39,7 @@ final TestDynamicFlowAdapter<ToDoList> testAdapter =
             set: (ToDoList toDoList, List<ItemBean> beans) {
               toDoList.list.clear();
               toDoList.list.addAll(
-                  beans.map<Todo>((ItemBean bean) => bean.data).toList());
+                  beans.map<Todo>((ItemBean bean) => bean.data as dynamic).toList());
             }),
         reducer: toDoListReducer,
         effect: toDoListEffect);

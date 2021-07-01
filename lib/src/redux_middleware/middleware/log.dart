@@ -5,16 +5,17 @@ import '../../utils/utils.dart';
 /// It works on debug mode.
 Middleware<T> logMiddleware<T>({
   String tag = 'redux',
-  String Function(T) monitor,
+  /// 可空
+  String Function(T)? monitor,
 }) {
-  return ({Dispatch dispatch, Get<T> getState}) {
+  return ({ Dispatch? dispatch, Get<T>? getState}) {
     return (Dispatch next) {
       return isDebug()
           ? (Action action) {
               print('---------- [$tag] ----------');
               print('[$tag] ${action.type} ${action.payload}');
 
-              final T prevState = getState();
+              final T prevState = getState!();
               if (monitor != null) {
                 print('[$tag] prev-state: ${monitor(prevState)}');
               }

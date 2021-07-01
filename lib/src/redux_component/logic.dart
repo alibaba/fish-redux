@@ -12,36 +12,47 @@ import 'helper.dart' as helper;
 /// 3. Dependencies
 /// 4. Key
 abstract class Logic<T> implements AbstractLogic<T> {
-  final Reducer<T> _reducer;
-  final ReducerFilter<T> _filter;
-  final Effect<T> _effect;
-  final Dependencies<T> _dependencies;
-  final Object Function(T state) _key;
+  /// 可空 【logic.dart#82】
+  final Reducer<T>? _reducer;
+  /// 可空 【logic.dart#82】
+  final ReducerFilter<T>? _filter;
+  /// 可空
+  final Effect<T>? _effect;
+  /// 可空
+  final Dependencies<T>? _dependencies;
+  final Object Function(T state)? _key;
 
   /// for extends
-  Reducer<T> get protectedReducer => _reducer;
-  ReducerFilter<T> get protectedFilter => _filter;
-  Effect<T> get protectedEffect => _effect;
-  Dependencies<T> get protectedDependencies => _dependencies;
-  Reducer<T> get protectedDependenciesReducer =>
+  /// 可空 [private_reducer_mixin.dart#12]
+  Reducer<T>? get protectedReducer => _reducer;
+  /// 可空 【logic.dart#82】
+  ReducerFilter<T>? get protectedFilter => _filter;
+  /// 可空
+  Effect<T>? get protectedEffect => _effect;
+  /// 可空 【logic.dart#82】
+  Dependencies<T>? get protectedDependencies => _dependencies;
+  Reducer<T>? get protectedDependenciesReducer =>
       protectedDependencies?.createReducer();
-  Object Function(T state) get protectedKey => _key;
+  /// 可空
+  Object Function(T state)? get protectedKey => _key;
 
   /// Used as function cache to improve operational efficiency
   final Map<String, Object> _resultCache = <String, Object>{};
 
   Logic({
-    Reducer<T> reducer,
-    Dependencies<T> dependencies,
-    ReducerFilter<T> filter,
-    Effect<T> effect,
+    /// 可空
+    Reducer<T>? reducer,
+    Dependencies<T>? dependencies,
+    ReducerFilter<T>? filter,
+    /// 可空
+    Effect<T>? effect,
 
     /// implement [StateKey] in T instead of using key in Logic.
     /// class T implements StateKey {
     ///   Object _key = UniqueKey();
     ///   Object key() => _key;
     /// }
-    @deprecated Object Function(T state) key,
+    @deprecated Object Function(T state)? key,
   })  : _reducer = reducer,
         _filter = filter,
         _effect = effect,
@@ -68,19 +79,20 @@ abstract class Logic<T> implements AbstractLogic<T> {
   /// _resultCache['key'] = null;
   /// then
   /// _resultCache.containsKey('key') will be true;
-  R cache<R>(String key, Get<R> getter) => _resultCache.containsKey(key)
-      ? _resultCache[key]
-      : (_resultCache[key] = getter());
+  R cache<R>(String? key, Get<R> getter) => _resultCache.containsKey(key)
+      ? _resultCache[key] as R
+      : (_resultCache[key!] = getter() as dynamic) as R;
 
+  /// 可空 【helper.dart#62】 protectedFilter?
   @override
-  Reducer<T> createReducer() => helper.filterReducer(
+  Reducer<T>? createReducer() => helper.filterReducer(
       combineReducers<T>(
-          <Reducer<T>>[protectedReducer, protectedDependenciesReducer]),
+          <Reducer<T>?>[protectedReducer, protectedDependenciesReducer]),
       protectedFilter);
 
   @override
   Object onReducer(Object state, Action action) =>
-      cache<Reducer<T>>('onReducer', createReducer)?.call(state, action) ??
+      cache<Reducer<T>?>('onReducer', createReducer)?.call(state as T, action) ??
       state;
 
   @override
@@ -91,7 +103,7 @@ abstract class Logic<T> implements AbstractLogic<T> {
         enhancer.effectEnhance(
           protectedEffect,
           this,
-          ctx.store,
+          ctx.store as Store<Object>,
         ),
         ctx);
   }
@@ -100,9 +112,10 @@ abstract class Logic<T> implements AbstractLogic<T> {
   Dispatch createNextDispatch(ContextSys<T> ctx, Enhancer<Object> enhancer) =>
       helper.createNextDispatch<T>(ctx);
 
+  /// 可空 effectDispatch？
   @override
   Dispatch createDispatch(
-    Dispatch effectDispatch,
+    Dispatch? effectDispatch,
     Dispatch nextDispatch,
     Context<T> ctx,
   ) =>
@@ -112,8 +125,9 @@ abstract class Logic<T> implements AbstractLogic<T> {
   Object key(T state) => _key?.call(state) ?? ValueKey<Type>(runtimeType);
 
   @override
-  Dependent<T> slot(String type) => protectedDependencies?.slot(type);
+  Dependent<T>? slot(String type) => protectedDependencies?.slot(type);
 
+  ///可空
   @override
-  Dependent<T> adapterDep() => protectedDependencies?.adapter;
+  Dependent<T>? adapterDep() => protectedDependencies?.adapter;
 }

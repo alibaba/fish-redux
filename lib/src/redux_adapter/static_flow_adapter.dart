@@ -16,25 +16,25 @@ class StaticFlowAdapter<T> extends Logic<T>
   final List<Dependent<T>> _slots;
 
   StaticFlowAdapter({
-    @required List<Dependent<T>> slots,
-    Reducer<T> reducer,
-    Effect<T> effect,
-    ReducerFilter<T> filter,
+    required List<Dependent<T>> slots,
+    Reducer<T>? reducer,
+    Effect<T>? effect,
+    ReducerFilter<T>? filter,
 
     /// implement [StateKey] in T instead of using key in Logic.
     /// class T implements StateKey {
     ///   Object _key = UniqueKey();
     ///   Object key() => _key;
     /// }
-    @deprecated Object Function(T) key,
+    @deprecated  Object Function(T)? key,
   })  : assert(slots != null),
-        _slots = Collections.compact(slots),
+        _slots = Collections.compact(slots)!,
         super(
-          reducer: combineReducers(<Reducer<T>>[
+          reducer: combineReducers(<Reducer<T>?>[
             reducer,
             combineSubReducers(
               slots.map(
-                (Dependent<T> dependent) => dependent?.createSubReducer(),
+                (Dependent<T>? dependent) => dependent?.createSubReducer(),
               ),
             )
           ]),
@@ -47,7 +47,7 @@ class StaticFlowAdapter<T> extends Logic<T>
 
   @override
   ListAdapter buildAdapter(ContextSys<T> ctx) {
-    final RecycleContext<T> recycleCtx = ctx;
+    final RecycleContext<T> recycleCtx = ctx as RecycleContext<T>;
     final List<ListAdapter> adapters = <ListAdapter>[];
 
     recycleCtx.markAllUnused();
