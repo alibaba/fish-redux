@@ -1,8 +1,11 @@
 class _Fields {
   bool isDisposed = false;
-  Set<AutoDispose> children;
-  AutoDispose parent;
-  void Function() onDisposed;
+  /// 可空
+  Set<AutoDispose>? children;
+  /// 可空
+  AutoDispose? parent;
+  /// 可空
+  void Function()? onDisposed;
 }
 
 /// Ultra-lightweight lifecycle management system
@@ -22,7 +25,7 @@ class AutoDispose {
   void dispose() {
     /// dispose all children
     if (_fields.children != null) {
-      final List<AutoDispose> copy = _fields.children.toList(growable: false);
+      final List<AutoDispose> copy = _fields.children!.toList(growable: false);
       for (AutoDispose child in copy) {
         child.dispose();
       }
@@ -41,7 +44,8 @@ class AutoDispose {
     _fields.isDisposed = true;
   }
 
-  void onDisposed(void Function() onDisposed) {
+  /// 可空 onDisposed?
+  void onDisposed(void Function()? onDisposed) {
     assert(_fields.onDisposed == null);
     if (_fields.isDisposed) {
       onDisposed?.call();
@@ -50,10 +54,11 @@ class AutoDispose {
     }
   }
 
-  void setParent(AutoDispose newParent) {
+  /// 可空 newParent？
+  void setParent(AutoDispose? newParent) {
     assert(newParent != this);
 
-    final AutoDispose oldParent = _fields.parent;
+    final AutoDispose? oldParent = _fields.parent;
     if (oldParent == newParent || isDisposed) {
       return;
     }
@@ -65,15 +70,15 @@ class AutoDispose {
 
     if (newParent != null) {
       newParent._fields.children ??= <AutoDispose>{};
-      newParent._fields.children.add(this);
+      newParent._fields.children!.add(this);
     }
     if (oldParent != null) {
-      oldParent._fields.children.remove(this);
+      oldParent._fields.children!.remove(this);
     }
     _fields.parent = newParent;
   }
 
-  AutoDispose registerOnDisposed(void Function() onDisposed) => AutoDispose()
+  AutoDispose registerOnDisposed(void Function()? onDisposed) => AutoDispose()
     ..setParent(this)
     ..onDisposed(onDisposed);
 }

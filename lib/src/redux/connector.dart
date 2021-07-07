@@ -19,16 +19,17 @@ abstract class ImmutableConn<T, P> implements AbstractConnector<T, P> {
 
   T set(T state, P subState);
 
+  /// 可空 reducer?
   @override
-  SubReducer<T> subReducer(Reducer<P> reducer) {
+  SubReducer<T>? subReducer(Reducer<P>? reducer) {
     return reducer == null
         ? null
         : (T state, Action action, bool isStateCopied) {
-            final P props = get(state);
+            final P? props = get(state);
             if (props == null) {
               return state;
             }
-            final P newProps = reducer(props, action);
+            final P newProps = reducer.call(props, action)!;
             final bool hasChanged = !identical(newProps, props);
             if (hasChanged) {
               final T result = set(state, newProps);
@@ -82,16 +83,17 @@ abstract class MutableConn<T, P> implements AbstractConnector<T, P> {
 
   void set(T state, P subState);
 
+  /// 可空
   @override
-  SubReducer<T> subReducer(Reducer<P> reducer) {
+  SubReducer<T>? subReducer(Reducer<P>? reducer) {
     return reducer == null
         ? null
         : (T state, Action action, bool isStateCopied) {
-            final P props = get(state);
+            final P? props = get(state);
             if (props == null) {
               return state;
             }
-            final P newProps = reducer(props, action);
+            final P newProps = reducer(props, action)!;
             final bool hasChanged = newProps != props;
             final T copy =
                 (hasChanged && !isStateCopied) ? _clone<T>(state) : state;

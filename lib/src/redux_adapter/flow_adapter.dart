@@ -9,11 +9,11 @@ class FlowAdapter<T> extends Logic<T>
     implements AbstractAdapter<T> {
   final FlowDependencies<T> _flowDependencies;
   FlowAdapter({
-    @required FlowAdapterView<T> view,
-    ReducerFilter<T> filter,
-    Reducer<T> reducer,
-    Effect<T> effect,
-    @deprecated Object Function(T state) key,
+    required FlowAdapterView<T> view,
+    ReducerFilter<T>? filter,
+    Reducer<T>? reducer,
+    Effect<T>? effect,
+    @deprecated Object Function(T state)? key,
   })  : assert(view != null),
         _flowDependencies =
             FlowDependencies<T>(_memoize<T, DependentArray<T>>(view)),
@@ -34,14 +34,14 @@ class FlowAdapter<T> extends Logic<T>
     final T state = ctx.state;
     final DependentArray<T> depArray = _flowDependencies.build(state);
 
-    final RecycleContext<T> recycleCtx = ctx;
+    final RecycleContext<T> recycleCtx = ctx as dynamic;
     final List<ListAdapter> adapters = <ListAdapter>[];
 
     recycleCtx.markAllUnused();
 
     final int count = depArray.length;
     for (int index = 0; index < count; index++) {
-      final Dependent<T> dependent = depArray[index];
+      final Dependent<T>? dependent = depArray[index];
 
       if (dependent == null) {
         continue;
@@ -62,7 +62,7 @@ class FlowAdapter<T> extends Logic<T>
           },
         );
 
-        adapters.add(dependent.buildAdapter(subCtx));
+        adapters.add(dependent.buildAdapter(subCtx)!);
       } else if (dependent.isComponent()) {
         adapters.add(ListAdapter((BuildContext buildContext, int index) {
           return dependent.buildComponent(
@@ -81,19 +81,19 @@ class FlowAdapter<T> extends Logic<T>
 }
 
 //////////////////////////////////////////
-typedef IndexedDependentBuilder<T> = Dependent<T> Function(int);
+typedef IndexedDependentBuilder<T> = Dependent<T>? Function(int);
 
 class DependentArray<T> {
   final IndexedDependentBuilder<T> builder;
   final int length;
 
-  DependentArray({@required this.builder, @required this.length})
+  DependentArray({required this.builder, required this.length})
       : assert(builder != null && length >= 0);
 
   DependentArray.fromList(List<Dependent<T>> list)
       : this(builder: (int index) => list[index], length: list.length);
 
-  Dependent<T> operator [](int index) => builder(index);
+  Dependent<T>? operator [](int index) => builder(index);
 }
 
 typedef FlowAdapterView<T> = DependentArray<T> Function(T);
@@ -106,11 +106,11 @@ class FlowDependencies<T> {
   Reducer<T> createReducer() => (T state, Action action) {
         T copy = state;
         bool hasChanged = false;
-        final DependentArray<T> list = build(state);
+        final DependentArray<T>? list = build(state);
         if (list != null) {
           for (int i = 0; i < list.length; i++) {
-            final Dependent<T> dep = list[i];
-            final SubReducer<T> subReducer = dep?.createSubReducer();
+            final Dependent<T>? dep = list[i];
+            final SubReducer<T>? subReducer = dep?.createSubReducer();
             if (subReducer != null) {
               copy = subReducer(copy, action, hasChanged);
               hasChanged = hasChanged || copy != state;
@@ -166,15 +166,16 @@ class ItemBean {
 
   const ItemBean(this.type, this.data);
 
-  ItemBean clone({String type, Object data}) =>
+  /// 可空
+  ItemBean clone({String? type, Object? data}) =>
       ItemBean(type ?? this.type, data ?? this.data);
 }
 
 /// Optimize flow-adapter-view performance
 R Function(P) _memoize<P, R>(R Function(P) functor) {
   bool hasInvoked = false;
-  P cahcedKey;
-  R cachedValue;
+  late P cahcedKey;
+  late R cachedValue;
   return (P param) {
     if (!hasInvoked) {
       hasInvoked = true;

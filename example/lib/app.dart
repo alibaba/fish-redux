@@ -28,10 +28,10 @@ Widget createApp() {
         /// 2. 参数2 当 AppStore.state 变化时, PageStore.state 该如何变化
         page.connectExtraStore<GlobalState>(GlobalStore.store,
             (Object pagestate, GlobalState appState) {
-          final GlobalBaseState p = pagestate;
+          final GlobalBaseState p = pagestate as dynamic;
           if (p.themeColor != appState.themeColor) {
             if (pagestate is Cloneable) {
-              final Object copy = pagestate.clone();
+              final dynamic copy = pagestate.clone();
               final GlobalBaseState newState = copy;
               newState.themeColor = appState.themeColor;
               return newState;
@@ -77,7 +77,7 @@ Widget createApp() {
     home: routes.buildPage('todo_list', null),
     onGenerateRoute: (RouteSettings settings) {
       return MaterialPageRoute<Object>(builder: (BuildContext context) {
-        return routes.buildPage(settings.name, settings.arguments);
+        return routes.buildPage(settings.name!, settings.arguments);
       });
     },
   );
@@ -87,7 +87,7 @@ Widget createApp() {
 /// 只针对页面的生命周期进行打印
 EffectMiddleware<T> _pageAnalyticsMiddleware<T>({String tag = 'redux'}) {
   return (AbstractLogic<dynamic> logic, Store<T> store) {
-    return (Effect<dynamic> effect) {
+    return (Effect<dynamic>? effect) {
       return (Action action, Context<dynamic> ctx) {
         if (logic is Page<dynamic, dynamic> && action.type is Lifecycle) {
           print('${logic.runtimeType} ${action.type.toString()} ');

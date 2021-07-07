@@ -13,36 +13,36 @@ import '../utils/utils.dart';
 /// }
 mixin VisibleChangeMixin<T> on AbstractAdapter<T> {
   @override
-  ListAdapter buildAdapter(ContextSys<T> ctx) {
-    return _wrapVisibleChange<T>(super.buildAdapter(ctx), ctx);
+  ListAdapter? buildAdapter(ContextSys<T> ctx) {
+    return _wrapVisibleChange<T>(super.buildAdapter(ctx), ctx as dynamic);
   }
 }
 
 class _VisibleChangeState extends State<_VisibleChangeWidget> {
   @override
   Widget build(BuildContext context) =>
-      widget.itemBuilder(context, widget.index);
+      widget.itemBuilder!(context, widget.index!);
 
   @override
   void initState() {
     super.initState();
-    widget.dispatch(LifecycleCreator.appear(widget.index));
+    widget.dispatch!(LifecycleCreator.appear(widget.index));
   }
 
   @override
   void dispose() {
-    widget.dispatch(LifecycleCreator.disappear(widget.index));
+    widget.dispatch!(LifecycleCreator.disappear(widget.index));
     super.dispose();
   }
 }
 
 class _VisibleChangeWidget extends StatefulWidget {
-  final IndexedWidgetBuilder itemBuilder;
-  final int index;
-  final Dispatch dispatch;
+  final IndexedWidgetBuilder? itemBuilder;
+  final int? index;
+  final Dispatch? dispatch;
 
   const _VisibleChangeWidget({
-    Key key,
+    Key? key,
     this.itemBuilder,
     this.index,
     this.dispatch,
@@ -52,12 +52,14 @@ class _VisibleChangeWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _VisibleChangeState();
 }
 
-ListAdapter _wrapVisibleChange<T>(
-  ListAdapter listAdapter,
-  LogicContext<T> ctx,
+/// 可空
+ListAdapter? _wrapVisibleChange<T>(
+    /// 可空
+  ListAdapter? listAdapter,
+  LogicContext<T>? ctx,
 ) {
   final _VisibleChangeDispatch onChange =
-      (ctx.extra['\$visible'] ??= _VisibleChangeDispatch(ctx.dispatch));
+      (ctx?.extra['\$visible'] ??= _VisibleChangeDispatch(ctx.dispatch)) as _VisibleChangeDispatch;
 
   return listAdapter == null
       ? null

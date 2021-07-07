@@ -11,7 +11,7 @@ Effect<TodoEditState> buildEffect() {
   return combineEffects(<Object, Effect<TodoEditState>>{
     ToDoEditAction.onDone: _onDone,
     ToDoEditAction.onChangeTheme: _onChangeTheme,
-  });
+  })!;
 }
 
 void _onDone(Action action, Context<TodoEditState> ctx) {

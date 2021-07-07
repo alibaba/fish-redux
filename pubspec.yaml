@@ -5,10 +5,11 @@ author: Alibaba Xianyu Team <tino.wjf@alibaba-inc.com>
 homepage: https://github.com/alibaba/fish-redux
 
 environment:
-    sdk: ">=2.2.0 <3.0.0"
+    sdk: ">=2.12.0 <3.0.0"
 dependencies:
     flutter:
         sdk: flutter
+    collection: ^1.15.0-nullsafety.4
 
 dev_dependencies:
     test: ^1.5.1

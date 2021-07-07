@@ -12,12 +12,12 @@ Widget pageView(
   ViewService viewService,
 ) {
   print('build pageView');
-  final ListAdapter listAdapter = viewService.buildAdapter();
+  final ListAdapter listAdapter = viewService.buildAdapter()!;
   return Column(
     children: <Widget>[
       Expanded(
           child: ListView.builder(
-              itemBuilder: listAdapter.itemBuilder,
+              itemBuilder: listAdapter.itemBuilder!,
               itemCount: listAdapter.itemCount)),
       Row(
         children: <Widget>[
@@ -84,7 +84,7 @@ bool pageEffect(Action action, Context<ToDoList> ctx) {
   return false;
 }
 
-ToDoList initState(Map map) => ToDoList.fromMap(map);
+ToDoList initState(Map? map) => ToDoList.fromMap(map!);
 
 Widget createDynamicAdapterWidget(BuildContext context) {
   return TestPage<ToDoList, Map>(

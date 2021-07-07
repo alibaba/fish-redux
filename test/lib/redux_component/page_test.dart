@@ -22,7 +22,7 @@ void main() {
       final Widget pageWidget = page.buildPage(pageInitParams);
       expect(pageWidget, isNotNull);
 
-      expect(const TypeMatcher<PageWrapper>().check(pageWidget), isTrue);
+      expect(const TypeMatcher<PageWrapper>(), pageWidget);
       //expect(pageWidget, TypeMatcher<PageWrapper>());
     });
 

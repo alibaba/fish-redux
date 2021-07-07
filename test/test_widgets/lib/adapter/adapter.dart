@@ -25,7 +25,7 @@ Widget toDoView(
                   height: 28.0,
                   color: Colors.yellow,
                   child: Text(
-                    toDo.title,
+                    toDo.title ?? '',
                     style: TextStyle(fontSize: 16.0),
                   ),
                   alignment: AlignmentDirectional.centerStart,
@@ -41,7 +41,7 @@ Widget toDoView(
                   padding: const EdgeInsets.all(8.0),
                   height: 60.0,
                   color: Colors.grey,
-                  child: Text(toDo.desc, style: TextStyle(fontSize: 14.0)),
+                  child: Text(toDo.desc ?? '', style: TextStyle(fontSize: 14.0)),
                   alignment: AlignmentDirectional.centerStart,
                 ),
                 onTap: () {
@@ -87,7 +87,7 @@ bool toDoListEffect(Action action, Context<ToDoList> ctx) {
     assert(action.payload is Todo);
 
     Todo toDo = ctx.state.list
-        .firstWhere((i) => i.id == action.payload.id, orElse: () => null)
+        .firstWhere((i) => i?.id == action.payload.id, orElse: () => null)!
         .clone();
     toDo.desc = '${toDo.desc}-effect';
     ctx.dispatch(Action(ToDoListAction.edit, payload: toDo));
@@ -123,12 +123,12 @@ ToDoList toDoListReducer(ToDoList state, Action action) {
   } else if (action.type == ToDoListAction.markDone) {
     return state.clone()
       ..list
-          .firstWhere((toDo) => toDo.id == item.id, orElse: () => null)
+          .firstWhere((toDo) => toDo?.id == item.id, orElse: () => null)
           ?.isDone = true;
   } else if (action.type == ToDoListAction.remove) {
-    return state.clone()..list.removeWhere((toDo) => toDo.id == item.id);
+    return state.clone()..list.removeWhere((toDo) => toDo?.id == item.id);
   } else if (action.type == ToDoListAction.edit) {
-    Todo toDo = state.list.firstWhere((toDo) => toDo.id == item.id);
+    Todo toDo = state.list.firstWhere((toDo) => toDo?.id == item.id)!;
     int index = state.list.indexOf(toDo);
     toDo = toDo.clone()..desc = item.desc;
     return state.clone()..list[index] = toDo;
@@ -143,7 +143,7 @@ ListAdapter toDoListAdapter(
   ViewService viewService,
 ) {
   return ListAdapter((context, index) {
-    Todo toDo = state.list[index];
+    Todo toDo = state.list[index]!;
 
     return toDoView(toDo, dispatch, viewService);
   }, state.list.length);

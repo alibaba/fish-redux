@@ -13,7 +13,7 @@ class Tuple0<T0> {
 /// Represents a 1-tuple
 /// Mutable data types are easier to use.
 class Tuple1<T0> {
-  T0 i0;
+  T0? i0;
 
   Tuple1([this.i0]);
 
@@ -30,10 +30,10 @@ class Tuple1<T0> {
 /// Represents a 2-tuple or pair.
 class Tuple2<T0, T1> {
   /// First item of the tuple
-  T0 i0;
+  T0? i0;
 
   /// Second item of the tuple
-  T1 i1;
+  T1? i1;
 
   /// Create a new tuple value with the specified items.
   Tuple2([this.i0, this.i1]);
@@ -51,9 +51,9 @@ class Tuple2<T0, T1> {
 
 /// Represents a 3-tuple or pair.
 class Tuple3<T0, T1, T2> {
-  T0 i0;
-  T1 i1;
-  T2 i2;
+  T0? i0;
+  T1? i1;
+  T2? i2;
 
   Tuple3([this.i0, this.i1, this.i2]);
 
@@ -70,10 +70,10 @@ class Tuple3<T0, T1, T2> {
 
 /// Represents a 4-tuple or pair.
 class Tuple4<T0, T1, T2, T3> {
-  T0 i0;
-  T1 i1;
-  T2 i2;
-  T3 i3;
+  T0? i0;
+  T1? i1;
+  T2? i2;
+  T3? i3;
 
   Tuple4([this.i0, this.i1, this.i2, this.i3]);
 
@@ -95,11 +95,11 @@ class Tuple4<T0, T1, T2, T3> {
 
 /// Represents a 5-tuple or pair.
 class Tuple5<T0, T1, T2, T3, T4> {
-  T0 i0;
-  T1 i1;
-  T2 i2;
-  T3 i3;
-  T4 i4;
+  T0? i0;
+  T1? i1;
+  T2? i2;
+  T3? i3;
+  T4? i4;
 
   Tuple5([this.i0, this.i1, this.i2, this.i3, this.i4]);
 
@@ -122,12 +122,12 @@ class Tuple5<T0, T1, T2, T3, T4> {
 
 /// Represents a 6-tuple or pair.
 class Tuple6<T0, T1, T2, T3, T4, T5> {
-  T0 i0;
-  T1 i1;
-  T2 i2;
-  T3 i3;
-  T4 i4;
-  T5 i5;
+  T0? i0;
+  T1? i1;
+  T2? i2;
+  T3? i3;
+  T4? i4;
+  T5? i5;
 
   Tuple6([this.i0, this.i1, this.i2, this.i3, this.i4, this.i5]);
 

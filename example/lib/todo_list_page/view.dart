@@ -5,7 +5,7 @@ import 'action.dart';
 import 'state.dart';
 
 Widget buildView(PageState state, Dispatch dispatch, ViewService viewService) {
-  final ListAdapter adapter = viewService.buildAdapter();
+  final ListAdapter adapter = viewService.buildAdapter()!;
   return Scaffold(
     appBar: AppBar(
       backgroundColor: state.themeColor,
@@ -17,7 +17,7 @@ Widget buildView(PageState state, Dispatch dispatch, ViewService viewService) {
           viewService.buildComponent('report'),
           Expanded(
               child: ListView.builder(
-                  itemBuilder: adapter.itemBuilder,
+                  itemBuilder: adapter.itemBuilder!,
                   itemCount: adapter.itemCount))
         ],
       ),

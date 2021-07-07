@@ -3,10 +3,12 @@ import 'dart:core';
 /// Util for collections.
 class Collections {
   /// Wrap List.reduce with a check list is null or empty.
-  static E reduce<E>(List<E> list, E combine(E e0, E e1)) =>
+  /// 可空
+  static E? reduce<E>(List<E>? list, E combine(E e0, E e1)) =>
       (list == null || list.isEmpty) ? null : list.reduce(combine);
 
   /// Wrap List.fold with a check list is null or empty.
+  /// 可空
   static T fold<T, E>(T init, List<E> list, T combine(T e0, E e1)) =>
       (list == null || list.isEmpty) ? init : list.fold(init, combine);
 
@@ -16,16 +18,17 @@ class Collections {
   /// List<String> b = ['1', '2', '3'];
   /// List<List<String>> list = [a, b] // [[a, b, c], [1, 2, 3]]
   /// List<String> listFlatten = Collections.flatten(list) // [a, b, c, 1, 2, 3]
-  static List<E> flatten<E>(List<List<E>> lists) => reduce(lists, merge);
+  /// 可空
+  static List<E>? flatten<E>(List<List<E>> lists) => reduce(lists, merge);
 
   /// Merge two Iterable
   /// List<String> a = ['a', 'b', 'c'];
   /// List<String> b = ['1', '2', '3'];
   /// List<String> listMerge = Collections.merge(a, b) // [a, b, c, 1, 2, 3]
-  static List<T> merge<T>(Iterable<T> a, Iterable<T> b) =>
+  static List<T> merge<T>(Iterable<T>? a, Iterable<T>? b) =>
       <T>[]..addAll(a ?? <T>[])..addAll(b ?? <T>[]);
 
-  static List<T> clone<T>(Iterable<T> a) =>
+  static List<T> clone<T>(Iterable<T>? a) =>
       (a == null || a.isEmpty) ? <T>[] : (<T>[]..addAll(a));
 
   /// Cast map to list
@@ -47,11 +50,12 @@ class Collections {
   /// List<String> list = ['1', '2', null, '3', null];
   /// print(list)                       // [1, 2, null, 3, null]
   /// print(Collections.compact(list)); // [1, 2, 3]
-  static List<T> compact<T>(Iterable<T> list, {bool growable = true}) =>
-      list?.where((T e) => e != null)?.toList(growable: growable);
+  /// 可空 list?
+  static List<T>? compact<T>(Iterable<T>? list, {bool growable = true}) =>
+      list?.where((T? e) => e != null)?.toList(growable: growable);
 
   /// Check if an Object is Empty.
-  static bool isEmpty(Object value) {
+  static bool isEmpty(Object? value) {
     if (value == null) {
       return true;
     } else {

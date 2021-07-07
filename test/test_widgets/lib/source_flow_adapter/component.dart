@@ -21,7 +21,7 @@ Widget toDoView(Todo toDo, Dispatch dispatch, ViewService viewService) {
                   height: 28.0,
                   color: Colors.yellow,
                   child: Text(
-                    toDo.title,
+                    toDo.title ?? '',
                     style: TextStyle(fontSize: 16.0),
                   ),
                   alignment: AlignmentDirectional.centerStart,
@@ -38,7 +38,7 @@ Widget toDoView(Todo toDo, Dispatch dispatch, ViewService viewService) {
                   padding: const EdgeInsets.all(8.0),
                   height: 60.0,
                   color: Colors.grey,
-                  child: Text(toDo.desc, style: TextStyle(fontSize: 14.0)),
+                  child: Text(toDo.desc ?? '', style: TextStyle(fontSize: 14.0)),
                   alignment: AlignmentDirectional.centerStart,
                 ),
                 onTap: () {

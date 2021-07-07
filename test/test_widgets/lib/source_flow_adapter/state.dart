@@ -1,9 +1,9 @@
 import 'package:fish_redux/fish_redux.dart';
 
 class Todo implements Cloneable<Todo> {
-  String id;
-  String title;
-  String desc;
+  String? id;
+  String? title;
+  String? desc;
   bool isDone = false;
 
   Todo();
@@ -88,7 +88,7 @@ class ToDoList extends ItemListLike implements Cloneable<ToDoList> {
 
   @override
   ItemListLike updateItemData(int index, Object data, bool isStateCopied) {
-    list[index] = data;
+    list[index] = data as dynamic;
     return this;
   }
 }

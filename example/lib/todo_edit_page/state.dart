@@ -5,16 +5,16 @@ import '../global_store/state.dart';
 import '../todo_list_page/todo_component/component.dart';
 
 class TodoEditState implements GlobalBaseState, Cloneable<TodoEditState> {
-  ToDoState toDo;
+  late ToDoState toDo;
 
-  TextEditingController nameEditController;
-  TextEditingController descEditController;
+  late TextEditingController nameEditController;
+  late TextEditingController descEditController;
 
-  FocusNode focusNodeName;
-  FocusNode focusNodeDesc;
+  late FocusNode focusNodeName;
+  late FocusNode focusNodeDesc;
 
   @override
-  Color themeColor;
+   Color? themeColor;
 
   @override
   TodoEditState clone() {
@@ -28,7 +28,7 @@ class TodoEditState implements GlobalBaseState, Cloneable<TodoEditState> {
   }
 }
 
-TodoEditState initState(ToDoState arg) {
+TodoEditState initState(ToDoState? arg) {
   final TodoEditState state = TodoEditState();
   state.toDo = arg?.clone() ?? ToDoState();
   state.nameEditController = TextEditingController(text: arg?.title);

@@ -3,13 +3,13 @@ import 'basic.dart';
 
 class DispatchBusDefault implements DispatchBus {
   final List<Dispatch> _dispatchList = <Dispatch>[];
-  DispatchBus parent;
-  void Function() unregister;
+  DispatchBus? parent;
+  void Function()? unregister;
 
   DispatchBusDefault();
 
   @override
-  void attach(DispatchBus parent) {
+  void attach(DispatchBus? parent) {
     this.parent = parent;
     unregister?.call();
     unregister = parent?.registerReceiver(dispatch);
@@ -21,7 +21,7 @@ class DispatchBusDefault implements DispatchBus {
   }
 
   @override
-  void dispatch(Action action, {Dispatch excluded}) {
+  void dispatch(Action action, {Dispatch? excluded}) {
     final List<Dispatch> list = _dispatchList
         .where((Dispatch dispatch) => dispatch != excluded)
         .toList(growable: false);
@@ -32,12 +32,13 @@ class DispatchBusDefault implements DispatchBus {
   }
 
   @override
-  void broadcast(Action action, {DispatchBus excluded}) {
+  void broadcast(Action action, {DispatchBus? excluded}) {
     parent?.dispatch(action, excluded: excluded?.dispatch);
   }
 
+  /// 可空
   @override
-  void Function() registerReceiver(Dispatch dispatch) {
+  void Function()? registerReceiver(Dispatch? dispatch) {
     assert(!_dispatchList.contains(dispatch),
         'Do not register a dispatch which is already existed');
 

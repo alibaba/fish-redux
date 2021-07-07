@@ -23,7 +23,7 @@ Widget toDoView(Todo toDo, BuildContext context, Dispatch dispatch) {
                   height: 28.0,
                   color: Colors.yellow,
                   child: Text(
-                    toDo.title,
+                    toDo.title ?? '',
                     style: TextStyle(fontSize: 16.0),
                   ),
                   alignment: AlignmentDirectional.centerStart,
@@ -39,7 +39,7 @@ Widget toDoView(Todo toDo, BuildContext context, Dispatch dispatch) {
                   padding: const EdgeInsets.all(8.0),
                   height: 60.0,
                   color: Colors.grey,
-                  child: Text(toDo.desc, style: TextStyle(fontSize: 14.0)),
+                  child: Text(toDo.desc ?? '', style: TextStyle(fontSize: 14.0)),
                   alignment: AlignmentDirectional.centerStart,
                 ),
                 onTap: () {
@@ -87,7 +87,7 @@ Widget toDoListView(
       Expanded(
           child: ListView.builder(
         itemBuilder: (context, index) {
-          Todo toDo = state.list[index];
+          Todo toDo = state.list[index]!;
           return toDoView(toDo, context, dispatch);
         },
         itemCount: state.list.length,
@@ -142,7 +142,7 @@ bool toDoListEffect(Action action, Context<ToDoList> ctx) {
     assert(action.payload is Todo);
 
     Todo toDo = ctx.state.list
-        .firstWhere((i) => i.id == action.payload.id, orElse: () => null);
+        .firstWhere((Todo? i) => i?.id == action.payload.id, orElse: () => null)!;
 
     assert(toDo != null);
 
@@ -183,14 +183,14 @@ ToDoList toDoListReducer(ToDoList state, Action action) {
   } else if (action.type == ToDoListAction.markDone) {
     return state.clone()
       ..list
-          .firstWhere((toDo) => toDo.id == item.id, orElse: () => null)
+          .firstWhere((toDo) => toDo?.id == item.id, orElse: () => null)
           ?.isDone = true;
   } else if (action.type == ToDoListAction.remove) {
-    return state.clone()..list.removeWhere((toDo) => toDo.id == item.id);
+    return state.clone()..list.removeWhere((toDo) => toDo?.id == item.id);
   } else if (action.type == ToDoListAction.edit) {
     return state.clone()
       ..list
-          .firstWhere((toDo) => toDo.id == item.id, orElse: () => null)
+          .firstWhere((toDo) => toDo?.id == item.id, orElse: () => null)
           ?.desc = item.desc;
   } else {
     return state;
@@ -211,16 +211,16 @@ bool toDoListErrorHandler(Exception exception, Context<ToDoList> ctx) {
 }
 
 Composable<Dispatch> toDoListMiddleware({
-  Dispatch dispatch,
-  Get<ToDoList> getState,
+  required Dispatch dispatch,
+  required Get<ToDoList> getState,
 }) =>
     (Dispatch next) => (Action action) {
           if (action.type == ToDoListAction.middlewareEdit) {
             assert(action.payload is Todo);
 
             Todo toDo = getState().list.firstWhere(
-                (i) => i.id == action.payload.id,
-                orElse: () => null);
+                (i) => i?.id == action.payload.id,
+                orElse: () => null)!;
 
             assert(toDo != null);
 
@@ -262,7 +262,7 @@ const Map pageInitParams = <String, dynamic>{
   ]
 };
 
-ToDoList initState(Map map) => ToDoList.fromMap(map);
+ToDoList initState(Map? map) => ToDoList.fromMap(map!);
 
 class PageWrapper extends StatelessWidget {
   final Widget child;
@@ -283,5 +283,5 @@ Widget createPageWidget(BuildContext context) {
       effect: toDoListEffectAsync,
 //      shouldUpdate: forbidRefreshWhenAddOrRemove,
 //      onError: toDoListErrorHandler,
-      middleware: [toDoListMiddleware]).buildPage(pageInitParams);
+      middleware: [toDoListMiddleware as dynamic]).buildPage(pageInitParams);
 }

@@ -10,7 +10,8 @@ mixin _BatchNotify<T> on Store<T> {
   final List<void Function()> _listeners = <void Function()>[];
   bool _isBatching = false;
   bool _isSetupBatch = false;
-  T _prevState;
+  /// 可空 【identical.dart#8】
+  T? _prevState;
 
   void setupBatch() {
     if (!_isSetupBatch) {
@@ -29,17 +30,17 @@ mixin _BatchNotify<T> on Store<T> {
 
   bool isInSuitablePhase() {
     return SchedulerBinding.instance != null &&
-        SchedulerBinding.instance.schedulerPhase !=
+        SchedulerBinding.instance?.schedulerPhase !=
             SchedulerPhase.persistentCallbacks &&
-        !(SchedulerBinding.instance.schedulerPhase == SchedulerPhase.idle &&
-            WidgetsBinding.instance.renderViewElement == null);
+        !(SchedulerBinding.instance?.schedulerPhase == SchedulerPhase.idle &&
+            WidgetsBinding.instance?.renderViewElement == null);
   }
 
   void _batch() {
     if (!isInSuitablePhase()) {
       if (!_isBatching) {
         _isBatching = true;
-        SchedulerBinding.instance.addPostFrameCallback((Duration duration) {
+        SchedulerBinding.instance?.addPostFrameCallback((Duration duration) {
           if (_isBatching) {
             _batch();
           }
@@ -78,8 +79,10 @@ class _BatchStore<T> extends Store<T> with _BatchNotify<T> {
 
 Store<T> createBatchStore<T>(
   T preloadedState,
-  Reducer<T> reducer, {
-  StoreEnhancer<T> storeEnhancer,
+  /// 可空
+  Reducer<T>? reducer, {
+  /// 可空
+  StoreEnhancer<T>? storeEnhancer,
 }) =>
     _BatchStore<T>(
       createStore(
@@ -94,7 +97,8 @@ Store<T> createBatchStore<T>(
 enum _UpdateState { Assign }
 
 // replace current state
-Reducer<T> _appendUpdateStateReducer<T>(Reducer<T> reducer) =>
+/// 可空 reducer？
+Reducer<T> _appendUpdateStateReducer<T>(Reducer<T>? reducer) =>
     (T state, Action action) => action.type == _UpdateState.Assign
         ? action.payload
         : reducer == null ? state : reducer(state, action);
@@ -112,7 +116,7 @@ Store<T> connectStores<T, K>(
     }
   };
 
-  final void Function() unsubscribe = extraStore.subscribe(subscriber);
+  final void Function()? unsubscribe = extraStore.subscribe(subscriber);
 
   /// should triggle once
   subscriber();

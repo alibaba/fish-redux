@@ -7,7 +7,7 @@ import 'todo_component/component.dart';
 Reducer<PageState> buildReducer() {
   return asReducer(
     <Object, Reducer<PageState>>{PageAction.initToDos: _initToDosReducer},
-  );
+  )!;
 }
 
 PageState _initToDosReducer(PageState state, Action action) {

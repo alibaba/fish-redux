@@ -2,7 +2,7 @@ name: test_widgets
 description: widgets for redux test...
 
 environment:
-    sdk: '>=2.0.0-dev.28.0 <3.0.0'
+    sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
     flutter:

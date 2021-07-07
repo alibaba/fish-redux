@@ -11,18 +11,17 @@ Reducer<GlobalState> buildReducer() {
     <Object, Reducer<GlobalState>>{
       GlobalAction.changeThemeColor: _onchangeThemeColor,
     },
-  );
+  )!;
 }
 
-List<Color> _colors = <Color>[
-  Colors.green,
-  Colors.red,
-  Colors.black,
-  Colors.blue
-];
+List<Color> _colors = <Color>[Colors.green, Colors.red, Colors.black, Colors.blue];
 
 GlobalState _onchangeThemeColor(GlobalState state, Action action) {
-  final Color next =
-      _colors[((_colors.indexOf(state.themeColor) + 1) % _colors.length)];
-  return state.clone()..themeColor = next;
+  if (state.themeColor != null) {
+    final Color next =
+        /// todo(不确定)
+        _colors[((_colors.indexOf(state.themeColor!) + 1) % _colors.length)];
+    return state.clone()..themeColor = next;
+  }
+  return state.clone();
 }

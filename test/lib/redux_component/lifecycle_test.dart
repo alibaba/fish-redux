@@ -109,7 +109,7 @@ void main() {
       expect(componentWidget, isNotNull);
 
       expect(
-          const TypeMatcher<ComponentWrapper>().check(componentWidget), isTrue);
+          const TypeMatcher<ComponentWrapper>(), componentWidget);
     });
 
     testWidgets('cycleLife', (WidgetTester tester) async {

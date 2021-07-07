@@ -7,10 +7,10 @@ import 'todo_component/component.dart';
 
 class PageState extends ItemListLike
     implements GlobalBaseState, Cloneable<PageState> {
-  List<ToDoState> toDos;
+   List<ToDoState>? toDos;
 
   @override
-  Color themeColor;
+  Color? themeColor;
 
   @override
   PageState clone() {
@@ -20,7 +20,7 @@ class PageState extends ItemListLike
   }
 
   @override
-  Object getItemData(int index) => toDos[index];
+  Object getItemData(int index) => toDos?.elementAt(index) as dynamic;
 
   @override
   String getItemType(int index) => 'toDo';
@@ -30,12 +30,12 @@ class PageState extends ItemListLike
 
   @override
   ItemListLike updateItemData(int index, Object data, bool isStateCopied) {
-    toDos[index] = data;
+    toDos?[index] = data as dynamic;
     return this;
   }
 }
 
-PageState initState(Map<String, dynamic> args) {
+PageState initState(Map<String, dynamic>? args) {
   //just demo, do nothing here...
   return PageState();
 }
@@ -45,15 +45,15 @@ class ReportConnector extends ConnOp<PageState, ReportState>
   @override
   ReportState computed(PageState state) {
     return ReportState()
-      ..done = state.toDos.where((ToDoState tds) => tds.isDone).length
-      ..total = state.toDos.length;
+      ..done = state.toDos?.where((ToDoState tds) => tds.isDone).length ?? 0
+      ..total = state.toDos?.length ?? 0;
   }
 
   @override
   List<dynamic> factors(PageState state) {
     return <int>[
-      state.toDos.where((ToDoState tds) => tds.isDone).length,
-      state.toDos.length
+      state.toDos?.where((ToDoState tds) => tds.isDone).length ?? 0,
+      state.toDos?.length ?? 0
     ];
   }
 

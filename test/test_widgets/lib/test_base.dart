@@ -25,16 +25,16 @@ class _StubState extends State<TestStub> {
 
 class TestPage<T extends Cloneable<T>, P> extends Page<T, P> {
   TestPage({
-    @required InitState<T, P> initState,
-    List<Middleware<T>> middleware,
-    @required ViewBuilder<T> view,
-    Reducer<T> reducer,
-    ReducerFilter<T> filter,
-    Effect<T> effect,
-    Dependencies<T> dependencies,
-    ShouldUpdate<T> shouldUpdate,
-    WidgetWrapper wrapper,
-    Key Function(T) key,
+    required InitState<T, P> initState,
+    List<Middleware<T>>? middleware,
+    required ViewBuilder<T> view,
+    Reducer<T>? reducer,
+    ReducerFilter<T>? filter,
+    Effect<T>? effect,
+    Dependencies<T>? dependencies,
+    ShouldUpdate<T>? shouldUpdate,
+    WidgetWrapper? wrapper,
+    Key Function(T)? key,
   }) : super(
           initState: initState,
           middleware: middleware,
@@ -51,14 +51,14 @@ class TestPage<T extends Cloneable<T>, P> extends Page<T, P> {
 
 class TestComponent<T extends Cloneable<T>> extends Component<T> {
   TestComponent({
-    @required ViewBuilder<T> view,
-    Reducer<T> reducer,
-    ReducerFilter<T> filter,
-    Effect<T> effect,
-    Dependencies<T> dependencies,
-    ShouldUpdate<T> shouldUpdate,
-    WidgetWrapper wrapper,
-    Key Function(T) key,
+    required ViewBuilder<T> view,
+    Reducer<T>? reducer,
+    ReducerFilter<T>? filter,
+    Effect<T>? effect,
+    Dependencies<T>? dependencies,
+    ShouldUpdate<T>? shouldUpdate,
+    WidgetWrapper? wrapper,
+    Key Function(T)? key,
   }) : super(
             view: view,
             reducer: reducer,
@@ -72,11 +72,11 @@ class TestComponent<T extends Cloneable<T>> extends Component<T> {
 
 class TestAdapter<T extends Cloneable<T>> extends Adapter<T> {
   TestAdapter({
-    AdapterBuilder<T> adapter,
-    Reducer<T> reducer,
-    Effect<T> effect,
-    ReducerFilter<T> filter,
-    Dependencies<T> dependencies,
+    required AdapterBuilder<T> adapter,
+    Reducer<T>? reducer,
+    Effect<T>? effect,
+    ReducerFilter<T>? filter,
+    Dependencies<T>? dependencies,
   }) : super(
             adapter: adapter,
             reducer: reducer,
@@ -88,21 +88,21 @@ class TestAdapter<T extends Cloneable<T>> extends Adapter<T> {
 class TestStaticFlowAdapter<T extends Cloneable<T>>
     extends StaticFlowAdapter<T> {
   TestStaticFlowAdapter({
-    @required List<Dependent<T>> slots,
-    Reducer<T> reducer,
-    Effect<T> effect,
-    ReducerFilter<T> filter,
+    required List<Dependent<T>> slots,
+    Reducer<T>? reducer,
+    Effect<T>? effect,
+    ReducerFilter<T>? filter,
   }) : super(slots: slots, reducer: reducer, effect: effect, filter: filter);
 }
 
 class TestDynamicFlowAdapter<T extends Cloneable<T>>
     extends DynamicFlowAdapter<T> {
   TestDynamicFlowAdapter({
-    @required Map<String, AbstractLogic<Object>> pool,
-    @required ConnOp<T, List<ItemBean>> connector,
-    ReducerFilter<T> filter,
-    Reducer<T> reducer,
-    Effect<T> effect,
+    required Map<String, AbstractLogic<Object>> pool,
+    required ConnOp<T, List<ItemBean>> connector,
+    ReducerFilter<T>? filter,
+    Reducer<T>? reducer,
+    Effect<T>? effect,
   }) : super(
             pool: pool,
             connector: connector,
@@ -111,13 +111,13 @@ class TestDynamicFlowAdapter<T extends Cloneable<T>>
             filter: filter);
 }
 
-class TestSourceFlowAdapter<T extends AdapterSource>
+class TestSourceFlowAdapter<T extends ItemListLike>
     extends SourceFlowAdapter<T> {
   TestSourceFlowAdapter({
-    @required Map<String, AbstractLogic<Object>> pool,
-    ReducerFilter<T> filter,
-    Reducer<T> reducer,
-    Effect<T> effect,
+    required Map<String, AbstractLogic<Object>> pool,
+    ReducerFilter<T>? filter,
+    Reducer<T>? reducer,
+    Effect<T>? effect,
   }) : super(
           pool: pool,
           reducer: reducer,

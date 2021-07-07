@@ -7,7 +7,8 @@ class ConnHelper {
     return _AbstractConnector<T, P, K>(one, two);
   }
 
-  static Dependent<T> join<T, P>(
+  /// 可空
+  static Dependent<T>? join<T, P>(
           AbstractConnector<T, P> conn, AbstractLogic<P> logic) =>
       createDependent<T, P>(conn, logic);
 }
@@ -18,15 +19,16 @@ class _AbstractConnector<T, P, K> extends AbstractConnector<T, K> {
 
   _AbstractConnector(this.one, this.two);
 
+  /// 可空
   @override
-  K get(T state) {
+  K? get(T? state) {
     return two.get(one.get(state));
   }
 
   @override
-  SubReducer<T> subReducer(Reducer<K> reducer) {
+  SubReducer<T>? subReducer(Reducer<K>? reducer) {
     return one.subReducer((P state, Action action) {
-      return two.subReducer(reducer)(state, action, false);
+      return two.subReducer(reducer)?.call(state, action, false);
     });
   }
 }

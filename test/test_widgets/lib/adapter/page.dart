@@ -11,9 +11,9 @@ Widget pageView(
   ViewService viewService,
 ) {
   print('build pageView');
-  ListAdapter listAdapter = viewService.buildAdapter();
+  ListAdapter listAdapter = viewService.buildAdapter()!;
   return ListView.builder(
-      itemBuilder: listAdapter.itemBuilder, itemCount: listAdapter.itemCount);
+      itemBuilder: listAdapter.itemBuilder!, itemCount: listAdapter.itemCount);
 }
 
 const Map pageInitParams = <String, dynamic>{
@@ -45,7 +45,7 @@ const Map pageInitParams = <String, dynamic>{
   ]
 };
 
-ToDoList initState(Map map) => ToDoList.fromMap(map);
+ToDoList initState(Map? map) => ToDoList.fromMap(map!);
 
 class PageWrapper extends StatelessWidget {
   final Widget child;
