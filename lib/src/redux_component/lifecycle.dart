@@ -1,6 +1,4 @@
-import 'package:flutter/scheduler.dart';
-
-import '../redux/redux.dart';
+import '../redux/basic.dart';
 
 enum Lifecycle {
   /// componenmt(page) or adapter receives the following events
@@ -53,7 +51,4 @@ class LifecycleCreator {
 
   static Action disappear(int index) =>
       Action(Lifecycle.disappear, payload: index);
-
-  static Action didChangeAppLifecycleState(AppLifecycleState state) =>
-      Action(Lifecycle.didChangeAppLifecycleState, payload: state);
 }

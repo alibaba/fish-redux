@@ -1,3 +1,8 @@
+## [0.4.0]
+- support flutter 2.x
+- context imp change
+- streamline the concept
+
 ## [0.3.7]
 - fix test .
 - revert issue 613

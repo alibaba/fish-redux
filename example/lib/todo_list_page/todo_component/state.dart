@@ -1,5 +1,4 @@
 import 'package:fish_redux/fish_redux.dart';
-// import 'package:uuid/uuid.dart';
 
 class ToDoState implements Cloneable<ToDoState> {
   String uniqueId;

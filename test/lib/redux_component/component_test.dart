@@ -15,7 +15,7 @@ class ToDoComponentInstrument extends TestComponent<Todo> {
       {bool hasReducer = true})
       : super(
             view: instrumentView<Todo>(toDoView,
-                (Todo state, Dispatch dispatch, ViewService viewService) {
+                (Todo state, Dispatch dispatch, ComponentContext<Todo> viewService) {
               track.append('toDo$index-build', state.clone());
             }),
             reducer: hasReducer
@@ -76,7 +76,7 @@ Dependencies<ToDoList> toDoListDependencies(final Track track) =>
 Widget pageView(
   ToDoList state,
   Dispatch dispatch,
-  ViewService viewService,
+  ComponentContext<ToDoList> viewService,
 ) {
   return Column(
     children: <Widget>[
@@ -134,20 +134,16 @@ void main() {
   group('component', () {
     test('create', () {
       final TestComponent<Todo> component = TestComponent<Todo>(
-          view: toDoView, wrapper: (child) => ComponentWrapper(child));
+          view: toDoView,);
       expect(component, isNotNull);
 
       /// TODO
       final Widget componentWidget = component.buildComponent(
-        createBatchStore<Todo>(Todo.mock(), null),
+        createStore<Todo>(Todo.mock(), null),
         () => Todo.mock(),
-        enhancer: EnhancerDefault<Object>(),
-        bus: DispatchBusDefault(),
       );
       expect(componentWidget, isNotNull);
 
-      expect(
-          const TypeMatcher<ComponentWrapper>().check(componentWidget), isTrue);
     });
 
     testWidgets('build', (WidgetTester tester) async {
@@ -156,7 +152,7 @@ void main() {
       await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
               initState: initState,
               view: instrumentView<ToDoList>(pageView,
-                  (ToDoList state, Dispatch dispatch, ViewService viewService) {
+                  (ToDoList state, Dispatch dispatch, ComponentContext<ToDoList> viewService) {
                 track.append('page-build', state.clone());
               }),
               reducer: toDoListReducer,
@@ -209,7 +205,7 @@ void main() {
       await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
               initState: initState,
               view: instrumentView<ToDoList>(pageView,
-                  (ToDoList state, Dispatch dispatch, ViewService viewService) {
+                  (ToDoList state, Dispatch dispatch, ComponentContext<ToDoList> viewService) {
                 track.append('page-build', state.clone());
               }),
               reducer: instrumentReducer<ToDoList>(toDoListReducer,
@@ -289,7 +285,7 @@ void main() {
       await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
               initState: initState,
               view: instrumentView<ToDoList>(pageView,
-                  (ToDoList state, Dispatch dispatch, ViewService viewService) {
+                  (ToDoList state, Dispatch dispatch, ComponentContext<ToDoList> viewService) {
                 track.append('page-build', state.clone());
               }),
               reducer: instrumentReducer<ToDoList>(toDoListReducer,
@@ -371,7 +367,7 @@ void main() {
       await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
               initState: initState,
               view: instrumentView<ToDoList>(pageView,
-                  (ToDoList state, Dispatch dispatch, ViewService viewService) {
+                  (ToDoList state, Dispatch dispatch, ComponentContext<ToDoList> viewService) {
                 track.append('page-build', state.clone());
               }),
               reducer: instrumentReducer<ToDoList>(toDoListReducer,

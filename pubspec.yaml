@@ -1,6 +1,6 @@
 name: fish_redux
 description: Fish Redux is an assembled flutter application framework based on Redux state management.
-version: 0.3.7
+version: 0.4.0
 author: Alibaba Xianyu Team <tino.wjf@alibaba-inc.com>
 homepage: https://github.com/alibaba/fish-redux
 
@@ -15,8 +15,8 @@ dev_dependencies:
     flutter_test:
         sdk: flutter
 
-    test_widgets:
-        path: test/test_widgets
+    # test_widgets:
+    #     path: test/test_widgets
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

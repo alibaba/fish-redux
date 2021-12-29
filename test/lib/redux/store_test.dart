@@ -404,7 +404,7 @@ void main() {
                 lastState = ToDoList.copy(getState());
                 next(action);
               };
-
+      
       final Store<ToDoList> store = createStore<ToDoList>(
           ToDoList(),
           instrumentReducer(toDoReducer, pre: (ToDoList state, Action action) {
@@ -418,7 +418,7 @@ void main() {
               track.append('onReduce_Unkonw');
             }
           }),
-          applyMiddleware(<Middleware<ToDoList>>[
+          middleware: <Middleware<ToDoList>>[
             instrumentMiddleware(toDoMiddleware,
                 pre: (Action action, Get<ToDoList> getReducer) {
               if (action.type == ToDoAction.add) {
@@ -431,7 +431,7 @@ void main() {
                 track.append('onMiddleware_Unkonw');
               }
             })
-          ]));
+          ]);
 
       store.subscribe(() {
         track.append('onSubscribe');

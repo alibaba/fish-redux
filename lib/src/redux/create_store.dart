@@ -12,7 +12,8 @@ void _throwIfNot(bool condition, [String message]) {
   }
 }
 
-Store<T> _createStore<T>(final T preloadedState, final Reducer<T> reducer) {
+Store<T> _createStore<T>(final T preloadedState, final Reducer<T> reducer,
+    {List<Middleware<T>> middleware}) {
   _throwIfNot(
     preloadedState != null,
     'Expected the preloadedState to be non-null value.',
@@ -27,58 +28,76 @@ Store<T> _createStore<T>(final T preloadedState, final Reducer<T> reducer) {
   bool _isDispatching = false;
   bool _isDisposed = false;
 
-  return Store<T>()
-    ..getState = (() => _state)
-    ..dispatch = (Action action) {
-      _throwIfNot(action != null, 'Expected the action to be non-null value.');
-      _throwIfNot(action.type != null,
-          'Expected the action.type to be non-null value.');
-      _throwIfNot(!_isDispatching, 'Reducers may not dispatch actions.');
+  Dispatch dispatch = (Action action) {
+    _throwIfNot(action != null, 'Expected the action to be non-null value.');
+    _throwIfNot(
+        action.type != null, 'Expected the action.type to be non-null value.');
+    _throwIfNot(!_isDispatching, 'Reducers may not dispatch actions.');
 
-      if (_isDisposed) {
-        return;
-      }
-
-      try {
-        _isDispatching = true;
-        _state = _reducer(_state, action);
-      } finally {
-        _isDispatching = false;
-      }
-
-      final List<_VoidCallback> _notifyListeners = _listeners.toList(
-        growable: false,
-      );
-      for (_VoidCallback listener in _notifyListeners) {
-        listener();
-      }
-
-      _notifyController.add(_state);
+    if (_isDisposed) {
+      return;
     }
-    ..replaceReducer = (Reducer<T> replaceReducer) {
-      _reducer = replaceReducer ?? _noop;
+
+    try {
+      _isDispatching = true;
+      _state = _reducer(_state, action);
+    } finally {
+      _isDispatching = false;
     }
-    ..subscribe = (_VoidCallback listener) {
-      _throwIfNot(
-        listener != null,
-        'Expected the listener to be non-null value.',
-      );
+
+    final List<_VoidCallback> _notifyListeners = _listeners.toList(
+      growable: false,
+    );
+    for (_VoidCallback listener in _notifyListeners) {
+      listener();
+    }
+
+    _notifyController.add(_state);
+  };
+  final Get<T> getState = (() => _state);
+
+  dispatch = (middleware?.isNotEmpty ?? false)
+      ? middleware
+          .map((Middleware<T> middleware) => middleware(
+                dispatch: (Action action) => dispatch(action),
+                getState: getState,
+              ))
+          .fold(
+            dispatch,
+            (Dispatch previousValue, Dispatch Function(Dispatch) element) =>
+                element(previousValue),
+          )
+      : dispatch;
+  final ReplaceReducer<T> _replaceReducer = (Reducer<T> replaceReducer) {
+    _reducer = replaceReducer ?? _noop;
+  };
+  final Subscribe subscribe = (_VoidCallback listener) {
+    _throwIfNot(
+      listener != null,
+      'Expected the listener to be non-null value.',
+    );
+    _throwIfNot(
+      !_isDispatching,
+      'You may not call store.subscribe() while the reducer is executing.',
+    );
+
+    _listeners.add(listener);
+
+    return () {
       _throwIfNot(
         !_isDispatching,
-        'You may not call store.subscribe() while the reducer is executing.',
+        'You may not unsubscribe from a store listener while the reducer is executing.',
       );
-
-      _listeners.add(listener);
-
-      return () {
-        _throwIfNot(
-          !_isDispatching,
-          'You may not unsubscribe from a store listener while the reducer is executing.',
-        );
-        _listeners.remove(listener);
-      };
-    }
-    ..observable = (() => _notifyController.stream)
+      _listeners.remove(listener);
+    };
+  };
+  final Observable<T> observable = (() => _notifyController.stream);
+  return Store<T>()
+    ..getState = getState
+    ..dispatch = dispatch
+    ..replaceReducer = _replaceReducer
+    ..subscribe = subscribe
+    ..observable = observable
     ..teardown = () {
       _isDisposed = true;
       _listeners.clear();
@@ -87,14 +106,9 @@ Store<T> _createStore<T>(final T preloadedState, final Reducer<T> reducer) {
 }
 
 /// create a store with enhancer
-Store<T> createStore<T>(T preloadedState, Reducer<T> reducer,
-        [StoreEnhancer<T> enhancer]) =>
-    enhancer != null
-        ? enhancer(_createStore)(preloadedState, reducer)
-        : _createStore(preloadedState, reducer);
-
-StoreEnhancer<T> composeStoreEnhancer<T>(List<StoreEnhancer<T>> enhancers) =>
-    enhancers == null || enhancers.isEmpty
-        ? null
-        : enhancers.reduce((StoreEnhancer<T> previous, StoreEnhancer<T> next) =>
-            (StoreCreator<T> creator) => next(previous(creator)));
+Store<T> createStore<T>(
+  T preloadedState,
+  Reducer<T> reducer, {
+  List<Middleware<T>> middleware,
+}) =>
+    _createStore(preloadedState, reducer, middleware: middleware);

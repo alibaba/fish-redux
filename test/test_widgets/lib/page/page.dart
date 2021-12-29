@@ -79,7 +79,7 @@ Widget toDoView(Todo toDo, BuildContext context, Dispatch dispatch) {
 Widget toDoListView(
   ToDoList state,
   Dispatch dispatch,
-  ViewService viewService,
+  ComponentContext<ToDoList> viewService,
 ) {
   print('build toDoListView');
   return Column(
@@ -131,7 +131,7 @@ Widget toDoListView(
   );
 }
 
-bool toDoListEffect(Action action, Context<ToDoList> ctx) {
+bool toDoListEffect(Action action, ComponentContext<ToDoList> ctx) {
   if (action.type == ToDoListAction.onAdd) {
     print('onAdd');
     ctx.dispatch(Action(ToDoListAction.add, payload: Todo.mock()));
@@ -160,7 +160,7 @@ bool toDoListEffect(Action action, Context<ToDoList> ctx) {
   return false;
 }
 
-dynamic toDoListEffectAsync(Action action, Context<ToDoList> ctx) {
+dynamic toDoListEffectAsync(Action action, ComponentContext<ToDoList> ctx) {
   if (action.type == ToDoListAction.onAdd ||
       action.type == ToDoListAction.onEdit ||
       action.type == ToDoListAction.onKnowException ||
@@ -201,7 +201,7 @@ bool forbidRefreshUI(ToDoList old, ToDoList now) {
   return false;
 }
 
-bool toDoListErrorHandler(Exception exception, Context<ToDoList> ctx) {
+bool toDoListErrorHandler(Exception exception, ComponentContext<ToDoList> ctx) {
   print('onErr:$exception');
   if (exception is KnowException) {
     return true;

@@ -1,14 +1,14 @@
 import 'package:fish_redux/fish_redux.dart';
 
 typedef ViewInstrument<T> = void Function(
-    T state, Dispatch dispatch, ViewService viewService);
+    T state, Dispatch dispatch, ComponentContext<T> viewService);
 
 ViewBuilder<T> instrumentView<T>(
         ViewBuilder<T> builder, ViewInstrument<T> pre) =>
     (
       T state,
       Dispatch dispatch,
-      ViewService viewService,
+      ComponentContext<T> viewService,
     ) {
       if (pre != null) {
         pre(state, dispatch, viewService);
@@ -65,7 +65,7 @@ Reducer<T> instrumentReducer<T>(Reducer<T> reducer,
 typedef EffectInstrument<T> = void Function(Action action, Get<T> getState);
 
 Effect<T> instrumentEffect<T>(Effect<T> effect, EffectInstrument<T> pre) =>
-    (Action action, Context<T> ctx) {
+    (Action action, ComponentContext<T> ctx) {
       if (pre != null) {
         pre(action, () => ctx.state);
       }
@@ -95,4 +95,4 @@ Middleware<T> instrumentMiddleware<T>(Middleware<T> middleware,
       };
     };
 
-typedef ErrorInstrument<T> = void Function(Exception exception, Context<T> ctx);
+typedef ErrorInstrument<T> = void Function(Exception exception, ComponentContext<T> ctx);

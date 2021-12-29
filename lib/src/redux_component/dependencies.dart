@@ -13,6 +13,11 @@ class Dependencies<T> {
   }) : assert(adapter == null || adapter.isAdapter(),
             'The dependent must contains adapter.');
 
+  Dependent<T> slot(String type) => slots[type];
+
+  Dependencies<T> trim() =>
+      adapter != null || slots?.isNotEmpty == true ? this : null;
+
   Reducer<T> createReducer() {
     final List<SubReducer<T>> subs = <SubReducer<T>>[];
     if (slots != null && slots.isNotEmpty) {
@@ -28,9 +33,4 @@ class Dependencies<T> {
 
     return combineReducers(<Reducer<T>>[combineSubReducers(subs)]);
   }
-
-  Dependent<T> slot(String type) => slots[type];
-
-  Dependencies<T> trim() =>
-      adapter != null || slots?.isNotEmpty == true ? this : null;
 }

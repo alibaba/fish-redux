@@ -4,7 +4,7 @@ import 'package:flutter/material.dart' hide Action, Page;
 import 'action.dart';
 import 'state.dart';
 
-Widget toDoView(Todo toDo, Dispatch dispatch, ViewService viewService) {
+Widget toDoView(Todo toDo, Dispatch dispatch, ComponentContext<Todo> viewService) {
   return Container(
     margin: const EdgeInsets.all(8.0),
     color: Colors.grey,
@@ -74,7 +74,7 @@ Widget toDoView(Todo toDo, Dispatch dispatch, ViewService viewService) {
   );
 }
 
-bool toDoEffect(Action action, Context<Todo> ctx) {
+bool toDoEffect(Action action, ComponentContext<Todo> ctx) {
   if (action.type == ToDoAction.onEdit) {
     print('onEdit');
 
@@ -97,7 +97,7 @@ bool toDoEffect(Action action, Context<Todo> ctx) {
   return false;
 }
 
-dynamic toDoEffectAsync(Action action, Context<Todo> ctx) {
+dynamic toDoEffectAsync(Action action, ComponentContext<Todo> ctx) {
   if (action.type == ToDoAction.onEdit) {
     return Future.delayed(Duration(seconds: 1), () => toDoEffect(action, ctx));
   }
@@ -105,7 +105,7 @@ dynamic toDoEffectAsync(Action action, Context<Todo> ctx) {
   return null;
 }
 
-Dispatch toDoHigherEffect(Context<Todo> ctx) =>
+Dispatch toDoHigherEffect(ComponentContext<Todo> ctx) =>
     (Action action) => toDoEffect(action, ctx);
 
 Todo toDoReducer(Todo state, Action action) {
@@ -133,9 +133,7 @@ class ToDoComponent extends Component<Todo> {
       : super(
             view: toDoView,
             effect: toDoEffect,
-            reducer: toDoReducer,
-            shouldUpdate: shouldUpdate,
-            filter: reducerFilter);
+            reducer: toDoReducer,);
 }
 
 class ComponentWrapper extends StatelessWidget {

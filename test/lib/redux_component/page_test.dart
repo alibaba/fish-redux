@@ -14,15 +14,14 @@ void main() {
     test('create', () {
       TestPage<ToDoList, Map> page = TestPage<ToDoList, Map>(
           initState: initState,
-          view: toDoListView,
-          wrapper: (Widget child) => PageWrapper(child));
+          view: toDoListView,);
       expect(page, isNotNull);
 
       /// TODO
       final Widget pageWidget = page.buildPage(pageInitParams);
       expect(pageWidget, isNotNull);
 
-      expect(const TypeMatcher<PageWrapper>().check(pageWidget), isTrue);
+      expect(const TypeMatcher<Widget>().check(pageWidget), isTrue);
       //expect(pageWidget, TypeMatcher<PageWrapper>());
     });
 
@@ -34,7 +33,7 @@ void main() {
             track.append('initState', map);
           }),
           view: instrumentView<ToDoList>(toDoListView,
-              (ToDoList state, Dispatch dispatch, ViewService viewService) {
+              (ToDoList state, Dispatch dispatch, ComponentContext<ToDoList> viewService) {
             track.append('build', state.clone());
           })).buildPage(pageInitParams)));
 
@@ -84,7 +83,7 @@ void main() {
             track.append('initState', map);
           }),
           view: instrumentView<ToDoList>(toDoListView,
-              (ToDoList state, Dispatch dispatch, ViewService viewService) {
+              (ToDoList state, Dispatch dispatch, ComponentContext<ToDoList> viewService) {
             track.append('build', state.clone());
           }),
           reducer: instrumentReducer<ToDoList>(toDoListReducer,
@@ -167,7 +166,7 @@ void main() {
             track.append('initState', map);
           }),
           view: instrumentView<ToDoList>(toDoListView,
-              (ToDoList state, Dispatch dispatch, ViewService viewService) {
+              (ToDoList state, Dispatch dispatch, ComponentContext<ToDoList> viewService) {
             track.append('build', state.clone());
           }),
           reducer: instrumentReducer<ToDoList>(toDoListReducer,
@@ -242,7 +241,7 @@ void main() {
             track.append('initState', map);
           }),
           view: instrumentView<ToDoList>(toDoListView,
-              (ToDoList state, Dispatch dispatch, ViewService viewService) {
+              (ToDoList state, Dispatch dispatch, ComponentContext<ToDoList> viewService) {
             track.append('build', state.clone());
           }),
           reducer: instrumentReducer<ToDoList>(toDoListReducer,
@@ -317,14 +316,14 @@ void main() {
             track.append('initState', map);
           }),
           view: instrumentView<ToDoList>(toDoListView,
-              (ToDoList state, Dispatch dispatch, ViewService viewService) {
+              (ToDoList state, Dispatch dispatch, ComponentContext<ToDoList> viewService) {
             track.append('build', state.clone());
           }),
           reducer: instrumentReducer<ToDoList>(toDoListReducer,
               suf: (ToDoList state, Action action) {
             track.append('onReduce', state.clone());
           }),
-          effect: (Action action, Context<ToDoList> ctx) => instrumentEffect(
+          effect: (Action action, ComponentContext<ToDoList> ctx) => instrumentEffect(
                   toDoListEffect, (Action action, Get<ToDoList> getState) {
                 if (action.type == ToDoListAction.onAdd) {
                   track.append('onAdd', getState().clone());
@@ -396,14 +395,14 @@ void main() {
                 track.append('initState', map);
               }),
               view: instrumentView<ToDoList>(toDoListView,
-                  (ToDoList state, Dispatch dispatch, ViewService viewService) {
+                  (ToDoList state, Dispatch dispatch, ComponentContext<ToDoList> viewService) {
                 track.append('build', state.clone());
               }),
               reducer: instrumentReducer<ToDoList>(toDoListReducer,
                   suf: (ToDoList state, Action action) {
                 track.append('onReduce', state.clone());
               }),
-              effect: (Action action, Context<ToDoList> ctx) =>
+              effect: (Action action, ComponentContext<ToDoList> ctx) =>
                   instrumentEffect<ToDoList>(toDoListEffect,
                       (Action action, Get<ToDoList> getState) {
                     if (action.type == ToDoListAction.onAdd) {
@@ -470,7 +469,7 @@ void main() {
             track.append('initState', map);
           }),
           view: instrumentView<ToDoList>(toDoListView,
-              (ToDoList state, Dispatch dispatch, ViewService viewService) {
+              (ToDoList state, Dispatch dispatch, ComponentContext<ToDoList> viewService) {
             track.append('build', state.clone());
           }),
           reducer: instrumentReducer<ToDoList>(toDoListReducer,

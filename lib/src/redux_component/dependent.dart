@@ -1,88 +1,93 @@
-import 'package:fish_redux/fish_redux.dart';
-import 'package:flutter/widgets.dart' hide Action, Page;
+import 'package:flutter/material.dart' hide Action;
 
+import '../../fish_redux.dart';
+import '../redux/connector.dart';
 import '../redux/redux.dart';
 import 'basic.dart';
+import 'component.dart';
+import 'basic_component.dart';
 
-class _Dependent<T, P> implements Dependent<T> {
-  final AbstractConnector<T, P> connector;
-  final AbstractLogic<P> logic;
-  final SubReducer<T> subReducer;
+SubReducer<T> _conn<T, P>(
+    Reducer<Object> reducer, MutableConn<T, P> connector) {
+  return reducer == null
+      ? null
+      : connector
+          .subReducer((P state, Action action) => reducer(state, action));
+}
+
+class _Dependent<T, P> extends Dependent<T> {
+  final MutableConn<T, P> connector;
+  SubReducer<T> _subReducer;
+  final Reducer<P> _reducer;
+  final BasicComponent<P> _component;
 
   _Dependent({
-    @required this.logic,
+    BasicComponent<P> component,
     @required this.connector,
-  })  : assert(logic != null),
-        assert(connector != null),
-        subReducer = logic.createReducer != null
-            ? connector.subReducer(logic.createReducer())
-            : null;
+  })  : _reducer = component.createReducer(),
+        _component = component {
+    _subReducer = _conn<T, P>(
+        _reducer == null
+            ? null
+            : (Object state, Action action) {
+                return _reducer(state, action);
+              },
+        connector);
+  }
 
   @override
-  SubReducer<T> createSubReducer() => subReducer;
+  bool isComponent() => _component is Component;
+
+  @override
+  bool isAdapter() => !isComponent();
 
   @override
   Widget buildComponent(
     Store<Object> store,
     Get<T> getter, {
-    @required DispatchBus bus,
-    @required Enhancer<Object> enhancer,
+    DispatchBus bus,
   }) {
-    assert(bus != null && enhancer != null);
-    assert(isComponent(), 'Unexpected type of ${logic.runtimeType}.');
-    final AbstractComponent<P> component = logic;
-    return component.buildComponent(
+    return _component.buildComponent(
       store,
       () => connector.get(getter()),
-      bus: bus,
-      enhancer: enhancer,
+      dispatchBus: bus,
     );
   }
 
   @override
-  ListAdapter buildAdapter(covariant ContextSys<P> ctx) {
-    assert(isAdapter(), 'Unexpected type of ${logic.runtimeType}.');
-    final AbstractAdapter<P> adapter = logic;
-    return adapter.buildAdapter(ctx);
-  }
+  SubReducer<T> createSubReducer() => _subReducer;
 
   @override
-  Get<P> subGetter(Get<T> getter) => () => connector.get(getter());
-
-  @override
-  ContextSys<P> createContext(
+  List<Widget> buildComponents(
     Store<Object> store,
-    BuildContext buildContext,
-    Get<T> getState, {
-    @required DispatchBus bus,
-    @required Enhancer<Object> enhancer,
+    Get<T> getter, {
+    DispatchBus bus,
   }) {
-    assert(bus != null && enhancer != null);
-    return logic.createContext(
+    return _component.buildComponents(
       store,
-      buildContext,
-      subGetter(getState),
-      bus: bus,
-      enhancer: enhancer,
+      () => connector.get(getter()),
+      dispatchBus: bus,
     );
   }
 
   @override
-  bool isComponent() => logic is AbstractComponent;
-
-  @override
-  bool isAdapter() => logic is AbstractAdapter;
-
-  @override
-  Object key(T state) {
-    return Tuple3<Type, Type, Object>(
-      logic.runtimeType,
-      connector.runtimeType,
-      logic.key(connector.get(state)),
-    );
-  }
+  BasicComponent<Object> get component => _component;
 }
 
 Dependent<K> createDependent<K, T>(
-        AbstractConnector<K, T> connector, AbstractLogic<T> logic) =>
-    logic != null ? _Dependent<K, T>(connector: connector, logic: logic) : null;
+  MutableConn<K, T> connector,
+  BasicComponent<T> component,
+) =>
+    component == null
+        ? null
+        : (_Dependent<K, T>(
+            connector: connector,
+            component: component,
+          ));
+
+mixin ConnOpMixin<T, P> on MutableConn<T, P> {
+  Dependent<T> operator +(BasicComponent<P> component) => createDependent<T, P>(
+        this,
+        component,
+      );
+}

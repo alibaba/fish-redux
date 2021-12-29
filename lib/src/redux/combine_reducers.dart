@@ -48,13 +48,3 @@ Reducer<T> combineReducers<T>(Iterable<Reducer<T>> reducers) {
     return nextState;
   };
 }
-
-/// Convert a super Reducer<Sup> to a sub Reducer<Sub>
-Reducer<Sub> castReducer<Sub extends Sup, Sup>(Reducer<Sup> sup) {
-  return sup == null
-      ? null
-      : (Sub state, Action action) {
-          final Sub result = sup(state, action);
-          return result;
-        };
-}

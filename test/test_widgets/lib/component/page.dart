@@ -9,7 +9,7 @@ import 'state.dart';
 Widget toDoListView(
   ToDoList state,
   Dispatch dispatch,
-  ViewService viewService,
+  ComponentContext<ToDoList> viewService,
 ) {
   print('build toDoListView');
   return Column(
@@ -60,9 +60,8 @@ Widget toDoListView(
   );
 }
 
-bool toDoListEffect(Action action, Context<ToDoList> ctx) {
+bool toDoListEffect(Action action, ComponentContext<ToDoList> ctx) {
   if (action.type == ToDoListAction.onAdd) {
-    print('onAdd');
     ctx.dispatch(Action(ToDoListAction.add, payload: Todo.mock()));
     return true;
   } else if (action.type == ToDoListAction.onBroadcast) {
@@ -73,7 +72,7 @@ bool toDoListEffect(Action action, Context<ToDoList> ctx) {
   return false;
 }
 
-dynamic toDoListEffectAsync(Action action, Context<ToDoList> ctx) {
+dynamic toDoListEffectAsync(Action action, ComponentContext<ToDoList> ctx) {
   if (action.type == ToDoListAction.onAdd) {
     return Future.delayed(
         Duration(seconds: 1), () => toDoListEffect(action, ctx));
@@ -82,7 +81,7 @@ dynamic toDoListEffectAsync(Action action, Context<ToDoList> ctx) {
   return null;
 }
 
-Dispatch toDoListHigherEffect(Context<ToDoList> ctx) =>
+Dispatch toDoListHigherEffect(ComponentContext<ToDoList> ctx) =>
     (Action action) => toDoListEffect(action, ctx);
 
 ToDoList toDoListReducer(ToDoList state, Action action) {

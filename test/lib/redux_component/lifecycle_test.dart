@@ -57,7 +57,7 @@ Dependencies<ToDoList> toDoListDependencies(final Track track) =>
 Widget pageView(
   ToDoList state,
   Dispatch dispatch,
-  ViewService viewService,
+  ComponentContext<ToDoList> viewService,
 ) {
   return Column(
     children: <Widget>[
@@ -96,20 +96,18 @@ void main() {
   group('component', () {
     test('create', () {
       final TestComponent<Todo> component = TestComponent<Todo>(
-          view: toDoView, wrapper: (child) => ComponentWrapper(child));
+          view: toDoView,);
       expect(component, isNotNull);
 
       /// TODO
       final Widget componentWidget = component.buildComponent(
-        createBatchStore<Todo>(Todo.mock(), null),
+        createStore<Todo>(Todo.mock(), null),
         () => Todo.mock(),
-        bus: DispatchBusDefault(),
-        enhancer: EnhancerDefault<Object>(),
       );
       expect(componentWidget, isNotNull);
 
       expect(
-          const TypeMatcher<ComponentWrapper>().check(componentWidget), isTrue);
+          const TypeMatcher<Widget>().check(componentWidget), isTrue);
     });
 
     testWidgets('cycleLife', (WidgetTester tester) async {

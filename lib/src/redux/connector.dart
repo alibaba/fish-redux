@@ -1,25 +1,22 @@
+import '../redux_component/dependent.dart';
 import 'basic.dart';
+abstract class MutableConn<T, P> {
+  const MutableConn();
 
-/// Define a basic connector for immutable state.
-///     /// Example:
-///     class State {
-///       final SubState sub;
-///       final String name;
-///       const State({this.sub, this.name});
-///     }
-///
-///     class SubState {}
-///
-///     class Conn<State, SubState> extends ImmutableConn<State, SubState> {
-///       SubState get(State state) => state.sub;
-///       State set(State state, SubState sub) => State(sub: sub, name: state.name);
-///     }
-abstract class ImmutableConn<T, P> implements AbstractConnector<T, P> {
-  const ImmutableConn();
+  void set(T state, P subState);
 
-  T set(T state, P subState);
+  P get(T state);
 
-  @override
+  /// For mutable state, there are three abilities needed to be met.
+  ///     1. get: (S) => P
+  ///     2. set: (S, P) => void
+  ///     3. shallow copy: s.clone()
+  ///
+  /// For immutable state, there are two abilities needed to be met.
+  ///     1. get: (S) => P
+  ///     2. set: (S, P) => S
+  ///
+  /// See in [connector].
   SubReducer<T> subReducer(Reducer<P> reducer) {
     return reducer == null
         ? null
@@ -29,13 +26,13 @@ abstract class ImmutableConn<T, P> implements AbstractConnector<T, P> {
               return state;
             }
             final P newProps = reducer(props, action);
-            final bool hasChanged = !identical(newProps, props);
+            final bool hasChanged = newProps != props;
+            final T copy =
+                (hasChanged && !isStateCopied) ? _clone<T>(state) : state;
             if (hasChanged) {
-              final T result = set(state, newProps);
-              assert(result != null, 'Expected to return a non-null value.');
-              return result;
+              set(copy, newProps);
             }
-            return state;
+            return copy;
           };
   }
 }
@@ -61,44 +58,29 @@ dynamic _clone<T>(T state) {
   }
 }
 
-/// Define a basic connector for mutable state.
-///     /// Example:
-///     class State implments Cloneable<State>{
-///       SubState sub;
-///       String name;
-///       State({this.sub, this.name});
-///
-///       State clone() => State(sub: sub, name: name);
-///     }
-///
-///     class SubState {}
-///
-///     class Conn<State, SubState> extends MutableConn<State, SubState> {
-///       SubState get(State state) => state.sub;
-///       void set(State state, SubState sub) => state.sub = sub;
-///     }
-abstract class MutableConn<T, P> implements AbstractConnector<T, P> {
-  const MutableConn();
-
-  void set(T state, P subState);
+class NoneConn<T> extends ConnOp<T, T> {
+  const NoneConn();
 
   @override
-  SubReducer<T> subReducer(Reducer<P> reducer) {
-    return reducer == null
-        ? null
-        : (T state, Action action, bool isStateCopied) {
-            final P props = get(state);
-            if (props == null) {
-              return state;
-            }
-            final P newProps = reducer(props, action);
-            final bool hasChanged = newProps != props;
-            final T copy =
-                (hasChanged && !isStateCopied) ? _clone<T>(state) : state;
-            if (hasChanged) {
-              set(copy, newProps);
-            }
-            return copy;
-          };
-  }
+  T get(T state) => state;
+
+  @override
+  T set(T state, T subState) => subState;
+}
+
+class ConnOp<T, P> extends MutableConn<T, P> with ConnOpMixin<T, P> {
+  final P Function(T) _getter;
+  final void Function(T, P) _setter;
+
+  const ConnOp({
+    P Function(T) get,
+    void Function(T, P) set,
+  })  : _getter = get,
+        _setter = set;
+
+  @override
+  P get(T state) => _getter(state);
+
+  @override
+  void set(T state, P subState) => _setter(state, subState);
 }
