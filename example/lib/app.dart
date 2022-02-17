@@ -72,7 +72,7 @@ Widget createApp() {
     title: 'Fluro',
     debugShowCheckedModeBanner: false,
     theme: ThemeData(
-      primarySwatch: Colors.blue,
+      primarySwatch: Colors.yellow
     ),
     home: Scaffold(
       body: ToDoListPage().buildPage(<String, dynamic>{}),
